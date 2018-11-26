@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="http://www.zhengtongauto.com/ws/demo" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zhengtongauto.com/webservice" targetNamespace="http://www.zhengtongauto.com/webservice">
+  <wsdl:types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.zhengtongauto.com/ws/demo" elementFormDefault="qualified" targetNamespace="http://www.zhengtongauto.com/ws/demo">
+
+    <!-- 流程表单中，根据表单字段输入值，查询列表（不分页） -->
+    <element name="UserLogRequest">
+        <complexType>
+            <sequence>
+                <element maxOccurs="1" minOccurs="1" name="id" type="int">
+                </element>
+            </sequence>
+        </complexType>
+    </element>
+
+    <!-- 流程表单中，根据表单字段输入值，查询列表（分页） -->
+    <element name="UserLogPageRequest">
+        <complexType>
+            <sequence>
+                <element maxOccurs="1" minOccurs="1" name="id" type="int">
+                </element>
+                <element maxOccurs="1" minOccurs="1" name="page" type="int">
+                    <annotation>
+                        <documentation>当前页</documentation>
+                    </annotation>
+                </element>
+                <element maxOccurs="1" minOccurs="1" name="rows" type="int">
+                    <annotation>
+                        <documentation>每页行</documentation>
+                    </annotation>
+                </element>
+            </sequence>
+        </complexType>
+    </element>
+
+    <element name="ProcessRequest">
+        <complexType>
+            <sequence>
+                <element maxOccurs="1" minOccurs="1" name="processIdStr" type="string">
+                    <annotation>
+                        <documentation>流程ID（如果是String类型传此值）</documentation>
+                    </annotation>
+                </element>
+                <element maxOccurs="1" minOccurs="1" name="processIdInt" type="int">
+                    <annotation>
+                        <documentation>流程ID（如果是Int类型传此值）</documentation>
+                    </annotation>
+                </element>
+                <element maxOccurs="1" minOccurs="1" name="statusStr" type="string">
+                    <annotation>
+                        <documentation>状态ID（如果是String类型传此值）</documentation>
+                    </annotation>
+                </element>
+                <element maxOccurs="1" minOccurs="1" name="statusInt" type="int">
+                    <annotation>
+                        <documentation>状态ID（如果是Int类型传此值）</documentation>
+                    </annotation>
+                </element>
+                <element maxOccurs="1" minOccurs="1" name="name" type="string">
+                    <annotation>
+                        <documentation>审批人姓名</documentation>
+                    </annotation>
+                </element>
+            </sequence>
+        </complexType>
+    </element>
+
+    <element name="UserLogList">
+        <complexType>
+            <sequence>
+                <element name="id" type="int"/>
+                <element name="reason" type="string"/>
+                <element name="startTime" type="date"/>
+                <element name="endTime" type="date"/>
+            </sequence>
+        </complexType>
+    </element>
+
+    <element name="UserLogResponse">
+        <complexType>
+            <sequence>
+                <element maxOccurs="unbounded" ref="tns:UserLogList"/>
+            </sequence>
+        </complexType>
+    </element>
+
+    <element name="UserLogPageResponse">
+        <complexType>
+            <sequence>
+                <element maxOccurs="1" minOccurs="1" name="currentPage" type="int"/>
+                <element maxOccurs="1" minOccurs="1" name="totalPage" type="int"/>
+                <element maxOccurs="1" minOccurs="1" name="totalCount" type="int"/>
+                <element name="rows">
+                    <complexType>
+                        <sequence>
+                            <element maxOccurs="unbounded" ref="tns:UserLogList"/>
+                        </sequence>
+                    </complexType>
+                </element>
+            </sequence>
+        </complexType>
+    </element>
+
+    <!--<group name="UserLogListResponse">-->
+    <!--<sequence>-->
+    <!--<element name="id" type="int"/>-->
+    <!--<element name="reason" type="string"/>-->
+    <!--<element name="startTime" type="date"/>-->
+    <!--<element name="endTime" type="date"/>-->
+    <!--</sequence>-->
+    <!--</group>-->
+</schema>
+  </wsdl:types>
+  <wsdl:message name="UserLogRequest">
+    <wsdl:part element="sch:UserLogRequest" name="UserLogRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UserLogResponse">
+    <wsdl:part element="sch:UserLogResponse" name="UserLogResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UserLogPageResponse">
+    <wsdl:part element="sch:UserLogPageResponse" name="UserLogPageResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ProcessRequest">
+    <wsdl:part element="sch:ProcessRequest" name="ProcessRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UserLogPageRequest">
+    <wsdl:part element="sch:UserLogPageRequest" name="UserLogPageRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="UserOperation">
+    <wsdl:operation name="UserLog">
+      <wsdl:input message="tns:UserLogRequest" name="UserLogRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:UserLogResponse" name="UserLogResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UserLogPage">
+      <wsdl:input message="tns:UserLogPageRequest" name="UserLogPageRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:UserLogPageResponse" name="UserLogPageResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Process">
+      <wsdl:input message="tns:ProcessRequest" name="ProcessRequest">
+    </wsdl:input>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="UserOperationSoap11" type="tns:UserOperation">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="UserLog">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="UserLogRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="UserLogResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UserLogPage">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="UserLogPageRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="UserLogPageResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Process">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="ProcessRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="UserOperationService">
+    <wsdl:port binding="tns:UserOperationSoap11" name="UserOperationSoap11">
+      <soap:address location="http://111.198.158.174:9999/ws"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
