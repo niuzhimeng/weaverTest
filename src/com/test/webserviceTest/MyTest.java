@@ -8,7 +8,6 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.test.webserviceTest.vo.Student;
 import com.weavernorth.B1.zyml.po.CatalogAll;
-import com.weavernorth.daTang.vo.NameAndValue;
 import com.weavernorth.gaoji.vo.HrmSubCompany;
 import com.weavernorth.gaoji.vo.OrganizationVo;
 import org.apache.axis.client.Call;
@@ -662,9 +661,8 @@ public class MyTest {
 
     @Test
     public void test34() {
-       String str = "167,1#167,2#167,4#";
-
-
+        int i = Integer.parseInt("100");
+        System.out.println(i);
     }
 
 
