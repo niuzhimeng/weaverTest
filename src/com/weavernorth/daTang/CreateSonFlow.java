@@ -10,7 +10,10 @@ import weaver.workflow.action.BaseAction;
 import weaver.workflow.webservices.*;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 创建子流程
@@ -39,15 +42,31 @@ public class CreateSonFlow extends BaseAction {
             bm = recordSet.getString("bm");
         }
 
+        //本次创建明细表id
+        List<String> benCiCreatedetailId = new ArrayList<String>();
+
+        //查找已创建子流程的明细表id
+        List<String> createdDetailIdList = new ArrayList<String>();
+        RecordSet createdRecordSet = new RecordSet();
+        createdRecordSet.executeQuery("SELECT * FROM uf_MainAndDetail where main_requestId = '" + requestId + "' and my_type = 'person'");
+        while (createdRecordSet.next()) {
+            createdDetailIdList.add(createdRecordSet.getString("detail_id"));
+        }
+
         String sql = "select d.* from " + tableName + "_dt1 d left join " + tableName + " m on m.id = d.mainid where m.requestId = '" + requestId + "'";
-        //String sql = "SELECT d.* FROM " + tableName + "_dt1 d LEFT JOIN " + tableName + " m ON m.id = d.mainid LEFT JOIN uf_MainAndDetail u ON d.xm = u.personIdOrRequestId WHERE m.requestId = '" + requestId + "'AND (u.my_type IS NULL or u.my_type = 'person')";
         this.writeLog("查询sql： " + sql);
         recordSet.executeQuery(sql);
         //项目经理 - 明细行
         Map<String, List<DetailVo>> listMap = new HashMap<String, List<DetailVo>>();
         String xmjl;//项目经理
         while (recordSet.next()) {
+            if (createdDetailIdList.contains(recordSet.getString("id"))) {
+                continue;
+            }
+            benCiCreatedetailId.add(recordSet.getString("id"));
             DetailVo detailVo = new DetailVo();
+            detailVo.setId(recordSet.getString("id"));
+
             detailVo.setEjbm(recordSet.getString("ejbm"));
             detailVo.setSjbm(recordSet.getString("sjbm"));
             detailVo.setXm(recordSet.getString("xm"));
@@ -73,23 +92,10 @@ public class CreateSonFlow extends BaseAction {
             }
         }
 
-        //查找已创建流程
-        Set<String> createdSet = new HashSet<String>();
-        RecordSet createdRecordSet = new RecordSet();
-        createdRecordSet.executeQuery("SELECT * FROM uf_MainAndDetail where main_requestId = '" + requestId + "' and my_type = 'person'");
-        while (createdRecordSet.next()) {
-            createdSet.add(createdRecordSet.getString("personIdOrRequestId"));
-        }
-
         //创建子流程
         try {
-            List<String> createdPersonList = new ArrayList<String>();//已创建人员集合
             List<String> createdSonFlowList = new ArrayList<String>();//已创建子流程集合
             for (Map.Entry<String, List<DetailVo>> entry : listMap.entrySet()) {
-                //创建过的人不在处理
-                if (createdSet.contains(entry.getKey())) {
-                    continue;
-                }
                 WorkflowRequestTableField[] mainField = new WorkflowRequestTableField[5]; //主表行对象
                 int i = 0;
                 mainField[i] = new WorkflowRequestTableField();
@@ -209,7 +215,6 @@ public class CreateSonFlow extends BaseAction {
                     detailField1[i].setFieldValue(detailVo.getXmjl());
                     detailField1[i].setView(true);
                     detailField1[i].setEdit(true);
-                    createdPersonList.add(detailVo.getXmjl());//添加到list中
 
                     detailRecord[j] = new WorkflowRequestTableRecord();
                     detailRecord[j].setWorkflowRequestTableFields(detailField1);
@@ -258,7 +263,7 @@ public class CreateSonFlow extends BaseAction {
                 createdSonFlowList.add(returnStr);
                 this.writeLog("创建流程完毕=============== " + returnStr);
             }
-            insertRecord(requestId, "person", createdPersonList);
+            insertRecord(requestId, "person", benCiCreatedetailId);
             insertRecord(requestId, "flow", createdSonFlowList);
         } catch (Exception e) {
             this.writeLog("CreateSonFlow创建子流程异常： " + e);
@@ -274,16 +279,14 @@ public class CreateSonFlow extends BaseAction {
      * @param list      已创建人员或子流程id的集合
      */
     private void insertRecord(String requestId, String myType, List<String> list) {
-        RecordSet recordSet = new RecordSet();
+        if (list == null || list.size() <= 0) {
+            return;
+        }
         ConnStatement statement = new ConnStatement();
         try {
-            statement.setStatementSql("insert into uf_MainAndDetail(main_requestId, personIdOrRequestId, my_type) " +
+            statement.setStatementSql("insert into uf_MainAndDetail(main_requestId, detail_id, my_type) " +
                     "values(?, ?, ?)");
             for (String value : list) {
-                recordSet.executeQuery("select * from uf_MainAndDetail where main_requestId = '" + requestId + "' and personIdOrRequestId = '" + value + "' and my_type = 'person'");
-                if (recordSet.next()) {
-                    continue;
-                }
                 statement.setString(1, requestId);
                 statement.setString(2, value);
                 statement.setString(3, myType);

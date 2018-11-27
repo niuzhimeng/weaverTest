@@ -5,6 +5,8 @@ package com.weavernorth.daTang.vo;
  */
 public class DetailVo {
 
+    private String id;//明细表id
+
     private String ejbm;//二级部门
     private String sjbm;//三级部门
     private String xm;//姓名
@@ -36,6 +38,14 @@ public class DetailVo {
                 ", sm='" + sm + '\'' +
                 ", xmjl='" + xmjl + '\'' +
                 '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getEjbm() {

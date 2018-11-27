@@ -8,6 +8,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.test.webserviceTest.vo.Student;
 import com.weavernorth.B1.zyml.po.CatalogAll;
+import com.weavernorth.daTang.vo.DetailVo;
 import com.weavernorth.gaoji.vo.HrmSubCompany;
 import com.weavernorth.gaoji.vo.OrganizationVo;
 import org.apache.axis.client.Call;
@@ -18,6 +19,7 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.junit.Test;
 import sun.misc.BASE64Encoder;
+import weaver.conn.RecordSet;
 import weaver.general.AES;
 import weaver.general.TimeUtil;
 import weaver.hrm.webservice.HrmServiceXmlUtil;
@@ -661,8 +663,7 @@ public class MyTest {
 
     @Test
     public void test34() {
-        int i = Integer.parseInt("100");
-        System.out.println(i);
+
     }
 
 
