@@ -42,7 +42,7 @@ public class CreateSonFlow extends BaseAction {
             bm = recordSet.getString("bm");
         }
 
-        //本次创建明细表id
+        //本次创建子流程的 明细表id集合
         List<String> benCiCreatedetailId = new ArrayList<String>();
 
         //查找已创建子流程的明细表id
@@ -96,7 +96,7 @@ public class CreateSonFlow extends BaseAction {
         try {
             List<String> createdSonFlowList = new ArrayList<String>();//已创建子流程集合
             for (Map.Entry<String, List<DetailVo>> entry : listMap.entrySet()) {
-                WorkflowRequestTableField[] mainField = new WorkflowRequestTableField[5]; //主表行对象
+                WorkflowRequestTableField[] mainField = new WorkflowRequestTableField[15]; //主表行对象
                 int i = 0;
                 mainField[i] = new WorkflowRequestTableField();
                 mainField[i].setFieldName("tbr");//填报人
@@ -131,7 +131,7 @@ public class CreateSonFlow extends BaseAction {
                 WorkflowRequestTableRecord[] detailRecord = new WorkflowRequestTableRecord[entry.getValue().size()];//明细表对象(行的数组)
                 int j = 0;//行数
                 for (DetailVo detailVo : entry.getValue()) {
-                    WorkflowRequestTableField[] detailField1 = new WorkflowRequestTableField[12]; // 行对象（列的数组）
+                    WorkflowRequestTableField[] detailField1 = new WorkflowRequestTableField[15]; // 行对象（列的数组）
                     i = 0;
                     detailField1[i] = new WorkflowRequestTableField();
                     detailField1[i].setFieldName("ejbm");
@@ -216,6 +216,13 @@ public class CreateSonFlow extends BaseAction {
                     detailField1[i].setView(true);
                     detailField1[i].setEdit(true);
 
+                    i++;
+                    detailField1[i] = new WorkflowRequestTableField();
+                    detailField1[i].setFieldName("main_detail_id");
+                    detailField1[i].setFieldValue(detailVo.getId());
+                    detailField1[i].setView(true);
+                    detailField1[i].setEdit(true);
+
                     detailRecord[j] = new WorkflowRequestTableRecord();
                     detailRecord[j].setWorkflowRequestTableFields(detailField1);
                     j++;
@@ -268,6 +275,7 @@ public class CreateSonFlow extends BaseAction {
         } catch (Exception e) {
             this.writeLog("CreateSonFlow创建子流程异常： " + e);
         }
+        this.writeLog("====================根据明细表创建子流程完成 " + TimeUtil.getCurrentTimeString());
         return "1";
     }
 
