@@ -32,18 +32,18 @@ public class CreateSonFlow extends BaseAction {
         if ("reject".equals(src)) {
             return "1";
         }
-        String createrId = "";//创建人id
+        String creatorId = "";//创建人id
         String bm = "";//部门id
 
         RecordSet recordSet = new RecordSet();
         recordSet.executeQuery("select * from " + tableName + " where requestId = '" + requestId + "'");
         if (recordSet.next()) {
-            createrId = recordSet.getString("tbr");
+            creatorId = recordSet.getString("tbr");
             bm = recordSet.getString("bm");
         }
 
         //本次创建子流程的 明细表id集合
-        List<String> benCiCreatedetailId = new ArrayList<String>();
+        List<String> benCiCreatedDetailId = new ArrayList<String>();
 
         //查找已创建子流程的明细表id
         List<String> createdDetailIdList = new ArrayList<String>();
@@ -63,7 +63,7 @@ public class CreateSonFlow extends BaseAction {
             if (createdDetailIdList.contains(recordSet.getString("id"))) {
                 continue;
             }
-            benCiCreatedetailId.add(recordSet.getString("id"));
+            benCiCreatedDetailId.add(recordSet.getString("id"));
             DetailVo detailVo = new DetailVo();
             detailVo.setId(recordSet.getString("id"));
 
@@ -100,7 +100,7 @@ public class CreateSonFlow extends BaseAction {
                 int i = 0;
                 mainField[i] = new WorkflowRequestTableField();
                 mainField[i].setFieldName("tbr");//填报人
-                mainField[i].setFieldValue(createrId); // 字段值
+                mainField[i].setFieldValue(creatorId); // 字段值
                 mainField[i].setView(true); //字段是否可见
                 mainField[i].setEdit(true); //字段是否可编辑
 
@@ -235,7 +235,7 @@ public class CreateSonFlow extends BaseAction {
                 workflowBaseInfo.setWorkflowId(WORK_FLOW_ID);// 流程id
 
                 WorkflowRequestInfo workflowRequestInfo = new WorkflowRequestInfo();// 流程基本信息
-                workflowRequestInfo.setCreatorId(createrId);// 创建人id
+                workflowRequestInfo.setCreatorId(creatorId);// 创建人id
                 workflowRequestInfo.setRequestLevel("0");// 0 正常，1重要，2紧急
                 workflowRequestInfo.setRequestName("工时审批（子流程） " + TimeUtil.getCurrentTimeString());// 流程标题
                 workflowRequestInfo.setWorkflowBaseInfo(workflowBaseInfo);
@@ -257,11 +257,11 @@ public class CreateSonFlow extends BaseAction {
                 method2.setAccessible(true);
                 RequestInfo requestInfo = (RequestInfo) method2.invoke(service, workflowRequestInfo);
                 if (requestInfo.getCreatorid() == null || requestInfo.getCreatorid().isEmpty()) {
-                    requestInfo.setCreatorid(createrId);
+                    requestInfo.setCreatorid(creatorId);
                 }
 
-                if (!requestInfo.getCreatorid().equals(createrId)) {
-                    requestInfo.setCreatorid(createrId);
+                if (!requestInfo.getCreatorid().equals(creatorId)) {
+                    requestInfo.setCreatorid(creatorId);
                 }
                 this.writeLog("准备创建流程===============");
                 //requestInfo.setIsNextFlow("0");
@@ -270,7 +270,7 @@ public class CreateSonFlow extends BaseAction {
                 createdSonFlowList.add(returnStr);
                 this.writeLog("创建流程完毕=============== " + returnStr);
             }
-            insertRecord(requestId, "person", benCiCreatedetailId);
+            insertRecord(requestId, "person", benCiCreatedDetailId);
             insertRecord(requestId, "flow", createdSonFlowList);
         } catch (Exception e) {
             this.writeLog("CreateSonFlow创建子流程异常： " + e);

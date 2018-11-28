@@ -8,6 +8,7 @@ import weaver.general.StaticObj;
 import weaver.general.Util;
 import weaver.hrm.OnLineMonitor;
 import weaver.hrm.User;
+import weaver.login.Account;
 import weaver.systeminfo.SysMaintenanceLog;
 import weaver.systeminfo.template.UserTemplate;
 
@@ -15,9 +16,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CasSSOLoginFilter extends BaseBean implements Filter {
 
@@ -131,8 +130,10 @@ public class CasSSOLoginFilter extends BaseBean implements Filter {
                 user_new.setAccount(rs.getString("account"));
 
                 user_new.setLoginip(request.getRemoteAddr());
+                List<Account> childAccountList = getChildAccountList(user_new);//子账号相关设置
                 request.getSession(true).setMaxInactiveInterval(60 * 60 * 24);
                 request.getSession(true).setAttribute("weaver_user@bean", user_new);
+                request.getSession(true).setAttribute("accounts", childAccountList);
                 request.getSession(true).setAttribute("browser_isie", getisIE(request));
 
                 request.getSession(true).setAttribute("moniter", new OnLineMonitor("" + user_new.getUID(), user_new.getLoginip()));
@@ -211,6 +212,24 @@ public class CasSSOLoginFilter extends BaseBean implements Filter {
     }
 
     public void destroy() {
+    }
+
+    private List<Account> getChildAccountList(User user) {
+        List<Account> accounts = new ArrayList<Account>();
+        int uid = user.getUID();
+        RecordSet rs = new RecordSet();
+        rs.executeSql("select * from hrmresource where status in (0,1,2,3) and (belongto = " + uid + " or id = " + uid + ")");
+        while (rs.next()) {
+            Account account = new Account();
+            account.setId(rs.getInt("id"));
+            account.setDepartmentid(rs.getInt("departmentid"));
+            account.setJobtitleid(rs.getInt("JOBTITLE"));
+            account.setSubcompanyid(rs.getInt("SUBCOMPANYID1"));
+            account.setType(rs.getInt("ACCOUNTTYPE"));
+            account.setAccount(Util.null2String(rs.getString("ACCOUNT")));
+            accounts.add(account);
+        }
+        return accounts;
     }
 
     /**
