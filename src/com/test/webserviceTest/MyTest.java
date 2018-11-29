@@ -8,23 +8,30 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.test.webserviceTest.vo.Student;
 import com.weavernorth.B1.zyml.po.CatalogAll;
-import com.weavernorth.daTang.vo.DetailVo;
 import com.weavernorth.gaoji.vo.HrmSubCompany;
 import com.weavernorth.gaoji.vo.OrganizationVo;
+import jxl.Workbook;
+import jxl.write.*;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.junit.Test;
+import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
-import weaver.conn.RecordSet;
 import weaver.general.AES;
 import weaver.general.TimeUtil;
 import weaver.hrm.webservice.HrmServiceXmlUtil;
 
 import java.io.*;
+import java.lang.Boolean;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -663,8 +670,25 @@ public class MyTest {
 
     @Test
     public void test34() {
-
+        //excel base64传输
+        try {
+            InputStream inputStream = new FileInputStream("d:/11月开发任务.xls");
+            byte[] bytes = new byte[inputStream.available()];
+            int read = inputStream.read(bytes);
+            inputStream.close();
+            String decode = new BASE64Encoder().encode(bytes);
+            System.out.println(decode);
+            byte[] bytes1 = new BASE64Decoder().decodeBuffer(decode);
+            OutputStream outputStream = new FileOutputStream("d:\\复制的.xls");
+            outputStream.write(bytes1);
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+
+
 
 
 }
