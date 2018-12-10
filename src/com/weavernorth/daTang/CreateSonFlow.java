@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class CreateSonFlow extends BaseAction {
 
-    private static final String WORK_FLOW_ID = "79";//子流程id
+    private static final String WORK_FLOW_ID = "504";//子流程id
 
     @Override
     public String execute(RequestInfo request) {

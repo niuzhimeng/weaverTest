@@ -14,6 +14,7 @@ import weaver.file.FileUploadToPath;
 import weaver.formmode.interfaces.ImportPreInterfaceAction;
 import weaver.hrm.User;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,13 +60,7 @@ public class ImportAction extends BaseBean implements ImportPreInterfaceAction {
             for (int myRow = 1; myRow <= numRow; myRow++) {
                 HSSFRow cells = sheet.getRow(myRow);
                 for (int myCol = 0; myCol < numCol; myCol++) {
-                    if (cells.getCell((short) myCol).getCellType() == HSSFCell.CELL_TYPE_BLANK) {
-                        currentCell = "";
-                    } else if (cells.getCell((short) myCol).getCellType() == HSSFCell.CELL_TYPE_STRING) {
-                        currentCell = cells.getCell((short) myCol).getStringCellValue();
-                    } else {
-                        currentCell = NumberToTextConverter.toText(cells.getCell((short) myCol).getNumericCellValue());
-                    }
+                    currentCell = getCellStringValue(cells.getCell((short) myCol));
                     rowList.add(currentCell.replaceAll("\\s*", ""));
                 }
                 writeLog("一行list==========================： " + rowList.toString());
@@ -109,5 +104,35 @@ public class ImportAction extends BaseBean implements ImportPreInterfaceAction {
             e.printStackTrace();
             return "数据有误";
         }
+    }
+
+    /**
+     * 获取单元格数据内容为字符串类型的数据
+     *
+     * @param cell Excel单元格
+     * @return String 单元格数据内容
+     */
+    private static String getCellStringValue(HSSFCell cell) {
+        String strCell;
+        switch (cell.getCellType()) {
+            case HSSFCell.CELL_TYPE_STRING:
+                strCell = cell.getStringCellValue();
+                break;
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                Double value = cell.getNumericCellValue();
+                BigDecimal bd1 = new BigDecimal(Double.toString(value));
+                strCell = bd1.toPlainString();
+                break;
+            case HSSFCell.CELL_TYPE_BOOLEAN:
+                strCell = String.valueOf(cell.getBooleanCellValue());
+                break;
+            case HSSFCell.CELL_TYPE_BLANK:
+                strCell = "";
+                break;
+            default:
+                strCell = "";
+                break;
+        }
+        return strCell;
     }
 }

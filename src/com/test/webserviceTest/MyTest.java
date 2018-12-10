@@ -10,15 +10,9 @@ import com.test.webserviceTest.vo.Student;
 import com.weavernorth.B1.zyml.po.CatalogAll;
 import com.weavernorth.gaoji.vo.HrmSubCompany;
 import com.weavernorth.gaoji.vo.OrganizationVo;
-import jxl.Workbook;
-import jxl.write.*;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.hssf.usermodel.*;
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
@@ -30,13 +24,16 @@ import weaver.general.AES;
 import weaver.general.TimeUtil;
 import weaver.hrm.webservice.HrmServiceXmlUtil;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.*;
-import java.lang.Boolean;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -687,8 +684,122 @@ public class MyTest {
         }
     }
 
+    @Test
+    public void test35() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        // 第二步，在workbook中添加一个sheet,对应Excel文件中的sheet
+        HSSFSheet sheet = wb.createSheet("test工作表");
+
+        // 第四步，创建单元格，并设置值表头 设置表头居中
+        HSSFCellStyle style = wb.createCellStyle();
+        HSSFCellStyle style2 = wb.createCellStyle();
+        style2.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框
+        style2.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
+        style2.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
+        style2.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
+
+        HSSFFont font2 = wb.createFont();
+        font2.setFontName("宋体");
+        font2.setFontHeightInPoints((short) 12);
+        style2.setFont(font2);
+        style2.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 左右居中
+        style2.setWrapText(true); // 换行
+        style2.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 上下居中
 
 
+        //创建内容
+        for (int i = 2; i < 7; i++) {
+            HSSFRow row = sheet.createRow(i);
+
+            //将内容按顺序赋给对应的列对象
+            HSSFCell cell1 = row.createCell((short) 1);
+            cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
+            cell1.setCellStyle(style2);
+            cell1.setEncoding(HSSFCell.ENCODING_UTF_16);
+            cell1.setCellValue("列名");
+
+            HSSFCell cell2 = row.createCell((short) 2);
+            cell2.setCellType(HSSFCell.CELL_TYPE_STRING);
+            cell2.setEncoding(HSSFCell.ENCODING_UTF_16);
+            cell1.setCellStyle(style2);
+            cell2.setCellValue("value");
+
+            HSSFCell cell3 = row.createCell((short) 4);
+            cell3.setCellType(HSSFCell.CELL_TYPE_STRING);
+            cell1.setCellStyle(style2);
+            cell3.setEncoding(HSSFCell.ENCODING_UTF_16);
+            cell3.setCellValue("列名");
+
+            HSSFCell cell4 = row.createCell((short) 5);
+            cell4.setCellType(HSSFCell.CELL_TYPE_STRING);
+            cell4.setEncoding(HSSFCell.ENCODING_UTF_16);
+            cell1.setCellStyle(style2);
+            cell4.setCellValue("value");
+
+        }
+
+
+        //输出Excel文件
+        try {
+            FileOutputStream output = new FileOutputStream("C:\\Users\\29529\\Desktop\\workbook.xls");
+            wb.write(output);
+            output.flush();
+            output.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    public void test36() throws Exception {
+        double zshj = 1167.0;
+        double zb = 30;
+        double test = zshj * (zb * 0.01);
+
+        DecimalFormat df = new DecimalFormat("##.00");
+        System.out.println(Double.valueOf(df.format(test)));
+
+        double v = new BigDecimal(test).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        String s = new BigDecimal(test).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+
+        System.out.println(v);
+        System.out.println(s);
+
+        double a = 1.00;
+        System.out.println(a);
+
+    }
+
+    @Test
+    public void test37() {
+        DecimalFormat df = new DecimalFormat(",###.00");
+        double hh = 4324321.0123;
+        System.out.println(df.format(hh));
+        TimeUtil.getCurrentTimeString();
+
+    }
+
+    @Test
+    public void test38() {
+        double zshjper = 2931.50 * (25 * 0.01);
+        DecimalFormat df1 = new DecimalFormat("#.00");
+        double d2 = Double.parseDouble(df1.format(zshjper));
+        System.out.println(d2);
+        double ce = 5864.5 - 5864.52;
+        BigDecimal decimal = new BigDecimal("5864.5");
+        BigDecimal decimal1 = new BigDecimal("5864.52");
+        double fAmount = 733.25;
+        System.out.println(ce);
+        System.out.println(ce + fAmount);
+        System.out.println(decimal.subtract(decimal1).doubleValue());
+    }
+
+    @Test
+    public void test39() {
+        String timestamp = TimeUtil.getCurrentTimeString().replace("-", "").replace(":", "").replaceAll("\\s*", "").substring(0, 12);
+        System.out.println(timestamp);
+    }
 
 
 }

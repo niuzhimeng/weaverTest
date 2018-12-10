@@ -11,7 +11,7 @@ import weaver.workflow.action.BaseAction;
  */
 public class UpdateMainFlow extends BaseAction {
 
-    private static final String MAIN_DETAIL_NAME = "formtable_main_64_dt1";
+    private static final String MAIN_DETAIL_NAME = "formtable_main_322_dt1";//主流程表名
 
     @Override
     public String execute(RequestInfo request) {
