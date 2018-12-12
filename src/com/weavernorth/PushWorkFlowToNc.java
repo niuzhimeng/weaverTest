@@ -17,7 +17,7 @@ import javax.xml.rpc.ServiceException;
  */
 public class PushWorkFlowToNc extends BaseCronJob {
     private BaseBean baseBean = new BaseBean();
-    private static final String URL = "http://10.31.1.217:9080/uapws/service/OAProcessService";
+    private static final String URL = "http://10.31.1.31:802/uapws/service/OAProcessService";
     private static final String[] addUpdates = {"title", "oaProcessId", "applyPsnId", "applyTime", "sendTime"};
     private static final String[] deletes = {"oaProcessId"};
 
@@ -118,7 +118,7 @@ public class PushWorkFlowToNc extends BaseCronJob {
 
             baseBean.writeLog("推送流程定时任务结束================end");
         } catch (Exception e) {
-            e.printStackTrace();
+            baseBean.writeLog("推送流程数据异常： " + e);
         }
     }
 
@@ -140,8 +140,8 @@ public class PushWorkFlowToNc extends BaseCronJob {
             }
             // 设置被调用方法的返回值类型
             call.setReturnType(XMLType.XSD_STRING);
-        } catch (ServiceException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            baseBean.writeLog("获取call对象异常： " + e);
         }
         return call;
     }

@@ -8,11 +8,9 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.test.webserviceTest.vo.Student;
 import com.weavernorth.B1.zyml.po.CatalogAll;
-import com.weavernorth.gaoji.vo.HrmSubCompany;
 import com.weavernorth.gaoji.vo.OrganizationVo;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.poi.hssf.usermodel.*;
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
@@ -24,16 +22,12 @@ import weaver.general.AES;
 import weaver.general.TimeUtil;
 import weaver.hrm.webservice.HrmServiceXmlUtil;
 
-import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -103,39 +97,6 @@ public class MyTest {
             System.out.println(i + ", ");
         }
 
-    }
-
-    @Test
-    public void test4() {
-        String content = "1";
-        MessageDigest ins = null;
-        try {
-            ins = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        ins.update(content.getBytes(Charset.forName("UTF-8")));
-        char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-        byte tmp[] = ins.digest();
-        char str[] = new char[16 * 2];
-        int k = 0;
-        for (int i = 0; i < 16; i++) {
-            byte byte0 = tmp[i];
-            str[k++] = hexDigits[byte0 >>> 4 & 0xf];
-            str[k++] = hexDigits[byte0 & 0xf];
-        }
-        System.out.println(new String(str).toUpperCase());
-    }
-
-
-    @Test
-    public void test5() {
-//        KafkaClientHelper.getInstance("api-bdp.gaojihealth.cn",80,"hr").start(new GaoJiHrmSyn());
-//        try {
-//            Thread.currentThread().join();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Test
@@ -356,20 +317,6 @@ public class MyTest {
     }
 
     @Test
-    public void test18() {
-        List<HrmSubCompany> errorList = new ArrayList<HrmSubCompany>();
-        for (int i = 0; i < 3; i++) {
-            HrmSubCompany s = new HrmSubCompany();
-            s.setId("12");
-            s.setCzlx("12");
-            errorList.add(s);
-        }
-        String s = new Gson().toJson(errorList);
-        System.out.println(s);
-
-    }
-
-    @Test
     public void getCalendar() {
         String dateStr = "2018-01-01";
         Date date;
@@ -549,12 +496,6 @@ public class MyTest {
     }
 
     @Test
-    public void test29() {
-        String currentDateString = TimeUtil.getCurrentDateString().substring(0, 4);
-        System.out.println(currentDateString);
-    }
-
-    @Test
     public void test30() throws Exception {
         File file = new File("D:\\WEAVER\\ecology\\filesystem\\201811\\Q\\1e2cfe79-cd59-40cf-a039-0337a797182c.zip");
         unZip(file, "D:\\");
@@ -685,73 +626,6 @@ public class MyTest {
     }
 
     @Test
-    public void test35() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        // 第二步，在workbook中添加一个sheet,对应Excel文件中的sheet
-        HSSFSheet sheet = wb.createSheet("test工作表");
-
-        // 第四步，创建单元格，并设置值表头 设置表头居中
-        HSSFCellStyle style = wb.createCellStyle();
-        HSSFCellStyle style2 = wb.createCellStyle();
-        style2.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框
-        style2.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
-        style2.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
-        style2.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
-
-        HSSFFont font2 = wb.createFont();
-        font2.setFontName("宋体");
-        font2.setFontHeightInPoints((short) 12);
-        style2.setFont(font2);
-        style2.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 左右居中
-        style2.setWrapText(true); // 换行
-        style2.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 上下居中
-
-
-        //创建内容
-        for (int i = 2; i < 7; i++) {
-            HSSFRow row = sheet.createRow(i);
-
-            //将内容按顺序赋给对应的列对象
-            HSSFCell cell1 = row.createCell((short) 1);
-            cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
-            cell1.setCellStyle(style2);
-            cell1.setEncoding(HSSFCell.ENCODING_UTF_16);
-            cell1.setCellValue("列名");
-
-            HSSFCell cell2 = row.createCell((short) 2);
-            cell2.setCellType(HSSFCell.CELL_TYPE_STRING);
-            cell2.setEncoding(HSSFCell.ENCODING_UTF_16);
-            cell1.setCellStyle(style2);
-            cell2.setCellValue("value");
-
-            HSSFCell cell3 = row.createCell((short) 4);
-            cell3.setCellType(HSSFCell.CELL_TYPE_STRING);
-            cell1.setCellStyle(style2);
-            cell3.setEncoding(HSSFCell.ENCODING_UTF_16);
-            cell3.setCellValue("列名");
-
-            HSSFCell cell4 = row.createCell((short) 5);
-            cell4.setCellType(HSSFCell.CELL_TYPE_STRING);
-            cell4.setEncoding(HSSFCell.ENCODING_UTF_16);
-            cell1.setCellStyle(style2);
-            cell4.setCellValue("value");
-
-        }
-
-
-        //输出Excel文件
-        try {
-            FileOutputStream output = new FileOutputStream("C:\\Users\\29529\\Desktop\\workbook.xls");
-            wb.write(output);
-            output.flush();
-            output.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @Test
     public void test36() throws Exception {
         double zshj = 1167.0;
         double zb = 30;
@@ -782,24 +656,7 @@ public class MyTest {
 
     @Test
     public void test38() {
-        double zshjper = 2931.50 * (25 * 0.01);
-        DecimalFormat df1 = new DecimalFormat("#.00");
-        double d2 = Double.parseDouble(df1.format(zshjper));
-        System.out.println(d2);
-        double ce = 5864.5 - 5864.52;
-        BigDecimal decimal = new BigDecimal("5864.5");
-        BigDecimal decimal1 = new BigDecimal("5864.52");
-        double fAmount = 733.25;
-        System.out.println(ce);
-        System.out.println(ce + fAmount);
-        System.out.println(decimal.subtract(decimal1).doubleValue());
-    }
 
-    @Test
-    public void test39() {
-        String timestamp = TimeUtil.getCurrentTimeString().replace("-", "").replace(":", "").replaceAll("\\s*", "").substring(0, 12);
-        System.out.println(timestamp);
     }
-
 
 }
