@@ -656,7 +656,11 @@ public class MyTest {
 
     @Test
     public void test38() {
-
+        List<Integer> list = new ArrayList<Integer>();
+        list.add(1);
+        list.add(2);
+        String idStr = new Gson().toJson(list);
+        System.out.println(idStr.substring(1, idStr.length() - 1));
     }
 
 }

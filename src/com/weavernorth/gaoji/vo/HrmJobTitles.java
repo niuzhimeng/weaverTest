@@ -5,6 +5,9 @@ import weaver.conn.RecordSet;
 import weaver.formmode.setup.ModeRightInfo;
 import weaver.general.BaseBean;
 
+/**
+ * 岗位
+ */
 public class HrmJobTitles extends BaseBean {
 
     private static final String modelId = "15";
