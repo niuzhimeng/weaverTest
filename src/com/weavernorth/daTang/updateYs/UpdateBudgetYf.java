@@ -30,13 +30,29 @@ public class UpdateBudgetYf extends BaseAction {
             RecordSet mainSet = new RecordSet();
             mainSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
 
-            //部门id
-            int bm = 0;
+            int bm = 0; //部门id
+            int cbzx = 0;//成本中心
+            int orgId = 2;//最终插入的id
             String nf = TimeUtil.getCurrentDateString().substring(0, 4);//年份
+            String organizationtype = "";//组织ID类型
             if (mainSet.next()) {
                 bm = Util.getIntValue(mainSet.getString("bm"), 0);
+                cbzx = Util.getIntValue(mainSet.getString("cbzx"), 0);
                 nf = mainSet.getString("nf");
+                organizationtype = mainSet.getString("gslb");
             }
+
+            if ("2".equals(organizationtype)) {//0：总部； 1：分部； 2：部门； 18004：成本中心；
+                orgId = bm;
+            } else if ("18004".equals(organizationtype)) {
+                orgId = cbzx;
+            }
+
+            baseBean.writeLog("部门=================== " + bm);
+            baseBean.writeLog("成本中心=================== " + cbzx);
+            baseBean.writeLog("组织ID类型=================== " + organizationtype);
+            baseBean.writeLog("最终插入的id=================== " + orgId);
+            baseBean.writeLog("年份=================== " + nf);
 
             //主表处理
             mainSet.executeQuery("select m.* from fnabudgetinfo m left join fnayearsperiods d on " +
@@ -65,7 +81,7 @@ public class UpdateBudgetYf extends BaseAction {
             } else {
                 //插入主表fnabudgetinfo
                 String insertSql = "insert into fnabudgetinfo (budgetstatus, createrid, budgetorganizationid, organizationtype, budgetperiods, revision, status, createdate)" +
-                        " values(1, 1," + bm + ", 2, " + nfId + ", 0, 1, '" + TimeUtil.getCurrentDateString() + "')";
+                        " values(1, 1," + orgId + ", " + organizationtype + ", " + nfId + ", 0, 1, '" + TimeUtil.getCurrentDateString() + "')";
                 baseBean.writeLog("insert fnabudgetinfo : " + insertSql);
                 updateSet.execute(insertSql);
                 //查询主表该条数据id
