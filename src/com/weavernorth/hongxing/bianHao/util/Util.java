@@ -19,8 +19,10 @@ public class Util {
             recordSet.execute("update uf_lcbh set currentNo = '" + newNo + "' where wybs = '" + wybs + "'");
             currentNoStr = String.valueOf(currentNo);
             if (currentNoStr.length() == 1) {
-                currentNoStr = "00" + currentNoStr;
+                currentNoStr = "000" + currentNoStr;
             } else if (currentNoStr.length() == 2) {
+                currentNoStr = "00" + currentNoStr;
+            } else if (currentNoStr.length() == 3) {
                 currentNoStr = "0" + currentNoStr;
             }
         } else {
