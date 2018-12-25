@@ -43,7 +43,16 @@ public class ShiZhengjd extends BaseAction {
         this.writeLog("文件子类型 wjzlx====================nzm---> " + wjzlx);
         this.writeLog("主办部门 zbbm====================nzm---> " + zbbm);
         this.writeLog("---- 部门代字 bmdz----" + bmdz);
-        if(wh.contains(bmdz)){
+
+        if ("75".equals(zbbm)) {
+            // 主办部门是机电工程处
+            if (wh.indexOf("工程", 5) > 0) {
+                //已经有【工程】代字了 防止重复生成文号
+                this.writeLog("已有文号，跳过代码");
+                return "1";
+            }
+        } else if (wh.contains(bmdz)) {
+            this.writeLog("已有文号，跳过代码");
             return "1";
         }
         int i = wh.lastIndexOf("〔");
