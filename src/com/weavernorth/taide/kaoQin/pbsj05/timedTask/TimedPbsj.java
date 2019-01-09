@@ -23,6 +23,14 @@ public class TimedPbsj extends BaseCronJob {
     private static final String DATA_TYPE = "1"; // uf_loginInfo表中的类型，1代表排班数据
     private ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
+    private String dateStr = "";
+
+    public TimedPbsj() {
+    }
+
+    public TimedPbsj(String dateStr) {
+        this.dateStr = dateStr;
+    }
 
     @Override
     public void execute() {
@@ -48,10 +56,18 @@ public class TimedPbsj extends BaseCronJob {
                 after = recordSet.getInt("password");
             }
 
+            Date date = new Date();
+            // 手动传入时间
+            if (dateStr.length() > 0) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                date = sdf.parse(dateStr);
+            }
+
             //获取时间
             Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
+            calendar.setTime(date);
             calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) - before); // 往前调n天
+            String deleteDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()); //删除日期节点
             String before5 = new SimpleDateFormat("yyyyMMdd").format(calendar.getTime());
             calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + before + after); // 往后调n天
             String after10 = new SimpleDateFormat("yyyyMMdd").format(calendar.getTime());
@@ -70,13 +86,17 @@ public class TimedPbsj extends BaseCronJob {
                 dt_hr0003_ininput.setPERNR(recordSet.getString("workcode")); // 工号
                 dt_hr0003_ininput.setBEGDA(before5);
                 dt_hr0003_ininput.setENDDA(after10);
+                dt_hr0003_ininput.setAdditional1("");
+                dt_hr0003_ininput.setAdditional2("");
 
                 DT_HR0003_ININPUT[] dt_hr0003_ininputs = new DT_HR0003_ININPUT[1];
                 dt_hr0003_ininputs[0] = dt_hr0003_ininput;
                 DT_HR0003_OUTOUTPUT[] execute = PbsjUtil.execute(dt_hr0003_ininputs);
                 if (execute != null && execute.length > 0) {
                     // 删除当前人员旧的排班数据
-                    deleteSet.execute("delete from uf_sap_pbb where pb01 = '" + recordSet.getString("workcode") + "'");
+                    String deleteSql = "delete from uf_sap_pbb where pb01 = '" + recordSet.getString("workcode") + "' and pb02 >= '" + deleteDate + "'";
+                    baseBean.writeLog("删除sql： " + deleteSql);
+                    deleteSet.execute(deleteSql);
                     for (DT_HR0003_OUTOUTPUT en : execute) {
                         statement.setString(1, en.getPERNR()); // 人员编号
                         statement.setString(2, pjDate(en.getDATUM())); // 日期

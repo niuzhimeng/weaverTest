@@ -9,9 +9,12 @@ import com.google.gson.reflect.TypeToken;
 import com.test.webserviceTest.vo.Student;
 import com.weavernorth.B1.zyml.po.CatalogAll;
 import com.weavernorth.gaoji.vo.OrganizationVo;
+import com.weavernorth.taide.kaoQin.syjq04.myWeb.*;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -21,13 +24,21 @@ import sun.misc.BASE64Encoder;
 import weaver.general.AES;
 import weaver.general.TimeUtil;
 import weaver.hrm.webservice.HrmServiceXmlUtil;
+import weaver.integration.util.HTTPUtil;
 
+import javax.xml.rpc.ServiceException;
 import java.io.*;
 import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -68,8 +79,8 @@ public class MyTest {
     @Test
     public void test2() {
 
-        int a[] = {1, 2, 3, 4, 5, 10, 7, 8, 9, 11, 14, 12, 13, 10, 6, 15, 1};
-        int b[] = new int[a.length];
+        int[] a = {1, 2, 3, 4, 5, 10, 7, 8, 9, 11, 14, 12, 13, 10, 6, 15, 1};
+        int[] b = new int[a.length];
         for (int anA : a) {
             if (b[anA]++ > 0) {//以a数组的值作为b的下标，如果有重复的则会在同一个下标处多加1
                 System.out.println(anA);
@@ -395,7 +406,7 @@ public class MyTest {
     @Test
     public void test22() {
         String key = "{\"Table\":[{\"bguid\":\"OA90165DB44A66010429681D72086E0D8A64A\",\"btype\":\"9055\",\"bsource\":\"901\",\"bdestination\":\"101\",\"bdatetime\":\"2018-09-25 16:39:59\",\"bstatus\":\"1\",\"bcallback\":\"http://124.251.118.4/workflow/request/gaoji/CallBack.jsp\",\"bversion\":\"1.0\",\"bdatahash\":\"\",\"bkeys\":\"OA90165DB44A66010429681D72086E0D8A64A\",\"bdata\":\"{\\\"BUKRS\\\":\\\"测试主体\\\",\\\"PERNR\\\":\\\"\\\",\\\"NAME1\\\":\\\"赵国栋\\\",\\\"HBKID\\\":\\\"招商银行\\\",\\\"BANKN\\\":\\\"6214850118228342\\\",\\\"ZTYPE\\\":\\\"报销\\\",\\\"KOSTL\\\":\\\"115\\\",\\\"WAERS\\\":\\\"CNY\\\",\\\"ZJK\\\":\\\"借款余额\\\",\\\"ZBX\\\":\\\"369\\\",\\\"WRBTR\\\":\\\"支付金额\\\",\\\"ZDJBH\\\":\\\"CLBX-2018-09-1119\\\",\\\"ZDJZT\\\":\\\"\\\",\\\"AUFNR\\\":\\\"内部订单\\\",\\\"ZFKFS\\\":\\\"现金\\\",\\\"detailVoList\\\":[{\\\"ZFYLX\\\":\\\"66021301\\\"},{\\\"ZFYLX\\\":\\\"66021302\\\",\\\"ZSE\\\":\\\"123\\\",\\\"SGTXT\\\":\\\"123123\\\"},{\\\"ZFYLX\\\":\\\"66021303\\\"}]}\"}]}";
-        char hexDigits[] = {
+        char[] hexDigits = {
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
         };
         try {
@@ -408,7 +419,7 @@ public class MyTest {
             byte[] md = mdInst.digest();
             // 把密文转换成十六进制的字符串形式
             int j = md.length;
-            char str[] = new char[j * 2];
+            char[] str = new char[j * 2];
             int k = 0;
             for (byte byte0 : md) {
                 str[k++] = hexDigits[byte0 >>> 4 & 0xf];
@@ -655,12 +666,70 @@ public class MyTest {
     }
 
     @Test
-    public void test38() {
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(1);
-        list.add(2);
-        String idStr = new Gson().toJson(list);
-        System.out.println(idStr.substring(1, idStr.length() - 1));
+    public void test38() throws Exception {
+        String requestXml = HTTPUtil.doGet("http://localhost:8080/workflow/request/shiZheng/sso/OA_SSO_GEPS_BACK.jsp?ticket=ly");
+        System.out.println(requestXml);
+        Document doc = DocumentHelper.parseText(requestXml);
+        Element rootElt = doc.getRootElement();
+        //获取流程创建人编号
+        String creatorId = rootElt.element("authenticationSuccess").elementTextTrim("GtpUserID");
+
+        System.out.println(creatorId);
     }
+
+    @Test
+    public void test39() throws InterruptedException {
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(2, // 核心线程数
+                10, // 最大线程数
+                60L, // 非核心线程闲置超时时长，一个非核心线程，如果不干活(闲置状态)
+                // 的时长超过这个参数所设定的时长，就会被销毁掉，如果设置allowCoreThreadTimeOut = true，则会作用于核心线程。
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(40));
+
+
+        new CountDownLatch(2).await();
+        System.out.println(threadPoolExecutor.getCorePoolSize());
+    }
+
+    @Test
+    public void test40() throws RemoteException, ServiceException {
+        SI_OA_OUT_HR0004ServiceLocator locator = new SI_OA_OUT_HR0004ServiceLocator();
+        SI_OA_OUT_HR0004BindingStub stub = (SI_OA_OUT_HR0004BindingStub) locator.getHTTP_Port();
+        stub.setUsername("administrator");
+        stub.setPassword("T1de#sAP5");
+
+        //拼接参数
+        DT_HR0004_IN dt_hr0004_in = new DT_HR0004_IN();
+        dt_hr0004_in.setKTART("10");
+        dt_hr0004_in.setZBEGDA("2019-01-04");
+
+        //拼接数组
+        DT_HR0004_ININPUT[] dt_hr0004_ininput = new DT_HR0004_ININPUT[1];
+        dt_hr0004_ininput[0] = new DT_HR0004_ININPUT("10020087", "", "");
+        dt_hr0004_in.setINPUT(dt_hr0004_ininput);
+
+        //调用接口
+        DT_HR0004_OUTOUTPUT[] dt_hr0004_outoutputs = stub.SI_OA_OUT_HR0004(dt_hr0004_in);
+
+        System.out.println("总条数： " + dt_hr0004_outoutputs.length);
+        for (DT_HR0004_OUTOUTPUT en : dt_hr0004_outoutputs) {
+            System.out.println(en.getPERNR());
+            System.out.println(en.getKTART());
+            System.out.println(en.getZBEGDA());
+            System.out.println(en.getZANZHL());
+            System.out.println(en.getEITXT());
+            System.out.println(en.getMSG_TYPE());
+            System.out.println(en.getMESSAGE());
+            System.out.println("==============");
+        }
+    }
+
+    @Test
+    public void test4() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date parse = sdf.parse("2019-01-08");
+        System.out.println(parse);
+    }
+
 
 }

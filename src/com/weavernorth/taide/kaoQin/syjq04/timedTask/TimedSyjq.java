@@ -75,6 +75,7 @@ public class TimedSyjq extends BaseCronJob {
                     }
                 }
             }
+            baseBean.writeLog("定时获取剩余假期接口结束==========： " + TimeUtil.getCurrentTimeString());
         } catch (Exception e) {
             baseBean.writeLog("TimedSyjq 定时获取剩余假期异常 ； " + e);
         } finally {
