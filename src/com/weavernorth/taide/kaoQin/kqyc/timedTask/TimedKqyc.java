@@ -3,6 +3,7 @@ package com.weavernorth.taide.kaoQin.kqyc.timedTask;
 import com.weaver.general.TimeUtil;
 import com.weavernorth.taide.kaoQin.kqyc.myWeb.DT_HRI006_OUTRETURN;
 import com.weavernorth.taide.kaoQin.kqyc.myWeb.KqycUtil;
+import com.weavernorth.taide.util.ConnUtil;
 import weaver.conn.ConnStatement;
 import weaver.conn.RecordSet;
 import weaver.formmode.setup.ModeRightInfo;
@@ -14,13 +15,14 @@ import weaver.interfaces.schedule.BaseCronJob;
  */
 public class TimedKqyc extends BaseCronJob {
 
-    private static final Integer modeId = 724; //模块id
     private ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
     private RecordSet recordSet = new RecordSet();
 
     @Override
     public void execute() {
+        // 模块id
+        int modeId = ConnUtil.getModeIdByType(3);
         String currentTimeString = TimeUtil.getCurrentTimeString();
         baseBean.writeLog("定时获取考勤异常 Start ---------- " + currentTimeString);
         RecordSet deleteSet = new RecordSet();

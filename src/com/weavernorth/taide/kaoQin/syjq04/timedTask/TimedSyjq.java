@@ -5,6 +5,7 @@ import com.weavernorth.taide.kaoQin.syjq04.myWeb.DT_HR0004_IN;
 import com.weavernorth.taide.kaoQin.syjq04.myWeb.DT_HR0004_ININPUT;
 import com.weavernorth.taide.kaoQin.syjq04.myWeb.DT_HR0004_OUTOUTPUT;
 import com.weavernorth.taide.kaoQin.syjq04.myWeb.SyjqUtil;
+import com.weavernorth.taide.util.ConnUtil;
 import weaver.conn.ConnStatement;
 import weaver.conn.RecordSet;
 import weaver.formmode.setup.ModeRightInfo;
@@ -16,12 +17,12 @@ import weaver.interfaces.schedule.BaseCronJob;
  */
 public class TimedSyjq extends BaseCronJob {
 
-    private static final Integer modeId = 704; //模块id
     private ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
 
     @Override
     public void execute() {
+        int modeId = ConnUtil.getModeIdByType(6);
         String currentTimeString = TimeUtil.getCurrentTimeString();
         baseBean.writeLog("定时获取剩余假期接口执行==========： " + currentTimeString);
 

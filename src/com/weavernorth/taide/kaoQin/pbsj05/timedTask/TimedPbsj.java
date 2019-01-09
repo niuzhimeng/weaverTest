@@ -4,6 +4,7 @@ import com.weaver.general.TimeUtil;
 import com.weavernorth.taide.kaoQin.pbsj05.myWeb.DT_HR0003_ININPUT;
 import com.weavernorth.taide.kaoQin.pbsj05.myWeb.DT_HR0003_OUTOUTPUT;
 import com.weavernorth.taide.kaoQin.pbsj05.myWeb.PbsjUtil;
+import com.weavernorth.taide.util.ConnUtil;
 import weaver.conn.ConnStatement;
 import weaver.conn.RecordSet;
 import weaver.formmode.setup.ModeRightInfo;
@@ -19,7 +20,6 @@ import java.util.Date;
  */
 public class TimedPbsj extends BaseCronJob {
 
-    private static final Integer modeId = 649; //模块id
     private static final String DATA_TYPE = "1"; // uf_loginInfo表中的类型，1代表排班数据
     private ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
@@ -34,6 +34,7 @@ public class TimedPbsj extends BaseCronJob {
 
     @Override
     public void execute() {
+        int modeId = ConnUtil.getModeIdByType(1);
         String currentTimeString = TimeUtil.getCurrentTimeString();
         baseBean.writeLog("定时获取排班数据 Start ---------- " + currentTimeString);
         long start = System.currentTimeMillis();
@@ -51,9 +52,9 @@ public class TimedPbsj extends BaseCronJob {
             int before = 5; // 当前日期 往前天数
             int after = 10; // 当前日期 往后天数
             daysSet.executeQuery("select * from uf_loginInfo where dataType = '" + DATA_TYPE + "'");
-            if (recordSet.next()) {
-                before = recordSet.getInt("loginid");
-                after = recordSet.getInt("password");
+            if (daysSet.next()) {
+                before = daysSet.getInt("loginid"); // 往前n天
+                after = daysSet.getInt("password"); // 往后n天
             }
 
             Date date = new Date();

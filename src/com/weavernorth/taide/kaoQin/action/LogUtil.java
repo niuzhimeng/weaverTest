@@ -1,6 +1,7 @@
 package com.weavernorth.taide.kaoQin.action;
 
 import com.weavernorth.taide.kaoQin.action.myWeb.DT_HR0002_OUTRet_Msg;
+import com.weavernorth.taide.util.ConnUtil;
 import weaver.conn.ConnStatement;
 import weaver.conn.RecordSet;
 import weaver.formmode.setup.ModeRightInfo;
@@ -11,8 +12,6 @@ import weaver.general.TimeUtil;
  * 考勤插入日志
  */
 class LogUtil {
-
-    private static final Integer modeId = 684; // 建模表id
     private static ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
 
@@ -23,6 +22,9 @@ class LogUtil {
      * @param workBh  流程编号
      */
     static void insertLog(DT_HR0002_OUTRet_Msg[] returns, String workBh) {
+        // 建模表id
+        int modeId = ConnUtil.getModeIdByType(5);
+
         if (returns != null && returns.length > 0) {
             String currentTimeString = TimeUtil.getCurrentTimeString();
             DT_HR0002_OUTRet_Msg aReturn = returns[0];

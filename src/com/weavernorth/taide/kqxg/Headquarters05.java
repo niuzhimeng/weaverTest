@@ -1,6 +1,7 @@
 package com.weavernorth.taide.kqxg;
 
 import com.weaver.general.TimeUtil;
+import com.weavernorth.taide.util.ConnUtil;
 import weaver.conn.ConnStatement;
 import weaver.conn.RecordSet;
 import weaver.formmode.setup.ModeRightInfo;
@@ -16,12 +17,20 @@ import java.util.Date;
  */
 public class Headquarters05 extends BaseAction {
 
-    private static final Integer modeId = 643; //模块id
-    private static final Integer MODE_SELECTITEMPAGE = 401; //公共选择框主键id
     private ModeRightInfo moderightinfo = new ModeRightInfo();
 
     @Override
     public String execute(RequestInfo requestInfo) {
+        // 模块id
+        int modeId = ConnUtil.getModeIdByType(7);
+        // 公共选择框主键id
+        int ggxzkId = 0;
+        RecordSet dSet = new RecordSet();
+        dSet.executeQuery("select loginid from uf_loginInfo where dataType = 7");
+        if (dSet.next()) {
+            ggxzkId = dSet.getInt("loginid");
+        }
+
         String requestId = requestInfo.getRequestid();
         String operatetype = requestInfo.getRequestManager().getSrc();
         String tableName = requestInfo.getRequestManager().getBillTableName();
@@ -67,7 +76,7 @@ public class Headquarters05 extends BaseAction {
 
                     //获取补签代码
                     String bqdm = "";
-                    bqdmSet.executeQuery("SELECT NAME FROM  MODE_SELECTITEMPAGEDETAIL WHERE DISORDER = " + bqlx + " and MAINID = " + MODE_SELECTITEMPAGE);
+                    bqdmSet.executeQuery("SELECT NAME FROM  MODE_SELECTITEMPAGEDETAIL WHERE DISORDER = " + bqlx + " and MAINID = " + ggxzkId);
                     if (bqdmSet.next()) {
                         bqdm = bqdmSet.getString("NAME");
                     }
