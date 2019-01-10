@@ -54,6 +54,7 @@ public class TimedKqyc extends BaseCronJob {
                     statement.executeUpdate();
                 }
             }
+            baseBean.writeLog("TimedKqyc 定时获考勤异常数据 结束=========== ； ");
         } catch (Exception e) {
             baseBean.writeLog("TimedKqyc 定时获考勤异常数据异常 ； " + e);
         } finally {

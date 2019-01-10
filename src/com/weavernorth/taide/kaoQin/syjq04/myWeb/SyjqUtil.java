@@ -13,7 +13,6 @@ public class SyjqUtil {
     private static BaseBean baseBean = new BaseBean();
 
     public static DT_HR0004_OUTOUTPUT[] execute(DT_HR0004_IN dt_hr0004_in) {
-        baseBean.writeLog("SyjqUtil 执行=============== " + TimeUtil.getCurrentTimeString());
         String userName = "";
         String passWord = "";
         RecordSet recordSet = new RecordSet();
@@ -31,9 +30,6 @@ public class SyjqUtil {
             stub.setPassword(passWord);
 
             dt_hr0004_outoutputs = stub.SI_OA_OUT_HR0004(dt_hr0004_in);
-            baseBean.writeLog("SyjqUtil 调用接口结束=============== " + TimeUtil.getCurrentTimeString() +
-                    ", 返回数组长度： " + dt_hr0004_outoutputs.length);
-
         } catch (Exception e) {
             baseBean.writeLog("SyjqUtil 异常： " + e);
         }

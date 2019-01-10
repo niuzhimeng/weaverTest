@@ -96,7 +96,6 @@ public class TimedPbsj extends BaseCronJob {
                 if (execute != null && execute.length > 0) {
                     // 删除当前人员旧的排班数据
                     String deleteSql = "delete from uf_sap_pbb where pb01 = '" + recordSet.getString("workcode") + "' and pb02 >= '" + deleteDate + "'";
-                    baseBean.writeLog("删除sql： " + deleteSql);
                     deleteSet.execute(deleteSql);
                     for (DT_HR0003_OUTOUTPUT en : execute) {
                         statement.setString(1, en.getPERNR()); // 人员编号
@@ -140,6 +139,7 @@ public class TimedPbsj extends BaseCronJob {
             }
             long end1 = System.currentTimeMillis();
             baseBean.writeLog("授权结束耗时: " + (end1 - end));
+            baseBean.writeLog("定时获取排班数据 End ---------- " + TimeUtil.getCurrentTimeString());
         }
     }
 

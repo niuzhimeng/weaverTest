@@ -13,7 +13,6 @@ public class SksjUtil {
     private static BaseBean baseBean = new BaseBean();
 
     public static void execute(DT_HR0005_IN dtHr0005In) {
-        baseBean.writeLog("SksjUtil刷卡数据 执行=============== " + TimeUtil.getCurrentTimeString());
         String userName = "";
         String passWord = "";
         RecordSet recordSet = new RecordSet();
@@ -25,12 +24,10 @@ public class SksjUtil {
                 userName = recordSet.getString("loginid");
                 passWord = recordSet.getString("password");
             }
-            baseBean.writeLog("用户名： " + userName);
             stub.setUsername(userName);
             stub.setPassword(passWord);
 
             stub.SI_OA_OUT_HR0005(dtHr0005In);
-            baseBean.writeLog("SksjUtil刷卡数据 结束=============== " + TimeUtil.getCurrentTimeString());
         } catch (Exception e) {
             baseBean.writeLog("刷卡数据util SksjUtil异常： " + e);
         }
