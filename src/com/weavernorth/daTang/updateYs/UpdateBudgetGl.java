@@ -55,8 +55,11 @@ public class UpdateBudgetGl extends BaseAction {
             baseBean.writeLog("年份=================== " + nf);
 
             //主表处理
-            mainSet.executeQuery("select m.* from fnabudgetinfo m left join fnayearsperiods d on " +
-                    "m.budgetperiods = d.id where m.budgetorganizationid = '" + bm + "' and d.fnayear = '" + nf + "'");
+            String mainSQL = "select m.* from fnabudgetinfo m left join fnayearsperiods d on " +
+                    "m.budgetperiods = d.id where m.budgetorganizationid = '" + orgId + "' and d.fnayear = '" + nf + "'" +
+                    " and organizationtype = '" + organizationtype + "'";
+            mainSet.executeQuery(mainSQL);
+            baseBean.writeLog("主表查询sql： " + mainSQL);
 
             //查找年分表id
             RecordSet maxSet = new RecordSet();

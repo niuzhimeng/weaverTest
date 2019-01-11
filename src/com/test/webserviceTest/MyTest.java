@@ -6,9 +6,17 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.sap.conn.jco.JCoDestination;
+import com.sap.conn.jco.JCoFunction;
+import com.sap.conn.jco.JCoParameterList;
+import com.sap.conn.jco.JCoTable;
+import com.sap.mw.jco.IFunctionTemplate;
+import com.sap.mw.jco.JCO;
 import com.test.webserviceTest.vo.Student;
 import com.weavernorth.B1.zyml.po.CatalogAll;
 import com.weavernorth.gaoji.vo.OrganizationVo;
+import com.weavernorth.jcoTest.three.ConnPoolThree;
+import com.weavernorth.jcoTest.two.ConnPoolTwo;
 import com.weavernorth.taide.kaoQin.syjq04.myWeb.*;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -32,7 +40,6 @@ import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -724,11 +731,85 @@ public class MyTest {
         }
     }
 
+    /**
+     * sap3测试
+     */
     @Test
-    public void test4() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date parse = sdf.parse("2019-01-08");
-        System.out.println(parse);
+    public void test4() throws Exception {
+        File file1 = new File("D:\\1.txt");
+        FileWriter haveWriter = new FileWriter(file1, false);
+        BufferedWriter bufferedWriter = new BufferedWriter(haveWriter);
+
+        JCoDestination destination = ConnPoolThree.getJCoDestination();
+        try {
+            destination.ping();
+        }catch (Exception e){
+            System.out.println("接口不通");
+        }
+
+        JCoFunction function = destination.getRepository().getFunction("ZHRI0006");
+
+        //function.getImportParameterList().setValue("I_BELNR", "5105600129");
+
+        // 调用sap接口
+        function.execute(destination);
+
+        JCoParameterList tableParameterList = function.getTableParameterList();
+        System.out.println(tableParameterList.toString());
+        JCoTable table1 = function.getTableParameterList().getTable("OUTPUT_P0002");
+
+        // 打印一个表所有字段名
+        List<String> zdList = new ArrayList<String>();
+        for (int j = 0; j < table1.getFieldCount(); j++) {
+            String name = table1.getMetaData().getName(j);
+            zdList.add(name);
+        }
+        System.out.println("字段名： " + new Gson().toJson(zdList));
+        System.out.println("=====================行数： " + table1.getNumRows());
+        for (int i = 0; i < table1.getNumRows(); i++) {
+            table1.setRow(i);
+            for (String zdName : zdList) {
+                bufferedWriter.write(zdName + ": " + table1.getString(zdName) + "\r\n");
+            }
+            bufferedWriter.write("-----------------" + "\r\n");
+        }
+
+        bufferedWriter.flush();
+        bufferedWriter.close();
+
+    }
+
+
+    @Test
+    public void test5() {
+        ConnPoolTwo connPoolTwo = new ConnPoolTwo();
+        JCO.Client client = connPoolTwo.getConnection();
+        JCO.Repository repository = new JCO.Repository("sap", client);
+        IFunctionTemplate zrfc_fi_kunnr_create_b = repository.getFunctionTemplate("ZHRI0006");
+        JCO.Function function = zrfc_fi_kunnr_create_b.getFunction();
+        //function.getImportParameterList().setValue("I_BELNR", "5105600129");
+
+        client.execute(function);
+        //System.out.println(function.getTableParameterList());
+        System.out.println(function.getTableParameterList().toString());
+        JCO.Table table1 = function.getTableParameterList().getTable("OUTPUT_P002");
+
+        System.out.println(table1.getNumRows());
+        // 打印一个表所有字段名
+        List<String> zdList = new ArrayList<String>();
+        for (int j = 0; j < table1.getFieldCount(); j++) {
+            String name = table1.getMetaData().getName(j);
+            zdList.add(name);
+        }
+        System.out.println("字段名： " + new Gson().toJson(zdList));
+        System.out.println("=====================行数： " + table1.getNumRows());
+        for (int i = 0; i < table1.getNumRows(); i++) {
+            table1.setRow(i);
+            for (String zdName : zdList) {
+                System.out.println((zdName + ": " + table1.getString(zdName) + "\r\n"));
+            }
+            System.out.println("--------------");
+        }
     }
 
 
