@@ -732,7 +732,7 @@ public class MyTest {
     }
 
     /**
-     * sap3测试
+     * jco3测试
      */
     @Test
     public void test4() throws Exception {
@@ -741,9 +741,10 @@ public class MyTest {
         BufferedWriter bufferedWriter = new BufferedWriter(haveWriter);
 
         JCoDestination destination = ConnPoolThree.getJCoDestination();
+        destination.removeThroughput();
         try {
             destination.ping();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("接口不通");
         }
 
@@ -780,6 +781,9 @@ public class MyTest {
     }
 
 
+    /**
+     * jco2测试
+     */
     @Test
     public void test5() {
         ConnPoolTwo connPoolTwo = new ConnPoolTwo();
@@ -793,7 +797,7 @@ public class MyTest {
         //System.out.println(function.getTableParameterList());
         System.out.println(function.getTableParameterList().toString());
         JCO.Table table1 = function.getTableParameterList().getTable("OUTPUT_P002");
-
+        table1.writeHTML("D:\\sapTest"); // 写到html
         System.out.println(table1.getNumRows());
         // 打印一个表所有字段名
         List<String> zdList = new ArrayList<String>();
@@ -810,6 +814,13 @@ public class MyTest {
             }
             System.out.println("--------------");
         }
+    }
+
+    @Test
+    public void test41() throws Exception {
+        String str = "{\"company_Code\":\"\",\"dest_System\":\"\",\"iNPUT\":[{\"aUFNR\":\"400000\",\"bWART\":\"Z61\",\"iTEM\":[{\"additional1\":\"\",\"additional2\":\"\",\"additional3\":\"\",\"additional4\":\"\",\"additional5\":\"\",\"bDTER\":\"20190107\",\"cHARG\":\"1\",\"eRFMG\":\"1\",\"lGORT\":\"8011\",\"mATNR\":\"000000000000000002\",\"mEINS\":\"KG\",\"rEMARK1\":\"7\"},{\"additional1\":\"\",\"additional2\":\"\",\"additional3\":\"\",\"additional4\":\"\",\"additional5\":\"\",\"bDTER\":\"20190107\",\"cHARG\":\"1\",\"eRFMG\":\"1\",\"lGORT\":\"8010\",\"mATNR\":\"000000000000000055\",\"mEINS\":\"KG\",\"rEMARK1\":\"8\"},{\"additional1\":\"\",\"additional2\":\"\",\"additional3\":\"\",\"additional4\":\"\",\"additional5\":\"\",\"bDTER\":\"20190114\",\"cHARG\":\"1\",\"eRFMG\":\"1\",\"lGORT\":\"8008\",\"mATNR\":\"000000000010000001\",\"mEINS\":\"KG\",\"rEMARK1\":\"9\"},{\"additional1\":\"\",\"additional2\":\"\",\"additional3\":\"\",\"additional4\":\"\",\"additional5\":\"\",\"bDTER\":\"20190121\",\"cHARG\":\"1\",\"eRFMG\":\"1\",\"lGORT\":\"8006\",\"mATNR\":\"000000000010000070\",\"mEINS\":\"G\",\"rEMARK1\":\"10\"},{\"additional1\":\"\",\"additional2\":\"\",\"additional3\":\"\",\"additional4\":\"\",\"additional5\":\"\",\"bDTER\":\"20190128\",\"cHARG\":\"1\",\"eRFMG\":\"1\",\"lGORT\":\"8004\",\"mATNR\":\"000000000010000077\",\"mEINS\":\"G\",\"rEMARK1\":\"11\"}],\"kOSTL\":\"\",\"pS_PSP_PNR\":\"A00021\",\"rEMARK1\":\"GY0720190121007\",\"wEMPF\":\"GY0720190121007\",\"wERKS\":\"1011\"}],\"iNTF_ID\":\"\",\"send_Time\":\"\",\"src_System\":\"OA\"}";
+        System.out.println(str.length());
+
     }
 
 

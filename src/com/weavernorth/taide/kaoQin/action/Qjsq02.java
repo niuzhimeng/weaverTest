@@ -1,5 +1,6 @@
 package com.weavernorth.taide.kaoQin.action;
 
+import com.alibaba.fastjson.JSON;
 import com.weavernorth.taide.kaoQin.action.myWeb.*;
 import weaver.conn.RecordSet;
 import weaver.soa.workflow.request.RequestInfo;
@@ -22,6 +23,14 @@ public class Qjsq02 extends BaseAction {
                 String mainSql = "select * from " + tableName + " where requestid = '" + requestId + "'";
                 recordSet.executeQuery(mainSql);
                 if (recordSet.next()) {
+                    String lclx = recordSet.getString("lclx"); // 操作类型 MOD DEL INS
+                    String czlxStr = "INS";
+                    if("1".equals(lclx)){
+                        czlxStr = "MOD";
+                    }else if("2".equals(lclx)){
+                        czlxStr = "DEL";
+                    }
+
                     String bh = recordSet.getString("bh"); // 流程编号
                     this.writeLog("流程编号=============： " + bh);
                     // 拼接对象
@@ -30,8 +39,8 @@ public class Qjsq02 extends BaseAction {
 
                     DT_HR0002_ININPUTPT2002[] datas = new DT_HR0002_ININPUTPT2002[1];
                     DT_HR0002_ININPUTPT2002 dt_hr0002_ininputpt2002 = new DT_HR0002_ININPUTPT2002();
-                    dt_hr0002_ininputpt2002.setOPTION("INS");
-                    dt_hr0002_ininputpt2002.setZATTEND_ID(bh); // 单据号 - OA流程编号
+                    dt_hr0002_ininputpt2002.setOPTION(czlxStr);
+                    dt_hr0002_ininputpt2002.setZATTEND_ID(requestId); // 单据号 - requestId
                     dt_hr0002_ininputpt2002.setPERNR(recordSet.getString("gh")); // 人员编号
                     dt_hr0002_ininputpt2002.setAWART(recordSet.getString("qjdm")); // 请假sap代码
                     dt_hr0002_ininputpt2002.setBEGDA(changeDays(recordSet.getString("ksrq"))); // 开始日期
@@ -59,10 +68,13 @@ public class Qjsq02 extends BaseAction {
                     dt_hr0002_in.setSend_Time("");
                     dt_hr0002_in.setINPUT(dt_hr0002_ininput);
 
+                    String sendJson = JSON.toJSONString(dt_hr0002_in);
+                    this.writeLog("发送json： " + sendJson);
+
                     // 调用接口
                     DT_HR0002_OUTRet_Msg[] returns = PushKqWorkFlowUtil.execute(dt_hr0002_in);
                     // 将返回信息插入日志
-                    LogUtil.insertLog(returns, bh);
+                    LogUtil.insertLog(returns, bh, sendJson);
                     StringBuilder builder = new StringBuilder();
                     for (DT_HR0002_OUTRet_Msg en : returns) {
                         if ("E".equals(en.getMSG_TYPE())) {
