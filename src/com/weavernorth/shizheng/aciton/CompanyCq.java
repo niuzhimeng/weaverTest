@@ -43,7 +43,7 @@ public class CompanyCq extends BaseAction {
         this.writeLog("文件子类型 wjzlx====================nzm---> " + wjzlx);
         this.writeLog("主办部门 zbbm====================nzm---> " + zbbm);
         this.writeLog("---- 部门代字 bmdz----" + bmdz);
-        if(wh.contains(bmdz)){
+        if (wh.contains(bmdz)) {
             return "1";
         }
         int i = wh.lastIndexOf("〔");
@@ -67,6 +67,7 @@ public class CompanyCq extends BaseAction {
         //更新流程表单
         RecordSet rs1 = new RecordSet();
         String updateSql = "update " + tableName + " set wh = '" + wh + "'  where requestid = '" + requestId + "'";
+        this.writeLog("更新表单的sql： " + updateSql);
         rs1.execute(updateSql);
         //更新请求名称
         RecordSetTrans updateWorkFlowSet = requestInfo.getRsTrans();
@@ -76,6 +77,7 @@ public class CompanyCq extends BaseAction {
         } catch (Exception e) {
             this.writeLog("RecordSetTrans报错" + TimeUtil.getCurrentTimeString());
         }
+        this.writeLog("-----------------------常青流程编号修改执行结束----------------------------------" + TimeUtil.getCurrentTimeString());
         return "1";
     }
 }
