@@ -57,7 +57,7 @@ public class WllyAction extends BaseAction {
                     int i = 0;
                     while (mxSet.next()) {
                         DT_MMI002_ININPUTHEADERITEM mxData = new DT_MMI002_ININPUTHEADERITEM();
-                        mxData.setREMARK1(mxSet.getString("id")); // OA明细表行号
+                        mxData.setREMARK1(lcbh); // 流程编号
                         mxData.setMATNR(mxSet.getString("MATNR")); // 物料编码
                         mxData.setERFMG(mxSet.getString("ERFMG")); // 申请数量
                         mxData.setMEINS(mxSet.getString("MEINS")); // 基本计量单位

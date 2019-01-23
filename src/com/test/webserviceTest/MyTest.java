@@ -31,8 +31,10 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 import weaver.general.AES;
 import weaver.general.TimeUtil;
+import weaver.hrm.report.schedulediff.HrmScheduleDiffUtil;
 import weaver.hrm.webservice.HrmServiceXmlUtil;
 import weaver.integration.util.HTTPUtil;
+import weaver.workflow.request.RequestInfo;
 
 import javax.xml.rpc.ServiceException;
 import java.io.*;
@@ -818,9 +820,23 @@ public class MyTest {
 
     @Test
     public void test41() throws Exception {
-        String str = "{\"company_Code\":\"\",\"dest_System\":\"\",\"iNPUT\":[{\"aUFNR\":\"400000\",\"bWART\":\"Z61\",\"iTEM\":[{\"additional1\":\"\",\"additional2\":\"\",\"additional3\":\"\",\"additional4\":\"\",\"additional5\":\"\",\"bDTER\":\"20190107\",\"cHARG\":\"1\",\"eRFMG\":\"1\",\"lGORT\":\"8011\",\"mATNR\":\"000000000000000002\",\"mEINS\":\"KG\",\"rEMARK1\":\"7\"},{\"additional1\":\"\",\"additional2\":\"\",\"additional3\":\"\",\"additional4\":\"\",\"additional5\":\"\",\"bDTER\":\"20190107\",\"cHARG\":\"1\",\"eRFMG\":\"1\",\"lGORT\":\"8010\",\"mATNR\":\"000000000000000055\",\"mEINS\":\"KG\",\"rEMARK1\":\"8\"},{\"additional1\":\"\",\"additional2\":\"\",\"additional3\":\"\",\"additional4\":\"\",\"additional5\":\"\",\"bDTER\":\"20190114\",\"cHARG\":\"1\",\"eRFMG\":\"1\",\"lGORT\":\"8008\",\"mATNR\":\"000000000010000001\",\"mEINS\":\"KG\",\"rEMARK1\":\"9\"},{\"additional1\":\"\",\"additional2\":\"\",\"additional3\":\"\",\"additional4\":\"\",\"additional5\":\"\",\"bDTER\":\"20190121\",\"cHARG\":\"1\",\"eRFMG\":\"1\",\"lGORT\":\"8006\",\"mATNR\":\"000000000010000070\",\"mEINS\":\"G\",\"rEMARK1\":\"10\"},{\"additional1\":\"\",\"additional2\":\"\",\"additional3\":\"\",\"additional4\":\"\",\"additional5\":\"\",\"bDTER\":\"20190128\",\"cHARG\":\"1\",\"eRFMG\":\"1\",\"lGORT\":\"8004\",\"mATNR\":\"000000000010000077\",\"mEINS\":\"G\",\"rEMARK1\":\"11\"}],\"kOSTL\":\"\",\"pS_PSP_PNR\":\"A00021\",\"rEMARK1\":\"GY0720190121007\",\"wEMPF\":\"GY0720190121007\",\"wERKS\":\"1011\"}],\"iNTF_ID\":\"\",\"send_Time\":\"\",\"src_System\":\"OA\"}";
-        System.out.println(str.length());
+        //String dateString = TimeUtil.getCurrentDateString();
+        String dateString = "2019-01-17";
+        int day = Integer.parseInt(dateString.substring(8, 10));
+        String myMonth;
+        if (day > 17) {
+            myMonth = dateString.substring(0, 7).replace("-", "");
+        } else {
+            myMonth = TimeUtil.dateAdd(dateString, -20).substring(0, 7).replace("-", "");
+        }
+        System.out.println(myMonth);
 
+    }
+
+    @Test
+    public void test42() {
+        String currentDateString = TimeUtil.getCurrentDateString();
+        System.out.println(currentDateString);
     }
 
 
