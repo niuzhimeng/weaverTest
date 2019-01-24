@@ -72,8 +72,6 @@ public class Jbsq01 extends BaseAction {
 
                     // 调用接口
                     DT_HR0002_OUTRet_Msg[] returns = PushKqWorkFlowUtil.execute(dt_hr0002_in);
-                    // 将返回信息插入日志
-                    LogUtil.insertLog(returns, bh, sendJson);
 
                     StringBuilder builder = new StringBuilder();
                     for (DT_HR0002_OUTRet_Msg en : returns) {
@@ -82,6 +80,15 @@ public class Jbsq01 extends BaseAction {
                         }
                         this.writeLog("sap返回信息： " + en.getMSG_TYPE() + ": " + en.getMESSAGE());
                     }
+
+                    // 返回标记
+                    String flag = "S";
+                    if (builder.length() > 0) {
+                        flag = "E";
+                    }
+                    // 将返回信息插入日志
+                    LogUtil.insertLog(returns, bh, sendJson, flag);
+
                     if (builder.length() > 0) {
                         this.writeLog("流程终止， builder: " + builder.toString());
                         requestInfo.getRequestManager().setMessageid("110000");

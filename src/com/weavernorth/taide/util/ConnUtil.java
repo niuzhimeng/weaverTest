@@ -33,21 +33,21 @@ public class ConnUtil {
      * @param logStr   日志信息
      * @param workBh   流程编号
      * @param sendJson 发送json
+     * @param flag     返回标记（E OR S）
      */
-    public static void insertLogCoon(String logStr, String workBh, String sendJson) {
+    public static void insertLogCoon(String logStr, String workBh, String sendJson, String flag) {
         try {
-            insertLogCoonReal(logStr, workBh, sendJson);
+            insertLogCoonReal(logStr, workBh, sendJson, flag);
         } catch (Exception e) {
             try {
-                insertLogCoonReal(logStr, workBh, "json过大，请前往日志查看。");
+                insertLogCoonReal(logStr, workBh, "json过大，请前往日志查看。", flag);
             } catch (Exception e1) {
                 baseBean.writeLog("ConnUtil insertLogCoon异常： " + e1);
             }
         }
-
     }
 
-    private static void insertLogCoonReal(String logStr, String workBh, String sendJson) throws Exception {
+    private static void insertLogCoonReal(String logStr, String workBh, String sendJson, String flag) throws Exception {
         // 建模表id
         int modeId = getModeIdByType(5);
 
@@ -55,20 +55,21 @@ public class ConnUtil {
             String currentTimeString = TimeUtil.getCurrentTimeString();
 
             ConnStatement statement = new ConnStatement();
-            String insertSql = "insert into uf_certificate_log(lcbh, pfxx, jasonxx, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
-                    "values (?,?,?, ?,?,?,?,?)";
+            String insertSql = "insert into uf_certificate_log(lcbh, pfxx, jasonxx, fhzt, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
+                    "values (?,?,?,?,  ?,?,?,?,?)";
 
             statement.setStatementSql(insertSql);
 
             statement.setString(1, workBh); // 	流程编号
             statement.setString(2, logStr); // 凭证返回信息
             statement.setString(3, sendJson); // 发送json信息
+            statement.setString(4, flag); // 返回状态
 
-            statement.setInt(4, modeId);//模块id
-            statement.setString(5, "1");//创建人id
-            statement.setString(6, "0");//一个默认值0
-            statement.setString(7, com.weaver.general.TimeUtil.getCurrentTimeString().substring(0, 10));
-            statement.setString(8, com.weaver.general.TimeUtil.getCurrentTimeString().substring(11));
+            statement.setInt(5, modeId);//模块id
+            statement.setString(6, "1");//创建人id
+            statement.setString(7, "0");//一个默认值0
+            statement.setString(8, com.weaver.general.TimeUtil.getCurrentTimeString().substring(0, 10));
+            statement.setString(9, com.weaver.general.TimeUtil.getCurrentTimeString().substring(11));
             statement.executeUpdate();
 
             statement.close();

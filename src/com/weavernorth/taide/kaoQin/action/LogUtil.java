@@ -8,8 +8,6 @@ import weaver.formmode.setup.ModeRightInfo;
 import weaver.general.BaseBean;
 import weaver.general.TimeUtil;
 
-import java.sql.SQLException;
-
 /**
  * 考勤插入日志
  */
@@ -22,13 +20,14 @@ class LogUtil {
      *
      * @param returns sap返回数组
      * @param workBh  流程编号
+     * @param flag    返回标记（E OR S）
      */
-    static void insertLog(DT_HR0002_OUTRet_Msg[] returns, String workBh, String sendJson) {
+    static void insertLog(DT_HR0002_OUTRet_Msg[] returns, String workBh, String sendJson, String flag) {
         try {
-            insertLogReal(returns, workBh, sendJson);
+            insertLogReal(returns, workBh, sendJson, flag);
         } catch (Exception e) {
             try {
-                insertLogReal(returns, workBh, "json过大，请前往日志查看。");
+                insertLogReal(returns, workBh, "json过大，请前往日志查看。", flag);
             } catch (Exception e1) {
                 baseBean.writeLog("LogUtil insertLog异常： " + e1);
             }
@@ -36,7 +35,7 @@ class LogUtil {
 
     }
 
-    private static void insertLogReal(DT_HR0002_OUTRet_Msg[] returns, String workBh, String sendJson) throws Exception {
+    private static void insertLogReal(DT_HR0002_OUTRet_Msg[] returns, String workBh, String sendJson, String flag) throws Exception {
         // 建模表id
         int modeId = ConnUtil.getModeIdByType(5);
 
@@ -44,20 +43,21 @@ class LogUtil {
             String currentTimeString = TimeUtil.getCurrentTimeString();
             DT_HR0002_OUTRet_Msg aReturn = returns[0];
             ConnStatement statement = new ConnStatement();
-            String insertSql = "insert into uf_certificate_log(lcbh, pfxx, jasonxx, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
-                    "values (?,?,?, ?,?,?,?,?)";
+            String insertSql = "insert into uf_certificate_log(lcbh, pfxx, jasonxx, fhzt, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
+                    "values (?,?,?,?,  ?,?,?,?,?)";
 
             statement.setStatementSql(insertSql);
 
             statement.setString(1, workBh); // 	流程编号
             statement.setString(2, aReturn.getMSG_TYPE() + ": " + aReturn.getMESSAGE()); // 凭证返回信息
             statement.setString(3, sendJson); // 发送json信息
+            statement.setString(4, flag); // 发送json信息
 
-            statement.setInt(4, modeId);//模块id
-            statement.setString(5, "1");//创建人id
-            statement.setString(6, "0");//一个默认值0
-            statement.setString(7, com.weaver.general.TimeUtil.getCurrentTimeString().substring(0, 10));
-            statement.setString(8, com.weaver.general.TimeUtil.getCurrentTimeString().substring(11));
+            statement.setInt(5, modeId);//模块id
+            statement.setString(6, "1");//创建人id
+            statement.setString(7, "0");//一个默认值0
+            statement.setString(8, com.weaver.general.TimeUtil.getCurrentTimeString().substring(0, 10));
+            statement.setString(9, com.weaver.general.TimeUtil.getCurrentTimeString().substring(11));
             statement.executeUpdate();
 
             statement.close();

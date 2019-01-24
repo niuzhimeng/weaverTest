@@ -105,13 +105,18 @@ public class WllyAction extends BaseAction {
                         this.writeLog("sap返回信息： " + en.getMSG_TYPE() + ": " + en.getMESSAGE());
                     }
 
+                    // 返回标记
+                    String flag = "S";
+                    if (builder.length() > 0) {
+                        flag = "E";
+                    }
                     // 将返回信息插入日志
-                    ConnUtil.insertLogCoon(logBuilder.toString(), lcbh, sendJson);
+                    ConnUtil.insertLogCoon(logBuilder.toString(), lcbh, sendJson, flag);
 
                     if (builder.length() > 0) {
                         this.writeLog("流程终止， builder: " + builder.toString());
                         requestInfo.getRequestManager().setMessageid("110000");
-                        requestInfo.getRequestManager().setMessagecontent("sap返回消息：--- " + builder.toString());
+                        requestInfo.getRequestManager().setMessagecontent("sap返回消息：--- " + JSON.toJSONString(returns));
                         return "0";
                     }
                 }
