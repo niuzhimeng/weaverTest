@@ -31,7 +31,7 @@ public class ZhiFu extends BaseAction {
         if (fyzfbm.trim().length() > 0) {
             return "1";
         }
-        fyzfbm = fysqbh + "-" + new Util().getCurrentNo(fysqbh);
+        fyzfbm = fysqbh + "-" + new Util().getCurrentNoZhiFu(fysqbh);
         this.writeLog("费用申请编号====================nzm---> " + fysqbh);
         //更新流程表单
         RecordSet rs1 = new RecordSet();

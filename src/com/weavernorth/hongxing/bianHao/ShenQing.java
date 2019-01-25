@@ -31,7 +31,7 @@ public class ShenQing extends BaseAction {
         if (fysqbh.trim().length() > 0) {
             return "1";
         }
-        fysqbh = lxbm + "-" + new Util().getCurrentNo(lxbm);
+        fysqbh = lxbm + "-" + new Util().getCurrentNoShenQing(lxbm);
         this.writeLog("费用申请编号====================nzm---> " + fysqbh);
         //更新流程表单
         String updateSql = "update " + tableName + " set fysqbh = '" + fysqbh + "'  where requestid = '" + requestId + "'";
