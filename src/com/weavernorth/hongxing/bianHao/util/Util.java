@@ -6,7 +6,7 @@ import weaver.general.BaseBean;
 public class Util {
     private static BaseBean baseBean = new BaseBean();
 
-    public String getCurrentNoZhiFu(String wybs) {
+    public String getCurrentNoShenQing(String wybs) {
         RecordSetDataSource recordSet = new RecordSetDataSource("orcl");
         int currentNo;
         String currentNoStr;
@@ -30,7 +30,7 @@ public class Util {
         return currentNoStr;
     }
 
-    public String getCurrentNoShenQing(String wybs) {
+    public String getCurrentNoZhiFu(String wybs) {
         RecordSetDataSource recordSet = new RecordSetDataSource("orcl");
         int currentNo;
         String currentNoStr;
