@@ -1,5 +1,7 @@
 package com.weavernorth.taide.kaoQin.sksj.timedTask;
 
+import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import com.weavernorth.taide.kaoQin.sksj.myWeb.DT_HR0005_IN;
 import com.weavernorth.taide.kaoQin.sksj.myWeb.DT_HR0005_INDATAITEMS;
 import com.weavernorth.taide.kaoQin.sksj.myWeb.DT_INTERFACE_COMMON;
@@ -64,9 +66,10 @@ public class SendSksjToSapTimed14 extends BaseCronJob {
             data1.setSEND_TIME("");
 
             DT_HR0005_INDATAITEMS[] dt_hr0005_indataitems = new DT_HR0005_INDATAITEMS[recordSet.getCounts()];
-            DT_HR0005_INDATAITEMS indataitems = new DT_HR0005_INDATAITEMS();
+
             int i = 0;
             while (recordSet.next()) {
+                DT_HR0005_INDATAITEMS indataitems = new DT_HR0005_INDATAITEMS();
                 indataitems.setPERNR(recordSet.getString("kq02")); // 人员编号
                 indataitems.setZENAME(recordSet.getString("kq11")); // 员工姓名
                 indataitems.setBEGDA(dataChange(recordSet.getString("kq05"))); // 刷卡日期
@@ -89,6 +92,10 @@ public class SendSksjToSapTimed14 extends BaseCronJob {
             DT_HR0005_IN dataAll = new DT_HR0005_IN();
             dataAll.setDATA(dt_hr0005_indataitems);
             dataAll.setSENDER(data1);
+
+            String sendJson = new Gson().toJson(dataAll);
+            baseBean.writeLog("发送json： " + sendJson);
+
             // 调用接口
             SksjUtil.execute(dataAll);
         } catch (Exception e) {
