@@ -36,7 +36,17 @@ public class SendSksjToSapTimed14 extends BaseCronJob {
             } else {
                 currentDate = TimeUtil.getCurrentDateString();
             }
-            String before1 = TimeUtil.dateAdd(currentDate, -1);
+
+            // 往前调N天， 从数据库查询具体时间段
+            int nDate = 0;
+            RecordSet dateSet = new RecordSet();
+            dateSet.executeQuery("select loginid from uf_loginInfo where dataType = 10");
+            if (dateSet.next()) {
+                nDate = dateSet.getInt("loginid");
+            }
+            nDate = 0 - nDate;
+
+            String before1 = TimeUtil.dateAdd(currentDate, nDate);
             String start = before1 + " 00:00:00";
             String end = currentDate + " 00:00:00";
 
