@@ -1,6 +1,6 @@
 package com.weavernorth.taide.kaoQin.action;
 
-import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import com.weavernorth.taide.kaoQin.action.myWeb.*;
 import weaver.conn.RecordSet;
 import weaver.soa.workflow.request.RequestInfo;
@@ -11,11 +11,14 @@ import weaver.workflow.action.BaseAction;
  */
 public class Jbsq01 extends BaseAction {
 
+    private String bh = ""; // 流程编号
+
     @Override
     public String execute(RequestInfo requestInfo) {
         String requestId = requestInfo.getRequestid();
         String operatetype = requestInfo.getRequestManager().getSrc();
         String tableName = requestInfo.getRequestManager().getBillTableName();
+
         this.writeLog("01-总部员工加班申请 start requestid --- " + requestId + "  operatetype --- " + operatetype + "   fromTable --- " + tableName);
         if (operatetype.equals("submit")) {
             try {
@@ -31,7 +34,7 @@ public class Jbsq01 extends BaseAction {
                         czlxStr = "DEL";
                     }
 
-                    String bh = recordSet.getString("bh"); // 流程编号
+                    bh = recordSet.getString("bh"); // 流程编号
                     // 拼接对象
                     DT_HR0002_ININPUT dt_hr0002_ininput = new DT_HR0002_ININPUT();
                     dt_hr0002_ininput.setTYPE("2005"); // 设置接口类型 '2002'."人事公出；'2001'."人事请假；'2005'."人事加班； '2010'."补贴次数
@@ -67,34 +70,60 @@ public class Jbsq01 extends BaseAction {
                     dt_hr0002_in.setSend_Time("");
                     dt_hr0002_in.setINPUT(dt_hr0002_ininput);
 
-                    String sendJson = JSON.toJSONString(dt_hr0002_in);
-                    this.writeLog("发送json： " + sendJson);
+                    // 修改操作，先删除再新增，调用两次接口
+                    if ("MOD".equals(czlxStr)) {
+                        // 删除
+                        DT_HR0002_ININPUT input = dt_hr0002_in.getINPUT();
+                        DT_HR0002_ININPUTPT2002[] pt2002 = input.getPT2002();
+                        pt2002[0].setOPTION("DEL");
+                        pt2002[0].setBEGDA(changeDays(recordSet.getString("yksrq"))); // 开始日期
+                        pt2002[0].setENDDA(changeDays(recordSet.getString("yjsrq"))); // 结束日期
+                        String delJson = new Gson().toJson(dt_hr0002_in);
+                        this.writeLog("DEL发送json： " + delJson);
 
-                    // 调用接口
-                    DT_HR0002_OUTRet_Msg[] returns = PushKqWorkFlowUtil.execute(dt_hr0002_in);
-
-                    StringBuilder builder = new StringBuilder();
-                    for (DT_HR0002_OUTRet_Msg en : returns) {
-                        if ("E".equals(en.getMSG_TYPE())) {
-                            builder.append(en.getMSG_TYPE()).append(": ").append(en.getMESSAGE()).append("</br>");
+                        // 调用接口
+                        DT_HR0002_OUTRet_Msg[] returns = PushKqWorkFlowUtil.execute(dt_hr0002_in);
+                        StringBuilder builder = insertLog(returns, "DEL json： " + delJson);
+                        if (builder.length() > 0) {
+                            this.writeLog("流程终止， builder: " + builder.toString());
+                            requestInfo.getRequestManager().setMessageid("110000");
+                            requestInfo.getRequestManager().setMessagecontent("sap返回消息：--- " + builder.toString());
+                            return "0";
                         }
-                        this.writeLog("sap返回信息： " + en.getMSG_TYPE() + ": " + en.getMESSAGE());
+
+                        // 新增
+                        DT_HR0002_ININPUT insInput = dt_hr0002_in.getINPUT();
+                        DT_HR0002_ININPUTPT2002[] pt20021 = insInput.getPT2002();
+                        pt20021[0].setOPTION("INS");
+                        pt20021[0].setBEGDA(changeDays(recordSet.getString("jbsj"))); // 开始日期
+                        pt20021[0].setENDDA(changeDays(recordSet.getString("jsrq"))); // 结束日期
+                        String insJson = new Gson().toJson(dt_hr0002_in);
+                        this.writeLog("INS发送json： " + insJson);
+
+                        // 调用接口
+                        DT_HR0002_OUTRet_Msg[] insReturns = PushKqWorkFlowUtil.execute(dt_hr0002_in);
+                        StringBuilder insBuilder = insertLog(insReturns, "INS json： " + insJson);
+                        if (insBuilder.length() > 0) {
+                            this.writeLog("流程终止， builder: " + insBuilder.toString());
+                            requestInfo.getRequestManager().setMessageid("110000");
+                            requestInfo.getRequestManager().setMessagecontent("sap返回消息：--- " + insBuilder.toString());
+                            return "0";
+                        }
+
+                    } else {
+                        // 正常调用接口
+                        String sendJson = new Gson().toJson(dt_hr0002_in);
+                        this.writeLog("非修改操作发送json： " + sendJson);
+                        DT_HR0002_OUTRet_Msg[] insReturns = PushKqWorkFlowUtil.execute(dt_hr0002_in);
+                        StringBuilder insBuilder = insertLog(insReturns, "send json： " + sendJson);
+                        if (insBuilder.length() > 0) {
+                            this.writeLog("流程终止， builder: " + insBuilder.toString());
+                            requestInfo.getRequestManager().setMessageid("110000");
+                            requestInfo.getRequestManager().setMessagecontent("sap返回消息：--- " + insBuilder.toString());
+                            return "0";
+                        }
                     }
 
-                    // 返回标记
-                    String flag = "S";
-                    if (builder.length() > 0) {
-                        flag = "E";
-                    }
-                    // 将返回信息插入日志
-                    LogUtil.insertLog(returns, bh, sendJson, flag);
-
-                    if (builder.length() > 0) {
-                        this.writeLog("流程终止， builder: " + builder.toString());
-                        requestInfo.getRequestManager().setMessageid("110000");
-                        requestInfo.getRequestManager().setMessagecontent("sap返回消息：--- " + builder.toString());
-                        return "0";
-                    }
                 }
                 this.writeLog("01-总部员工加班申请 end ===================");
             } catch (Exception e) {
@@ -135,4 +164,24 @@ public class Jbsq01 extends BaseAction {
         this.writeLog("拼接后的时间： " + hour + minute + "00");
         return hour + minute + "00";
     }
+
+    private StringBuilder insertLog(DT_HR0002_OUTRet_Msg[] returns, String sendJson) {
+        StringBuilder builder = new StringBuilder();
+        for (DT_HR0002_OUTRet_Msg en : returns) {
+            if ("E".equals(en.getMSG_TYPE())) {
+                builder.append(en.getMSG_TYPE()).append(": ").append(en.getMESSAGE()).append("</br>");
+            }
+            this.writeLog("sap返回信息： " + en.getMSG_TYPE() + ": " + en.getMESSAGE());
+        }
+
+        // 返回标记
+        String flag = "S";
+        if (builder.length() > 0) {
+            flag = "E";
+        }
+        // 将返回信息插入日志
+        LogUtil.insertLog(returns, bh, sendJson, flag);
+        return builder;
+    }
+
 }

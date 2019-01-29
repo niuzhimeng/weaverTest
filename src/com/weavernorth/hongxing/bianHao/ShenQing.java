@@ -13,9 +13,10 @@ import weaver.workflow.action.BaseAction;
 public class ShenQing extends BaseAction {
     @Override
     public String execute(RequestInfo requestInfo) {
-        this.writeLog("-----------------------申请流程编号修改执行----------------------------------" + TimeUtil.getCurrentTimeString());
+
         String tableName = requestInfo.getRequestManager().getBillTableName();
         String requestId = requestInfo.getRequestid();
+        this.writeLog("----------申请流程编号修改执行-------------" + TimeUtil.getCurrentTimeString() + ", requestId:" + requestId);
 
         RecordSetDataSource hrmrs = new RecordSetDataSource("orcl");
 
@@ -42,7 +43,7 @@ public class ShenQing extends BaseAction {
         try {
             updateWorkFlowSet.executeSql(updateWorkFlow);
         } catch (Exception e) {
-            this.writeLog("RecordSetTrans报错" + TimeUtil.getCurrentTimeString());
+            this.writeLog("RecordSetTrans报错" + e);
         }
         return "1";
     }

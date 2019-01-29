@@ -14,9 +14,10 @@ import weaver.workflow.action.BaseAction;
 public class ZhiFu extends BaseAction {
     @Override
     public String execute(RequestInfo requestInfo) {
-        this.writeLog("-----------------------支付流程编号修改执行----------------------------------" + TimeUtil.getCurrentTimeString());
+
         String tableName = requestInfo.getRequestManager().getBillTableName();
         String requestId = requestInfo.getRequestid();
+        this.writeLog("---------支付流程编号修改执行-----------" + TimeUtil.getCurrentTimeString() + ", requestId:" + requestId);
 
         String fyzfbm = "";//费用支付编码
         String fysqbh = "";//费用申请编码
@@ -43,7 +44,7 @@ public class ZhiFu extends BaseAction {
         try {
             updateWorkFlowSet.executeSql(updateWorkFlow);
         } catch (Exception e) {
-            this.writeLog("RecordSetTrans报错" + TimeUtil.getCurrentTimeString());
+            this.writeLog("RecordSetTrans报错" + e);
         }
         return "1";
     }

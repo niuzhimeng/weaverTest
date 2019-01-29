@@ -50,7 +50,7 @@ public class Util {
             }
         } else {
             recordSet.executeSql("insert into uf_lcbh(wybs, currentNo) values ('" + wybs + "',2)");
-            currentNoStr = "001";
+            currentNoStr = "0001";
         }
         baseBean.writeLog("当前唯一标识： " + wybs + " 对应的流程编号为： " + currentNoStr);
         return currentNoStr;
