@@ -28,9 +28,9 @@ public class TimedKqyc extends BaseCronJob {
         RecordSet deleteSet = new RecordSet();
 
         ConnStatement statement = new ConnStatement();
-        String insertSql = "insert into uf_sap_kqyc(xm, gh, rq, wbms, kssj, jssj, " +
+        String insertSql = "insert into uf_sap_kqyc(xm, gh, rq, wbms, kssj, jssj, sjkssj, sjjssj, " +
                 "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) " +
-                "values(?,?,?,?,?,?, ?,?,?,?,?)";
+                "values(?,?,?,?,?,?,?,?, ?,?,?,?,?)";
         try {
             statement.setStatementSql(insertSql);
             DT_HRI006_OUTRETURN[] execute = KqycUtil.execute();
@@ -44,13 +44,16 @@ public class TimedKqyc extends BaseCronJob {
                     statement.setString(3, pjDate(en.getDATUM())); // 日期
                     statement.setString(4, en.getZTEXT()); // 文本描述
                     statement.setString(5, en.getSOBEG()); // 班次开始时间
-                    statement.setString(6, en.getSOEND()); // 班次结束时间
 
-                    statement.setInt(7, modeId);//模块id
-                    statement.setString(8, "1");//创建人id
-                    statement.setString(9, "0");//一个默认值0
-                    statement.setString(10, TimeUtil.getCurrentTimeString().substring(0, 10));
-                    statement.setString(11, TimeUtil.getCurrentTimeString().substring(11));
+                    statement.setString(6, en.getSOEND()); // 班次结束时间
+                    statement.setString(7, en.getFTKLA()); // 实际开始时间
+                    statement.setString(8, en.getTPKLA()); // 实际结束时间
+
+                    statement.setInt(9, modeId);//模块id
+                    statement.setString(10, "1");//创建人id
+                    statement.setString(11, "0");//一个默认值0
+                    statement.setString(12, TimeUtil.getCurrentTimeString().substring(0, 10));
+                    statement.setString(13, TimeUtil.getCurrentTimeString().substring(11));
                     statement.executeUpdate();
                 }
             }
