@@ -73,11 +73,14 @@ public class Jbsq01 extends BaseAction {
                     // 修改操作，先删除再新增，调用两次接口
                     if ("MOD".equals(czlxStr)) {
                         // 删除
+                        String ylc = recordSet.getString("ylc");// 原流程id
+
                         DT_HR0002_ININPUT input = dt_hr0002_in.getINPUT();
                         DT_HR0002_ININPUTPT2002[] pt2002 = input.getPT2002();
                         pt2002[0].setOPTION("DEL");
                         pt2002[0].setBEGDA(changeDays(recordSet.getString("yksrq"))); // 开始日期
                         pt2002[0].setENDDA(changeDays(recordSet.getString("yjsrq"))); // 结束日期
+                        pt2002[0].setZATTEND_ID(ylc);
                         String delJson = new Gson().toJson(dt_hr0002_in);
                         this.writeLog("DEL发送json： " + delJson);
 
@@ -97,6 +100,7 @@ public class Jbsq01 extends BaseAction {
                         pt20021[0].setOPTION("INS");
                         pt20021[0].setBEGDA(changeDays(recordSet.getString("jbsj"))); // 开始日期
                         pt20021[0].setENDDA(changeDays(recordSet.getString("jsrq"))); // 结束日期
+                        pt20021[0].setZATTEND_ID(requestId);
                         String insJson = new Gson().toJson(dt_hr0002_in);
                         this.writeLog("INS发送json： " + insJson);
 
@@ -110,10 +114,32 @@ public class Jbsq01 extends BaseAction {
                             return "0";
                         }
 
+                    } else if ("DEL".equals(czlxStr)) {
+                        // 删除
+                        String ylc = recordSet.getString("ylc");// 原流程id
+
+                        DT_HR0002_ININPUT input = dt_hr0002_in.getINPUT();
+                        DT_HR0002_ININPUTPT2002[] pt2002 = input.getPT2002();
+                        pt2002[0].setOPTION("DEL");
+                        pt2002[0].setBEGDA(changeDays(recordSet.getString("yksrq"))); // 开始日期
+                        pt2002[0].setENDDA(changeDays(recordSet.getString("yjsrq"))); // 结束日期
+                        pt2002[0].setZATTEND_ID(ylc);
+                        String delJson = new Gson().toJson(dt_hr0002_in);
+                        this.writeLog("DEL发送json： " + delJson);
+
+                        // 调用接口
+                        DT_HR0002_OUTRet_Msg[] returns = PushKqWorkFlowUtil.execute(dt_hr0002_in);
+                        StringBuilder builder = insertLog(returns, "DEL json： " + delJson);
+                        if (builder.length() > 0) {
+                            this.writeLog("流程终止， builder: " + builder.toString());
+                            requestInfo.getRequestManager().setMessageid("110000");
+                            requestInfo.getRequestManager().setMessagecontent("sap返回消息：--- " + builder.toString());
+                            return "0";
+                        }
                     } else {
-                        // 正常调用接口
+                        // 新增接口
                         String sendJson = new Gson().toJson(dt_hr0002_in);
-                        this.writeLog("非修改操作发送json： " + sendJson);
+                        this.writeLog("新增操作发送json： " + sendJson);
                         DT_HR0002_OUTRet_Msg[] insReturns = PushKqWorkFlowUtil.execute(dt_hr0002_in);
                         StringBuilder insBuilder = insertLog(insReturns, "send json： " + sendJson);
                         if (insBuilder.length() > 0) {
