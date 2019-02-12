@@ -128,7 +128,7 @@ public class WllyAction extends BaseAction {
                 return "0";
             }
         }
-        return "";
+        return "1";
     }
 
     /**

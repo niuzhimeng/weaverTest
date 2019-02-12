@@ -30,17 +30,21 @@ import org.junit.Test;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 import weaver.general.AES;
+import weaver.general.StaticObj;
 import weaver.general.TimeUtil;
-import weaver.hrm.report.schedulediff.HrmScheduleDiffUtil;
 import weaver.hrm.webservice.HrmServiceXmlUtil;
 import weaver.integration.util.HTTPUtil;
-import weaver.workflow.request.RequestInfo;
+import weaver.soa.workflow.request.RequestInfo;
+import weaver.workflow.action.BaseAction;
 
 import javax.xml.rpc.ServiceException;
 import java.io.*;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -833,11 +837,58 @@ public class MyTest {
 
     }
 
+    /**
+     * 原生jdbc
+     *
+     * @throws SQLException
+     */
     @Test
-    public void test42() {
-        String currentDateString = TimeUtil.getCurrentDateString();
-        System.out.println(currentDateString);
+    public void test42() throws SQLException {
+
+        weaver.interfaces.datasource.DataSource ds = (weaver.interfaces.datasource.DataSource) StaticObj.getServiceByFullname(("datasource.数据源名称"), weaver.interfaces.datasource.DataSource.class);
+        java.sql.Connection connection = ds.getConnection();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("");
+        resultSet.getString("");
+
     }
 
+    @Test
+    public void test43() throws Exception {
+        BaseAction baseAction = (BaseAction) Class.forName("com.weavernorth.taide.autoSubmit.AutoSubmit").newInstance();
+        baseAction.execute(new RequestInfo());
+    }
+
+    @Test
+    public void test44() {
+        String replace = com.weaver.general.TimeUtil.getCurrentDateString().substring(0, 7).replace("-", "");
+        System.out.println(replace);
+    }
+
+    @Test
+    public void test45() throws Exception {
+        String baseDate = TimeUtil.getCurrentDateString().substring(0, 8);
+        System.out.println(baseDate + "15");
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date ksDate = format.parse("2019-01-15");
+
+        Date bzDate = format.parse(baseDate + "15");
+
+
+        System.out.println(ksDate.getTime());
+        System.out.println(bzDate.getTime());
+
+        System.out.println(ksDate.compareTo(bzDate));
+
+
+    }
+
+    @Test
+    public void test46() {
+        String currentTimeString = com.weaver.general.TimeUtil.getCurrentTimeString();
+        String s = TimeUtil.timeAdd(currentTimeString, -60);
+        System.out.println(s);
+    }
 
 }

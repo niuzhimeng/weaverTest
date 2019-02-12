@@ -6,6 +6,7 @@ import com.weavernorth.taide.kaoQin.sksj.myWeb.DT_HR0005_IN;
 import com.weavernorth.taide.kaoQin.sksj.myWeb.DT_HR0005_INDATAITEMS;
 import com.weavernorth.taide.kaoQin.sksj.myWeb.DT_INTERFACE_COMMON;
 import com.weavernorth.taide.kaoQin.sksj.myWeb.SksjUtil;
+import com.weavernorth.taide.util.ConnUtil;
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
 import weaver.general.TimeUtil;
@@ -19,6 +20,7 @@ public class SendSksjToSapTimed14 extends BaseCronJob {
     private static BaseBean baseBean = new BaseBean();
 
     private String handExecuteDate = ""; //手动执行获取日期 yyyy-MM-dd
+    private int stnCount; // 同步数据量
 
     public SendSksjToSapTimed14() {
     }
@@ -30,6 +32,7 @@ public class SendSksjToSapTimed14 extends BaseCronJob {
     @Override
     public void execute() {
         baseBean.writeLog("14刷卡数据集成到SAP 接口执行==========");
+        long startLogTime = System.currentTimeMillis();
         try {
             //获取前一天时间段
             String currentDate;
@@ -57,6 +60,7 @@ public class SendSksjToSapTimed14 extends BaseCronJob {
             recordSet.executeQuery(sql);
             baseBean.writeLog("此次查询sql： " + sql);
             baseBean.writeLog("此次推送数据条数： " + recordSet.getCounts());
+            stnCount = recordSet.getCounts();
             // 拼接对象
             DT_INTERFACE_COMMON data1 = new DT_INTERFACE_COMMON();
             data1.setINTF_ID("");
@@ -101,6 +105,12 @@ public class SendSksjToSapTimed14 extends BaseCronJob {
         } catch (Exception e) {
             baseBean.writeLog("14刷卡数据集成到SAP 接口异常： " + e);
         }
+        long end = System.currentTimeMillis(); // 结束时间戳
+        long cha = (end - startLogTime) / 1000;
+
+        String logStr = "刷卡同步完成，此次推送数据： " + stnCount + " 条，耗时：" + cha + " 秒。";
+        // 插入日志
+        ConnUtil.insertTimedLog(logStr);
         baseBean.writeLog("14刷卡数据集成到SAP 执行结束==========");
     }
 

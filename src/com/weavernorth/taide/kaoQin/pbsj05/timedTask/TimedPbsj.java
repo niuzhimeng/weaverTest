@@ -24,6 +24,7 @@ public class TimedPbsj extends BaseCronJob {
     private ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
     private String dateStr = "";
+    private int stnCount; // 同步数据量
 
     public TimedPbsj() {
     }
@@ -93,6 +94,7 @@ public class TimedPbsj extends BaseCronJob {
                 DT_HR0003_ININPUT[] dt_hr0003_ininputs = new DT_HR0003_ININPUT[1];
                 dt_hr0003_ininputs[0] = dt_hr0003_ininput;
                 DT_HR0003_OUTOUTPUT[] execute = PbsjUtil.execute(dt_hr0003_ininputs);
+                stnCount = execute.length;
                 if (execute != null && execute.length > 0) {
                     // 删除当前人员旧的排班数据
                     String deleteSql = "delete from uf_sap_pbb where pb01 = '" + recordSet.getString("workcode") + "' and pb02 >= '" + deleteDate + "'";
@@ -141,6 +143,13 @@ public class TimedPbsj extends BaseCronJob {
             baseBean.writeLog("授权结束耗时: " + (end1 - end));
             baseBean.writeLog("定时获取排班数据 End ---------- " + TimeUtil.getCurrentTimeString());
         }
+
+        long end = System.currentTimeMillis(); // 结束时间戳
+        long cha = (end - start) / 1000;
+
+        String logStr = "排班数据同步完成，此次同步数据： " + stnCount + " 条，耗时：" + cha + " 秒。";
+        // 插入日志
+        ConnUtil.insertTimedLog(logStr);
     }
 
     /**

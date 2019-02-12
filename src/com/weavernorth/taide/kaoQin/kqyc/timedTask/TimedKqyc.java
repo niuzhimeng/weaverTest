@@ -18,9 +18,11 @@ public class TimedKqyc extends BaseCronJob {
     private ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
     private RecordSet recordSet = new RecordSet();
+    private int stnCount; // 同步数据量
 
     @Override
     public void execute() {
+        long start = System.currentTimeMillis(); // 开始时间戳
         // 模块id
         int modeId = ConnUtil.getModeIdByType(3);
         String currentTimeString = TimeUtil.getCurrentTimeString();
@@ -34,6 +36,7 @@ public class TimedKqyc extends BaseCronJob {
         try {
             statement.setStatementSql(insertSql);
             DT_HRI006_OUTRETURN[] execute = KqycUtil.execute();
+            stnCount = execute.length;
             baseBean.writeLog("考勤异常返回条数： " + execute.length);
             if (execute.length > 0) {
                 // 删除所有旧的数据
@@ -73,6 +76,13 @@ public class TimedKqyc extends BaseCronJob {
                 moderightinfo.editModeDataShare(1, modeId, maxId);//创建人id， 模块id， 该条数据id
             }
         }
+
+        long end = System.currentTimeMillis(); // 结束时间戳
+        long cha = (end - start) / 1000;
+
+        String logStr = "考勤异常同步完成，此次同步数据： " + stnCount + " 条，耗时：" + cha + " 秒。";
+        // 插入日志
+        ConnUtil.insertTimedLog(logStr);
     }
 
     private String pjDate(String date) {

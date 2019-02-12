@@ -17,6 +17,7 @@ public class TimedKqmx extends BaseCronJob {
     private ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
     private String dateStr = "";
+    private int stnCount; // 同步数据量
 
     public TimedKqmx() {
     }
@@ -27,6 +28,8 @@ public class TimedKqmx extends BaseCronJob {
 
     @Override
     public void execute() {
+        long start = System.currentTimeMillis(); // 开始时间戳
+
         int modeId = ConnUtil.getModeIdByType(2);
         String currentTimeString = TimeUtil.getCurrentTimeString();
         baseBean.writeLog("定时获取考勤明细数据 Start ---------- " + currentTimeString);
@@ -110,6 +113,7 @@ public class TimedKqmx extends BaseCronJob {
                 dt_hri007_in.setDATA(dt_hri007_indata);
 
                 DT_HRI007_OUTRETURN[] execute = KqmxUtil.execute(dt_hri007_in);
+                stnCount = execute.length;
                 if (execute != null && execute.length > 0) {
                     // 删除当前人员旧的考勤明细数据
                     String deleteSql = "delete from uf_workdetails where OAID = '" + id + "' and month = '" + myMonth + "'";
@@ -230,6 +234,16 @@ public class TimedKqmx extends BaseCronJob {
             }
             baseBean.writeLog("定时获取考勤明细数据 End ---------- " + TimeUtil.getCurrentTimeString());
         }
+
+        long end = System.currentTimeMillis(); // 结束时间戳
+        long cha = (end - start) / 1000;
+
+        String logStr = "考勤明细同步完成，此次同步数据： " + stnCount + " 条，耗时：" + cha + " 秒。";
+        // 插入日志
+        ConnUtil.insertTimedLog(logStr);
+
+
     }
+
 
 }

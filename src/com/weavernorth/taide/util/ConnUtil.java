@@ -39,11 +39,7 @@ public class ConnUtil {
         try {
             insertLogCoonReal(logStr, workBh, sendJson, flag);
         } catch (Exception e) {
-            try {
-                insertLogCoonReal(logStr, workBh, "json过大，请前往日志查看。", flag);
-            } catch (Exception e1) {
-                baseBean.writeLog("ConnUtil insertLogCoon异常： " + e1);
-            }
+            baseBean.writeLog("ConnUtil insertLogCoon异常： " + e);
         }
     }
 
@@ -87,6 +83,46 @@ public class ConnUtil {
         } else {
             baseBean.writeLog("LogUtil 考勤日志，sap返回数据为空");
         }
+    }
+
+    /**
+     * 插入定时任务日志
+     */
+    public static void insertTimedLog(String logStr) {
+        int logModeId = ConnUtil.getModeIdByType(8);
+        String currentTimeString = TimeUtil.getCurrentTimeString();
+        ConnStatement statement = new ConnStatement();
+        String insertSql = "insert into uf_dep_log(logdate, logtxt, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
+                "values (?,?,  ?,?,?,?,?)";
+        try {
+
+            statement.setStatementSql(insertSql);
+
+            statement.setString(1, com.weaver.general.TimeUtil.getCurrentTimeString()); // 插入日期
+            statement.setString(2, logStr); // 日志信息
+
+            statement.setInt(3, logModeId);//模块id
+            statement.setString(4, "1");//创建人id
+            statement.setString(5, "0");//一个默认值0
+            statement.setString(6, com.weaver.general.TimeUtil.getCurrentTimeString().substring(0, 10));
+            statement.setString(7, com.weaver.general.TimeUtil.getCurrentTimeString().substring(11));
+            statement.executeUpdate();
+        } catch (Exception e) {
+            baseBean.writeLog("插入定时任务日志, insertTimedLog 异常： " + e);
+        } finally {
+            statement.close();
+            //赋权
+            moderightinfo.setNewRight(true);
+            RecordSet maxSet = new RecordSet();
+            maxSet.executeSql("select id from uf_dep_log where MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE >= '" + TimeUtil.timeAdd(currentTimeString, -60) + "'");
+
+            int maxId;
+            while (maxSet.next()) {
+                maxId = maxSet.getInt("id");
+                moderightinfo.editModeDataShare(1, logModeId, maxId);//创建人id， 模块id， 该条数据id
+            }
+        }
+        statement.close();
     }
 
 }

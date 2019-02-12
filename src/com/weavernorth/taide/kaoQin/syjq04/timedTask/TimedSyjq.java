@@ -19,12 +19,14 @@ public class TimedSyjq extends BaseCronJob {
 
     private ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
+    private int stnCount; // 同步数据量
 
     @Override
     public void execute() {
         int modeId = ConnUtil.getModeIdByType(6);
         String currentTimeString = TimeUtil.getCurrentTimeString();
         baseBean.writeLog("定时获取剩余假期接口执行==========： " + currentTimeString);
+        long start = System.currentTimeMillis();
 
         String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
         RecordSet recordSet = new RecordSet();
@@ -55,6 +57,7 @@ public class TimedSyjq extends BaseCronJob {
 
                 // 调用接口
                 DT_HR0004_OUTOUTPUT[] execute = SyjqUtil.execute(dt_hr0004_in);
+                stnCount = execute.length;
                 if (execute != null && execute.length > 0) {
                     // 删除当前人员旧数据
                     deleteSet.execute("delete from uf_sap_syjq where xm = '" + recordSet.getString("id") + "'");
@@ -92,6 +95,13 @@ public class TimedSyjq extends BaseCronJob {
                 moderightinfo.editModeDataShare(1, modeId, maxId);//创建人id， 模块id， 该条数据id
             }
         }
+
+        long end = System.currentTimeMillis(); // 结束时间戳
+        long cha = (end - start) / 1000;
+
+        String logStr = "剩余假期同步完成，此次同步数据： " + stnCount + " 条，耗时：" + cha + " 秒。";
+        // 插入日志
+        ConnUtil.insertTimedLog(logStr);
     }
 
     private String changeType(String myType) {
