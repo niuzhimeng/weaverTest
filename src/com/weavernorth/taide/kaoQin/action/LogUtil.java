@@ -64,8 +64,11 @@ class LogUtil {
             //赋权
             moderightinfo.setNewRight(true);
             RecordSet maxSet = new RecordSet();
-            maxSet.executeSql("select id from uf_certificate_log where MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE >= '" + TimeUtil.timeAdd(currentTimeString, -60) + "'");
+            String sql = "select id from uf_certificate_log where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + TimeUtil.timeAdd(currentTimeString, -60) + "'";
+            maxSet.executeSql(sql);
 
+            baseBean.writeLog("建模表赋权数据量： " + maxSet.getCounts());
+            baseBean.writeLog("赋权查询sql： " + sql);
             int maxId;
             while (maxSet.next()) {
                 maxId = maxSet.getInt("id");

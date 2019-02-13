@@ -149,7 +149,7 @@ public class TimedPbsj extends BaseCronJob {
 
         String logStr = "排班数据同步完成，此次同步数据： " + stnCount + " 条，耗时：" + cha + " 秒。";
         // 插入日志
-        ConnUtil.insertTimedLog(logStr);
+        ConnUtil.insertTimedLog("uf_sap_pbb", logStr, stnCount);
     }
 
     /**

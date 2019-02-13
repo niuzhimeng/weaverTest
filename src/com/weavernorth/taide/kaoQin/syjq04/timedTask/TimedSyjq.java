@@ -101,7 +101,7 @@ public class TimedSyjq extends BaseCronJob {
 
         String logStr = "剩余假期同步完成，此次同步数据： " + stnCount + " 条，耗时：" + cha + " 秒。";
         // 插入日志
-        ConnUtil.insertTimedLog(logStr);
+        ConnUtil.insertTimedLog("uf_sap_syjq", logStr, stnCount);
     }
 
     private String changeType(String myType) {

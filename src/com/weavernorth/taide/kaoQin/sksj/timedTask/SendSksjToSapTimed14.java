@@ -1,6 +1,5 @@
 package com.weavernorth.taide.kaoQin.sksj.timedTask;
 
-import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.weavernorth.taide.kaoQin.sksj.myWeb.DT_HR0005_IN;
 import com.weavernorth.taide.kaoQin.sksj.myWeb.DT_HR0005_INDATAITEMS;
@@ -110,7 +109,7 @@ public class SendSksjToSapTimed14 extends BaseCronJob {
 
         String logStr = "刷卡同步完成，此次推送数据： " + stnCount + " 条，耗时：" + cha + " 秒。";
         // 插入日志
-        ConnUtil.insertTimedLog(logStr);
+        ConnUtil.insertTimedLog("uf_allkqsk", logStr, stnCount);
         baseBean.writeLog("14刷卡数据集成到SAP 执行结束==========");
     }
 

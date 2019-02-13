@@ -72,7 +72,7 @@ public class ConnUtil {
             //赋权
             moderightinfo.setNewRight(true);
             RecordSet maxSet = new RecordSet();
-            maxSet.executeSql("select id from uf_certificate_log where MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE >= '" + TimeUtil.timeAdd(currentTimeString, -60) + "'");
+            maxSet.executeSql("select id from uf_certificate_log where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + TimeUtil.timeAdd(currentTimeString, -60) + "'");
 
             int maxId;
             while (maxSet.next()) {
@@ -87,25 +87,30 @@ public class ConnUtil {
 
     /**
      * 插入定时任务日志
+     *
+     * @param tableName 表名
+     * @param logStr    日志信息
+     * @param nums      插入数量
      */
-    public static void insertTimedLog(String logStr) {
+    public static void insertTimedLog(String tableName, String logStr, int nums) {
         int logModeId = ConnUtil.getModeIdByType(8);
         String currentTimeString = TimeUtil.getCurrentTimeString();
         ConnStatement statement = new ConnStatement();
-        String insertSql = "insert into uf_dep_log(logdate, logtxt, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
-                "values (?,?,  ?,?,?,?,?)";
+        String insertSql = "insert into uf_dep_log(TABLE_NAME, logtxt, LOGNUM, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
+                "values (?,?,?,  ?,?,?,?,?)";
         try {
 
             statement.setStatementSql(insertSql);
 
-            statement.setString(1, com.weaver.general.TimeUtil.getCurrentTimeString()); // 插入日期
+            statement.setString(1, tableName); // 表名
             statement.setString(2, logStr); // 日志信息
+            statement.setInt(3, nums); // 插入数量
 
-            statement.setInt(3, logModeId);//模块id
-            statement.setString(4, "1");//创建人id
-            statement.setString(5, "0");//一个默认值0
-            statement.setString(6, com.weaver.general.TimeUtil.getCurrentTimeString().substring(0, 10));
-            statement.setString(7, com.weaver.general.TimeUtil.getCurrentTimeString().substring(11));
+            statement.setInt(4, logModeId);//模块id
+            statement.setString(5, "1");//创建人id
+            statement.setString(6, "0");//一个默认值0
+            statement.setString(7, com.weaver.general.TimeUtil.getCurrentTimeString().substring(0, 10));
+            statement.setString(8, com.weaver.general.TimeUtil.getCurrentTimeString().substring(11));
             statement.executeUpdate();
         } catch (Exception e) {
             baseBean.writeLog("插入定时任务日志, insertTimedLog 异常： " + e);

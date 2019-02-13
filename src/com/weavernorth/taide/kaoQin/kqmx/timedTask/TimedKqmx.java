@@ -68,14 +68,14 @@ public class TimedKqmx extends BaseCronJob {
                     continue;
                 }
 
-                // 日期格式 201901，小于17号传上个月
+                // 日期格式 201901，小于17号传本月, >=17号传下一个月
                 String dateString = TimeUtil.getCurrentDateString();
                 int day = Integer.parseInt(dateString.substring(8, 10));
                 String myMonth;
-                if (day > 17) {
+                if (day < 17) {
                     myMonth = dateString.substring(0, 7).replace("-", "");
                 } else {
-                    myMonth = weaver.general.TimeUtil.dateAdd(dateString, -20).substring(0, 7).replace("-", "");
+                    myMonth = weaver.general.TimeUtil.dateAdd(dateString, 20).substring(0, 7).replace("-", "");
                 }
 
                 // 手动传入时间
@@ -240,7 +240,7 @@ public class TimedKqmx extends BaseCronJob {
 
         String logStr = "考勤明细同步完成，此次同步数据： " + stnCount + " 条，耗时：" + cha + " 秒。";
         // 插入日志
-        ConnUtil.insertTimedLog(logStr);
+        ConnUtil.insertTimedLog("uf_workdetails", logStr, stnCount);
 
 
     }

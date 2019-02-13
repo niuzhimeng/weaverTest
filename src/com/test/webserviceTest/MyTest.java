@@ -6,6 +6,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.ibm.db2.jcc.resources.Resources_pl_PL;
 import com.sap.conn.jco.JCoDestination;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
@@ -885,10 +886,11 @@ public class MyTest {
     }
 
     @Test
-    public void test46() {
-        String currentTimeString = com.weaver.general.TimeUtil.getCurrentTimeString();
+    public void test(){
+        String currentTimeString = TimeUtil.getCurrentTimeString();
         String s = TimeUtil.timeAdd(currentTimeString, -60);
         System.out.println(s);
     }
+
 
 }
