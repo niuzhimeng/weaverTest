@@ -72,7 +72,8 @@ public class ConnUtil {
             //赋权
             moderightinfo.setNewRight(true);
             RecordSet maxSet = new RecordSet();
-            maxSet.executeSql("select id from uf_certificate_log where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + TimeUtil.timeAdd(currentTimeString, -60) + "'");
+            String sql = "select id from uf_certificate_log where lcbh = '" + workBh + "'";
+            maxSet.executeSql(sql);
 
             int maxId;
             while (maxSet.next()) {
@@ -119,7 +120,7 @@ public class ConnUtil {
             //赋权
             moderightinfo.setNewRight(true);
             RecordSet maxSet = new RecordSet();
-            maxSet.executeSql("select id from uf_dep_log where MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE >= '" + TimeUtil.timeAdd(currentTimeString, -60) + "'");
+            maxSet.executeSql("select id from uf_dep_log where MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE >= '" + TimeUtil.timeAdd(currentTimeString, -10) + "'");
 
             int maxId;
             while (maxSet.next()) {

@@ -64,7 +64,8 @@ class LogUtil {
             //赋权
             moderightinfo.setNewRight(true);
             RecordSet maxSet = new RecordSet();
-            String sql = "select id from uf_certificate_log where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + TimeUtil.timeAdd(currentTimeString, -60) + "'";
+            //String sql = "select id from uf_certificate_log where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + TimeUtil.timeAdd(currentTimeString, -20) + "'";
+            String sql = "select id from uf_certificate_log where lcbh = '" + workBh + "'";
             maxSet.executeSql(sql);
 
             baseBean.writeLog("建模表赋权数据量： " + maxSet.getCounts());
