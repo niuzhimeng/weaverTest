@@ -34,12 +34,15 @@ public class LiZhiBdAction extends BaseAction {
                 String lzyy = recordSet.getString("lzyy");// 辞退原因
                 String gwbm = recordSet.getString("gwbm");// 岗位编码
 
+                String czlx = recordSet.getString("czlx");// 操作类型
+                String czyy = recordSet.getString("czyy");// 操作原因
+
                 // 拼接对象
                 DT_HRI001_INDATAITEMS dt_hri001_indataitems1 = new DT_HRI001_INDATAITEMS();
                 dt_hri001_indataitems1.setPERNR(sqgh); //工号
                 dt_hri001_indataitems1.setBEGDA(changeDays(qrlzrq)); // 开始日期
-                dt_hri001_indataitems1.setMASSN(lzlx); // 操作类型
-                dt_hri001_indataitems1.setMASSG(lzyy); // 操作原因
+                dt_hri001_indataitems1.setMASSN(czlx); // 操作类型
+                dt_hri001_indataitems1.setMASSG(czyy); // 操作原因
                 dt_hri001_indataitems1.setBTRTL(""); // 人事子范围
                 dt_hri001_indataitems1.setPLANS(gwbm); // 职位
                 dt_hri001_indataitems1.setZZJSJ(""); // 直接上级编号
