@@ -1,6 +1,5 @@
 package com.weavernorth.taide.kaoQin.action;
 
-import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.weavernorth.taide.kaoQin.action.myWeb.*;
 import weaver.conn.RecordSet;
@@ -153,6 +152,9 @@ public class Qjsq02 extends BaseAction {
                 this.writeLog("02-总部员工请假申请 end ===================");
             } catch (Exception e) {
                 this.writeLog("02-总部员工请假申请 异常： " + e);
+                requestInfo.getRequestManager().setMessageid("110000");
+                requestInfo.getRequestManager().setMessagecontent("接口异常，请联系管理员。");
+                return "0";
             }
         }
 

@@ -11,6 +11,7 @@ import weaver.hrm.User;
 import weaver.login.Account;
 import weaver.systeminfo.SysMaintenanceLog;
 import weaver.systeminfo.template.UserTemplate;
+import weaver.workflow.webservices.WorkflowServiceImpl;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -83,6 +84,14 @@ public class CasSSOLoginFilter extends BaseBean implements Filter {
 
         User user_new;
         if (rs.next()) {
+            // 流程转发
+            WorkflowServiceImpl workflowService = new WorkflowServiceImpl();
+            // 查询流程创建人
+            RecordSet cjrSet = new RecordSet();
+            cjrSet.executeQuery("select creater from workflow_requestbase where requestid = " + requestId);
+            cjrSet.next();
+            workflowService.forwardWorkflowRequest(Integer.parseInt(requestId), rs.getString("id"), "ok", cjrSet.getInt("creater"), "");// 流程id，接收人，签字意见，发送人
+
             // OA有相关人员
             User user = (User) request.getSession(true).getAttribute("weaver_user@bean");
             // 用户session不存在 或者 用户session中的用户名和此次登录的用户名不一致，要重启构造用户session

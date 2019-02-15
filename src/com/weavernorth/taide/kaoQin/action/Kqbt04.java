@@ -146,6 +146,9 @@ public class Kqbt04 extends BaseAction {
                 this.writeLog("04-总部员工考勤补贴 end ===================");
             } catch (Exception e) {
                 this.writeLog("04-总部员工考勤补贴 异常： " + e);
+                requestInfo.getRequestManager().setMessageid("110000");
+                requestInfo.getRequestManager().setMessagecontent("接口异常，请联系管理员。");
+                return "0";
             }
         }
 

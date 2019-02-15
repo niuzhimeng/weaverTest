@@ -152,6 +152,9 @@ public class Gcsq03 extends BaseAction {
                 this.writeLog("01-总部员工公出申请 end ===================");
             } catch (Exception e) {
                 this.writeLog("01-总部员工公出申请 异常： " + e);
+                requestInfo.getRequestManager().setMessageid("110000");
+                requestInfo.getRequestManager().setMessagecontent("接口异常，请联系管理员。");
+                return "0";
             }
         }
 
