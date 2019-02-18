@@ -28,13 +28,13 @@ public class ZhuanGangAction extends BaseAction {
 
                 String lcbh = recordSet.getString("lcbh");// 流程编号
                 String sqgh = recordSet.getString("sqgh"); // 工号
-                String gwbdrq = recordSet.getString("gwbdrq");// 转正日期
+                String gwbdrq = recordSet.getString("gwbdrq");// 岗位变动日期
                 String czlx = recordSet.getString("czlx");// 操作类型
-                String bdlxdm = recordSet.getString("bdlxdm");// 操作原因
+                String bdlxdm = recordSet.getString("bdlxdm");// 变动类型代码
 
-                String rszfw = recordSet.getString("rszfw");// 人事子范围
-                String drgw = recordSet.getString("drgw");// 调入后岗位编码
-                String drqsj = recordSet.getString("drqsj");// 调入后直接上级工号
+                String rszfw = recordSet.getString("rszfw");// 调动范围
+                String drhbm = recordSet.getString("drhbm");// 调入后岗位编码
+                String drhsjbm = recordSet.getString("drhsjbm");// 调入后直接上级工号
 
                 // 拼接对象
                 DT_HRI001_INDATAITEMS dt_hri001_indataitems1 = new DT_HRI001_INDATAITEMS();
@@ -43,8 +43,8 @@ public class ZhuanGangAction extends BaseAction {
                 dt_hri001_indataitems1.setMASSN(czlx); // 操作类型
                 dt_hri001_indataitems1.setMASSG(bdlxdm); // 操作原因
                 dt_hri001_indataitems1.setBTRTL(rszfw); // 人事子范围
-                dt_hri001_indataitems1.setPLANS(drgw); // 职位
-                dt_hri001_indataitems1.setZZJSJ(drqsj); // 直接上级编号
+                dt_hri001_indataitems1.setPLANS(drhbm); // 职位
+                dt_hri001_indataitems1.setZZJSJ(drhsjbm); // 直接上级编号
                 dt_hri001_indataitems1.setZLZLX(""); // 离职类型
                 dt_hri001_indataitems1.setZLZYY(""); // 离职原因
                 dt_hri001_indataitems1.setZBEIZ(""); // 备注
