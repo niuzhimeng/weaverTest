@@ -61,6 +61,25 @@ public class TimedKqmx extends BaseCronJob {
         try {
             recordSet.executeQuery("select id, workcode from HRMRESOURCE where status < 4");
             int id; // 人员id
+
+            // 日期格式 201901，<= modeDay传本月, > modeDay传下一个月
+            String dateString = TimeUtil.getCurrentDateString();
+            int currDay = Integer.parseInt(dateString.substring(8, 10));
+            int modeDay = 0; // 建模里的标准日期
+            RecordSet daySet = new RecordSet();
+            daySet.executeQuery("select loginid form uf_loginInfo WHERE dataType = 2");
+            if (daySet.next()) {
+                modeDay = daySet.getInt("loginid");
+            }
+
+            String myMonth;
+            if (currDay <= modeDay) {
+                myMonth = dateString.substring(0, 7).replace("-", "");
+            } else {
+                myMonth = weaver.general.TimeUtil.dateAdd(dateString, 30).substring(0, 7).replace("-", "");
+            }
+
+            statement.setStatementSql(insertSql);
             while (recordSet.next()) {
                 workCode = recordSet.getString("workcode");
                 id = recordSet.getInt("id");
@@ -68,22 +87,6 @@ public class TimedKqmx extends BaseCronJob {
                     continue;
                 }
 
-                // 日期格式 201901，小于17号传本月, >=17号传下一个月
-                String dateString = TimeUtil.getCurrentDateString();
-                int day = Integer.parseInt(dateString.substring(8, 10));
-                String myMonth;
-                if (day < 17) {
-                    myMonth = dateString.substring(0, 7).replace("-", "");
-                } else {
-                    myMonth = weaver.general.TimeUtil.dateAdd(dateString, 20).substring(0, 7).replace("-", "");
-                }
-
-                // 手动传入时间
-                if (dateStr.length() > 0) {
-                    myMonth = dateStr;
-                }
-
-                statement.setStatementSql(insertSql);
                 // 拼接对象
                 DT_HRI007_INSENDER dt_hri007_insender = new DT_HRI007_INSENDER();
                 dt_hri007_insender.setINTF_ID("");

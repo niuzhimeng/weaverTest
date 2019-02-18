@@ -1,5 +1,6 @@
 package com.weavernorth.taide.kaoQin.kqyc.myWeb;
 
+import com.weaver.general.TimeUtil;
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
 
@@ -27,6 +28,23 @@ public class KqycUtil {
             stub.setUsername(userName);
             stub.setPassword(passWord);
 
+            // 日期格式 201901，<= modeDay传本月, > modeDay传下一个月
+            String dateString = TimeUtil.getCurrentDateString();
+            int currDay = Integer.parseInt(dateString.substring(8, 10));
+            int modeDay = 0; // 建模里的标准日期
+            RecordSet daySet = new RecordSet();
+            daySet.executeQuery("select loginid form uf_loginInfo WHERE dataType = 3");
+            if (daySet.next()) {
+                modeDay = daySet.getInt("loginid");
+            }
+
+            String myMonth;
+            if (currDay <= modeDay) {
+                myMonth = dateString.substring(0, 7).replace("-", "");
+            } else {
+                myMonth = weaver.general.TimeUtil.dateAdd(dateString, 30).substring(0, 7).replace("-", "");
+            }
+
             DT_HRI006_INSENDER dt_hri006_insender = new DT_HRI006_INSENDER();
             dt_hri006_insender.setCompany_Code("");
             dt_hri006_insender.setDest_System("");
@@ -35,8 +53,8 @@ public class KqycUtil {
             dt_hri006_insender.setSrc_System("OA");
 
             DT_HRI006_INDATA dt_hri006_indata = new DT_HRI006_INDATA();
-            dt_hri006_indata.setBEGDA("");
-            dt_hri006_indata.setENDDA("");
+            dt_hri006_indata.setBEGDA(myMonth);
+            dt_hri006_indata.setENDDA(myMonth);
 
             // 拼接最外层对象
             DT_HRI006_IN dt_hri006_in = new DT_HRI006_IN();
