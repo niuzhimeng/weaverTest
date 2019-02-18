@@ -52,7 +52,7 @@ public class CheckGc extends BaseAction {
 
                 if (ksDate.before(bzDate)) {
                     requestInfo.getRequestManager().setMessageid("110000");
-                    requestInfo.getRequestManager().setMessagecontent("补贴日期需大于等于当月 " + bzDateJian1 + " 日");
+                    requestInfo.getRequestManager().setMessagecontent("公出开始日期需大于等于当月 " + bzDateJian1 + " 日");
                     return "0";
                 }
             } else {
@@ -61,7 +61,7 @@ public class CheckGc extends BaseAction {
                 calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1);// 往前调一个月
                 if (ksDate.before(calendar.getTime())) {
                     requestInfo.getRequestManager().setMessageid("110000");
-                    requestInfo.getRequestManager().setMessagecontent("补贴日期需大于等于上月 " + bzDateJian1 + " 日");
+                    requestInfo.getRequestManager().setMessagecontent("公出开始日期需大于等于上月 " + bzDateJian1 + " 日");
                     return "0";
                 }
             }
