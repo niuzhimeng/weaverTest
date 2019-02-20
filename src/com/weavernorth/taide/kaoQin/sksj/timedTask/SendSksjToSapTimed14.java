@@ -52,10 +52,10 @@ public class SendSksjToSapTimed14 extends BaseCronJob {
 
             String before1 = TimeUtil.dateAdd(currentDate, nDate);
             String start = before1 + " 00:00:00";
-            String end = currentDate + " 00:00:00";
+            String end = TimeUtil.dateAdd(currentDate, 1) + " 00:00:00";
 
             RecordSet recordSet = new RecordSet();
-            String sql = "select * from uf_allkqsk where MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE >= '" + start + "' and MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE < '" + end + "'";
+            String sql = "select * from uf_allkqsk where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + start + "' and MODEDATACREATEDATE || ' ' || MODEDATACREATETIME < '" + end + "'";
             recordSet.executeQuery(sql);
             baseBean.writeLog("此次查询sql： " + sql);
             baseBean.writeLog("此次推送数据条数： " + recordSet.getCounts());
