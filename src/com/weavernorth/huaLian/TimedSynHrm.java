@@ -46,7 +46,7 @@ public class TimedSynHrm extends BaseCronJob {
                 modelVo.setZbrs(countSet.getInt("myCount"));
                 modelVoList.add(modelVo);
             }
-            baseBean.writeLog("第一次拼装集合： " + new Gson().toJson(modelVoList));
+            // baseBean.writeLog("第一次拼装集合： " + new Gson().toJson(modelVoList));
 
             //新增或更新 uf_rsbzxx(人事编制信息)
             RecordSet sleectSet = new RecordSet();
@@ -82,7 +82,7 @@ public class TimedSynHrm extends BaseCronJob {
             idList.add(recordSet.getInt("id"));
             getAllSon(recordSet.getInt("id"), idList);
         }
-        new BaseBean().writeLog("当前list： " + new Gson().toJson(idList));
+        //new BaseBean().writeLog("当前list： " + new Gson().toJson(idList));
         return idList;
     }
 }
