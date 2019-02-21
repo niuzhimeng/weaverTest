@@ -15,14 +15,21 @@ public class ZhiFu extends BaseAction {
     @Override
     public String execute(RequestInfo requestInfo) {
 
-        String tableName = requestInfo.getRequestManager().getBillTableName();
         String requestId = requestInfo.getRequestid();
-        this.writeLog("---------支付流程编号修改执行-----------" + TimeUtil.getCurrentTimeString() + ", requestId:" + requestId);
+        RecordSetDataSource rs = new RecordSetDataSource("orcl");
+        String tableSql = "SELECT tablename FROM workflow_bill WHERE id = (SELECT formid FROM workflow_base WHERE id = (SELECT workflowid FROM workflow_requestbase WHERE requestid = '" + requestId + "'))";
+
+        String tableName = "";
+        rs.execute(tableSql);
+        if (rs.next()) {
+            tableName = rs.getString("tablename");
+        }
+        this.writeLog("---------支付流程编号修改执行-----------" + TimeUtil.getCurrentTimeString() + ", requestId:" + requestId + ", tableName: " + tableName);
 
         String fyzfbm = "";//费用支付编码
         String fysqbh = "";//费用申请编码
 
-        RecordSetDataSource rs = new RecordSetDataSource("orcl");
+
         String selectSql = "select * from " + tableName + " where requestid = '" + requestId + "'";
         rs.execute(selectSql);
         if (rs.next()) {

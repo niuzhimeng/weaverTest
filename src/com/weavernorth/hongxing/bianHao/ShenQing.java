@@ -14,11 +14,17 @@ public class ShenQing extends BaseAction {
     @Override
     public String execute(RequestInfo requestInfo) {
 
-        String tableName = requestInfo.getRequestManager().getBillTableName();
         String requestId = requestInfo.getRequestid();
-        this.writeLog("----------申请流程编号修改执行-------------" + TimeUtil.getCurrentTimeString() + ", requestId:" + requestId);
-
         RecordSetDataSource hrmrs = new RecordSetDataSource("orcl");
+        String tableSql = "SELECT tablename FROM workflow_bill WHERE id = (SELECT formid FROM workflow_base WHERE id = (SELECT workflowid FROM workflow_requestbase WHERE requestid = '" + requestId + "'))";
+
+        String tableName = "";
+        hrmrs.execute(tableSql);
+        if (hrmrs.next()) {
+            tableName = hrmrs.getString("tablename");
+        }
+
+        this.writeLog("----------申请流程编号修改执行-------------" + TimeUtil.getCurrentTimeString() + ", requestId:" + requestId + ",  tablename: " + tableName);
 
         String fysqbh = "";//费用申请编号
         String lxbm = "";//立项编码
