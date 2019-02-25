@@ -31,7 +31,7 @@ public class UpdateMainFlow extends BaseAction {
         ConnStatement connStatement = new ConnStatement();
         String updateSql = "update " + MAIN_DETAIL_NAME + " set ejbm = ?, sjbm = ?, xm = ?, gh = ?, rylb = ?," +
                 "bmgg = ?, xmbh = ?, xmmc = ?, ywfx = ?, gsqzzj = ?, " +
-                "sm = ? where id = ?";
+                "sm = ?, lczt = ? where id = ?";
         this.writeLog("更新主流程的sql： " + updateSql);
         try {
             connStatement.setStatementSql(updateSql);
@@ -49,11 +49,15 @@ public class UpdateMainFlow extends BaseAction {
                 connStatement.setString(10, recordSet.getString("gsqzzj"));
 
                 connStatement.setString(11, recordSet.getString("sm"));
-                connStatement.setString(12, recordSet.getString("main_detail_id"));
+                connStatement.setString(12, "1");
+                connStatement.setString(13, recordSet.getString("main_detail_id"));
                 connStatement.executeUpdate();
             }
         } catch (Exception e) {
             this.writeLog("UpdateMainFlow 更新主流程异常：" + e);
+            request.getRequestManager().setMessageid("110000");
+            request.getRequestManager().setMessagecontent("UpdateMainFlow 更新主流程异常：" + e);
+            return "0";
         } finally {
             connStatement.close();
         }
