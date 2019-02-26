@@ -6,13 +6,13 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.ibm.db2.jcc.resources.Resources_pl_PL;
 import com.sap.conn.jco.JCoDestination;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoTable;
 import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
+import com.test.webserviceTest.vo.DaYin;
 import com.test.webserviceTest.vo.Student;
 import com.weavernorth.B1.zyml.po.CatalogAll;
 import com.weavernorth.gaoji.vo.OrganizationVo;
@@ -21,6 +21,7 @@ import com.weavernorth.jcoTest.two.ConnPoolTwo;
 import com.weavernorth.taide.kaoQin.syjq04.myWeb.*;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -32,15 +33,20 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 import weaver.general.AES;
 import weaver.general.StaticObj;
+import weaver.general.StringUtil;
 import weaver.general.TimeUtil;
 import weaver.hrm.webservice.HrmServiceXmlUtil;
 import weaver.integration.util.HTTPUtil;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
+import weaver.workflow.workflow.WfForceOver;
 
 import javax.xml.rpc.ServiceException;
 import java.io.*;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.sql.ResultSet;
@@ -49,10 +55,7 @@ import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -885,11 +888,77 @@ public class MyTest {
 
     }
 
+    public static void main(String[] args) throws Exception {
+
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        long start = System.currentTimeMillis();
+        executorService.execute(new DaYin());
+        executorService.execute(new DaYin());
+
+        executorService.shutdown();
+        while (true) {
+            if (executorService.isTerminated()) {
+                long end = System.currentTimeMillis();
+                System.out.println("花费时间： " + (end - start));
+                break;
+            }
+        }
+
+    }
+
     @Test
-    public void test(){
-        String currentTimeString = TimeUtil.getCurrentTimeString();
-        String s = TimeUtil.timeAdd(currentTimeString, -60);
-        System.out.println(s);
+    public void test46() {
+        String s = hongXingSO();
+        System.out.println("接口返回： " + s);
+    }
+
+    private String hongXingSO() {
+        String host = "http://mail.redstarwine.com/cgi-bin/welfax/loginsm.cgi"; // 改成实际邮件服务器域名或 IP
+        String user = "pck@redstarwine.com";
+        String pass = "Pck940523";
+        try {
+            URL url = new URL(host);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setInstanceFollowRedirects(false); // 禁止自动重定向
+            String param = "safemailer=1"
+                    + "&user2=" + URLEncoder.encode(user, "utf-8")
+                    + "&pass2=" + URLEncoder.encode(pass, "utf-8");
+            OutputStream os = conn.getOutputStream();
+            os.write(param.getBytes());
+            os.flush();
+            os.close();
+
+            int responseCode = conn.getResponseCode();
+            System.out.println("responseCode: " + responseCode);
+
+            //得到响应流
+            InputStream inputStream = conn.getInputStream();
+            //将响应流转换成字符串
+            StringBuilder builder = new StringBuilder();
+            String line;
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(inputStream, "GBK"));
+            while ((line = buffer.readLine()) != null) {
+                builder.append(line);
+            }
+            System.out.println("builder.toString(): " + builder.toString());
+
+
+            /* 用户名和密码是否匹配要根据 HTTP 头中的 X­Tmpdir 来判断 */
+            String tmpdir = conn.getHeaderField("X­Tmpdir");
+            System.out.println("tmpdir: " + tmpdir);
+            if (tmpdir == null) {
+                System.out.println("Login failed");
+                return null;
+            }
+            System.out.println("Login success, tmpdir=" + tmpdir);
+            return tmpdir;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed: " + e.getMessage());
+            return null;
+        }
     }
 
 
