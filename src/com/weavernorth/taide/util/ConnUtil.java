@@ -39,7 +39,12 @@ public class ConnUtil {
         try {
             insertLogCoonReal(logStr, workBh, sendJson, flag);
         } catch (Exception e) {
-            baseBean.writeLog("ConnUtil insertLogCoon异常： " + e);
+            try {
+                insertLogCoonReal(logStr, workBh, "json过长，请前往log文件查看。", flag);
+            } catch (Exception e1) {
+                baseBean.writeLog("ConnUtil insertLogCoon异常： " + e1);
+            }
+
         }
     }
 

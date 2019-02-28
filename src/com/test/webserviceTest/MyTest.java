@@ -28,6 +28,7 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -41,6 +42,9 @@ import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 import weaver.workflow.workflow.WfForceOver;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.xml.rpc.ServiceException;
 import java.io.*;
 import java.math.BigDecimal;
@@ -933,26 +937,14 @@ public class MyTest {
             int responseCode = conn.getResponseCode();
             System.out.println("responseCode: " + responseCode);
 
-            //得到响应流
-            InputStream inputStream = conn.getInputStream();
-            //将响应流转换成字符串
-            StringBuilder builder = new StringBuilder();
-            String line;
-            BufferedReader buffer = new BufferedReader(new InputStreamReader(inputStream, "GBK"));
-            while ((line = buffer.readLine()) != null) {
-                builder.append(line);
-            }
-            System.out.println("builder.toString(): " + builder.toString());
-
-
             /* 用户名和密码是否匹配要根据 HTTP 头中的 X­Tmpdir 来判断 */
-            String tmpdir = conn.getHeaderField("X­Tmpdir");
+            String tmpdir = conn.getHeaderField("X-Tmpdir");
             System.out.println("tmpdir: " + tmpdir);
             if (tmpdir == null) {
                 System.out.println("Login failed");
                 return null;
             }
-            System.out.println("Login success, tmpdir=" + tmpdir);
+            System.out.println("Login success, tmpdir = " + tmpdir);
             return tmpdir;
         } catch (Exception e) {
             e.printStackTrace();
@@ -961,5 +953,54 @@ public class MyTest {
         }
     }
 
+    /**
+     * 发送邮件
+     */
+    @Test
+    public void test47() {
+        {
+            // 收件人电子邮箱
+            String to = "1125112547@qq.com";
+            // 发件人电子邮箱
+            String from = "295290968@qq.com";
+            // 指定发送邮件的主机为 localhost
+            String host = "smtp.qq.com";
+            // 获取系统属性
+            Properties properties = System.getProperties();
+            properties.put("mail.smtp.auth", "true");
+            properties.setProperty("mail.user", from);
+            properties.setProperty("mail.password", "adnnfwimpfqxbhje");
+            // 设置邮件服务器
+            properties.setProperty("mail.smtp.host", host);
+            // 获取默认session对象
 
+            // 获取默认session对象
+            Session session = Session.getDefaultInstance(properties, new Authenticator() {
+                public PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication("295290968@qq.com", "adnnfwimpfqxbhje"); //发件人邮件用户名、授权码
+                }
+            });
+
+            try {
+                // 创建默认的 MimeMessage 对象
+                MimeMessage message = new MimeMessage(session);
+                // Set From: 头部头字段
+                message.setFrom(new InternetAddress(from));
+                // Set To: 头部头字段
+                message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+                // Set Subject: 头部头字段
+                message.setSubject("头字段");
+                // 设置消息体
+                message.setText("消息体");
+                // 设置html内容为邮件正文，指定MIME类型为text/html类型，并指定字符编码为gbk
+                message.setContent("<span style='color:red;'>html正文...</span>","text/html;charset=gbk"); // 会覆盖消息体
+                // 发送消息
+                Transport.send(message);
+                System.out.println("Sent message successfully....");
+            } catch (Exception mex) {
+                mex.printStackTrace();
+            }
+        }
+
+    }
 }

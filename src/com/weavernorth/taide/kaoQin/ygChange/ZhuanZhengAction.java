@@ -29,15 +29,15 @@ public class ZhuanZhengAction extends BaseAction {
                 String lcbh = recordSet.getString("lcbh");// 流程编号
                 String sqgh = recordSet.getString("sqgh"); // 工号
                 String zzrq = recordSet.getString("zzrq");// 转正日期
-                String zzlxdm = recordSet.getString("zzlxdm");// 操作类型
-                String czyy = recordSet.getString("czyy");// 操作原因
+                String zzlxdm = recordSet.getString("zzlxdm");// 操作原因
+                String czyy = recordSet.getString("czyy");// 操作类型
 
                 // 拼接对象
                 DT_HRI001_INDATAITEMS dt_hri001_indataitems1 = new DT_HRI001_INDATAITEMS();
                 dt_hri001_indataitems1.setPERNR(sqgh); //工号
                 dt_hri001_indataitems1.setBEGDA(changeDays(zzrq)); // 开始日期
-                dt_hri001_indataitems1.setMASSN(zzlxdm); // 操作类型
-                dt_hri001_indataitems1.setMASSG(czyy); // 操作原因
+                dt_hri001_indataitems1.setMASSN(czyy); // 操作类型
+                dt_hri001_indataitems1.setMASSG(zzlxdm); // 操作原因
                 dt_hri001_indataitems1.setBTRTL(""); // 人事子范围
                 dt_hri001_indataitems1.setPLANS(""); // 职位
                 dt_hri001_indataitems1.setZZJSJ(""); // 直接上级编号
