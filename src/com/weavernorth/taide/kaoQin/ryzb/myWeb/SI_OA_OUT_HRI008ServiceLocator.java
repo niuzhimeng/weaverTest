@@ -22,7 +22,7 @@ public class SI_OA_OUT_HRI008ServiceLocator extends org.apache.axis.client.Servi
     }
 
     // Use to get a proxy class for HTTPS_Port
-    private java.lang.String HTTPS_Port_address = "https://podev.tidepharm.com:50001/XISOAPAdapter/MessageServlet?senderParty=&senderService=BC_YT_SEND_HRI008&receiverParty=&receiverService=&interface=SI_OA_OUT_HRI008&interfaceNamespace=http%3A%2F%2Ftidepharm.com%2FYT";
+    private java.lang.String HTTPS_Port_address = "https://poprdapp1.tidepharm.com:50001/XISOAPAdapter/MessageServlet?senderParty=&senderService=BC_YT_SEND_HRI008&receiverParty=&receiverService=&interface=SI_OA_OUT_HRI008&interfaceNamespace=http%3A%2F%2Ftidepharm.com%2FYT";
 
     public java.lang.String getHTTPS_PortAddress() {
         return HTTPS_Port_address;
@@ -67,7 +67,7 @@ public class SI_OA_OUT_HRI008ServiceLocator extends org.apache.axis.client.Servi
 
 
     // Use to get a proxy class for HTTP_Port
-    private java.lang.String HTTP_Port_address = "http://podev.tidepharm.com:50000/XISOAPAdapter/MessageServlet?senderParty=&senderService=BC_YT_SEND_HRI008&receiverParty=&receiverService=&interface=SI_OA_OUT_HRI008&interfaceNamespace=http%3A%2F%2Ftidepharm.com%2FYT";
+    private java.lang.String HTTP_Port_address = "http://poprdapp1.tidepharm.com:50000/XISOAPAdapter/MessageServlet?senderParty=&senderService=BC_YT_SEND_HRI008&receiverParty=&receiverService=&interface=SI_OA_OUT_HRI008&interfaceNamespace=http%3A%2F%2Ftidepharm.com%2FYT";
 
     public java.lang.String getHTTP_PortAddress() {
         return HTTP_Port_address;

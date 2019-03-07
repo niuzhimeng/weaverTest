@@ -2,6 +2,7 @@ package com.weavernorth.taide.kaoQin.wlly;
 
 
 import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import com.weavernorth.taide.kaoQin.wlly.myWeb.*;
 import com.weavernorth.taide.util.ConnUtil;
 import weaver.conn.RecordSet;
@@ -12,6 +13,8 @@ import weaver.workflow.action.BaseAction;
  * 07-领料申请单 OA -> SAP
  */
 public class WllyAction extends BaseAction {
+
+    private Gson gson = new Gson();
 
     @Override
     public String execute(RequestInfo requestInfo) {
@@ -90,10 +93,11 @@ public class WllyAction extends BaseAction {
                     dtMmi002In.setSend_Time("");
                     dtMmi002In.setINPUT(dt_mmi002_ininputheaders);
 
-                    String sendJson = JSON.toJSONString(dtMmi002In);
+                    String sendJson = gson.toJson(dtMmi002In);
                     this.writeLog("发送json： " + sendJson);
                     // 调用接口
                     DT_MMI002_OUTOUTPUT[] returns = WllyUtil.execute(dtMmi002In);
+                    this.writeLog("领料申请单返回信息： " + gson.toJson(returns));
 
                     StringBuilder builder = new StringBuilder();
                     StringBuilder logBuilder = new StringBuilder();
@@ -119,7 +123,15 @@ public class WllyAction extends BaseAction {
                         requestInfo.getRequestManager().setMessagecontent("sap返回消息：--- " + JSON.toJSONString(returns));
                         return "0";
                     }
+
+                    //推送成功后，更新回写数据
+                    String banfn = returns[0].getRSNUM();
+                    String updateSql = "update " + tableName + " set sapyldh = '" + banfn + "' where requestid = " + requestId;
+                    this.writeLog("领料申请更新sql：" + updateSql);
+                    recordSet.execute(updateSql);
+
                 }
+
                 this.writeLog("07-领料申请单 OA -> SAP end ===================");
             } catch (Exception e) {
                 this.writeLog("07-领料申请单 OA -> SAP 异常： " + e);

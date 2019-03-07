@@ -29,7 +29,7 @@ public class LiZhiZdAction extends BaseAction {
                 String lcbh = recordSet.getString("lcbh");// 流程编号
 
                 String sqgh = recordSet.getString("sqgh"); // 申请工号
-                String qrlzrq = recordSet.getString("nlzrq");// 确认离职日期
+                String qrlzrq = recordSet.getString("qrlzrq");// 确认离职日期
                 String lzlx = recordSet.getString("lzlx");// 离职类型
                 String lzyy = recordSet.getString("lzyy");// 离职原因
                 String gwbm = recordSet.getString("gwbm");// 岗位编码

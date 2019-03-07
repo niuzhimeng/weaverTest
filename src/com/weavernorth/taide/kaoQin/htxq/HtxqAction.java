@@ -27,32 +27,39 @@ public class HtxqAction extends BaseAction {
                 String mainSql = "select * from " + tableName + " where requestid = '" + requestId + "'";
                 recordSet.executeQuery(mainSql);
                 if (recordSet.next()) {
-                    String bh = recordSet.getString("bh");// 流程编号
+                    String bh = recordSet.getString("bh"); // 流程编号
 
                     String sqgh = recordSet.getString("sqgh"); // 申请工号
-                    String xqhtksrq = recordSet.getString("xqhtksrq");// 续签合同开始日期
+                    String xqhtksrq = recordSet.getString("xqhtksrq"); // 续签合同开始日期
                     String xqlxdm = recordSet.getString("xqlxdm"); // 续签类型代码
-                    String xqhtjsrq = recordSet.getString("xqhtjsrq");// 续签合同结束日期
-                    String qddw = recordSet.getString("qddw");// 签订单位
+                    String xqhtjsrq; // 续签合同结束日期
+                    String qddw = recordSet.getString("qddw"); // 签订单位
 
-                    int xqlx = recordSet.getInt("xqlx");// 续签类型
+                    int xqlx = recordSet.getInt("xqlx"); // 续签类型
 
                     String zsrq = "00000000"; // 结束日期
                     String[] split = xqhtksrq.split("-");
 
-                    if (xqlx == 3 || xqlx == 5 || xqlx == 6) {
+                    if (xqlx == 2 || xqlx == 4 || xqlx == 5) {
                         // 结束日期取页面
                         zsrq = recordSet.getString("xqhtjsrq");
-                    } else if (xqlx == 2) {
-                        zsrq = "9999-12-31";
                     } else if (xqlx == 1) {
+                        zsrq = "9999-12-31";
+                    } else if (xqlx == 0) {
                         // 新起始 + 3年
                         int i = Integer.parseInt(split[0]) + 3;
                         zsrq = i + split[1] + split[2];
-                    } else if (xqlx == 4) {
+                    } else if (xqlx == 3) {
                         // 新起始 + 1年
                         int i = Integer.parseInt(split[0]) + 1;
                         zsrq = i + split[1] + split[2];
+                    }
+
+                    // 是除无固定期限外不取值。其他都 = 结束日期
+                    if (xqlx == 1) {
+                        xqhtjsrq = "";
+                    } else {
+                        xqhtjsrq = zsrq;
                     }
 
                     // 拼接对象
