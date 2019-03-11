@@ -39,7 +39,7 @@ public class CYTicketPost extends BaseBean implements Action {
             String contentJiami = Base64Util.encode(jsonObject.toString());
             JSONObject map1 = new JSONObject();
             map1.put("content", contentJiami);
-            String url = "http://10.10.1.131:8080/finance/bxdfpgl/bxdCxForOA/bxdfpInfoToOA";
+            String url = "http://10.10.1.79:8080/finance/bxdfpgl/bxdCxForOA/bxdfpInfoToOA";
 
             // 调用接口
             String mao = HTTPUtil.doPost(url, map1);
