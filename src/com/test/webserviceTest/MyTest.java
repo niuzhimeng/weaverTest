@@ -6,21 +6,21 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.sap.conn.jco.JCoDestination;
-import com.sap.conn.jco.JCoFunction;
-import com.sap.conn.jco.JCoParameterList;
-import com.sap.conn.jco.JCoTable;
+import com.sap.conn.jco.*;
 import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
 import com.test.webserviceTest.vo.DaYin;
 import com.test.webserviceTest.vo.Student;
 import com.weavernorth.B1.zyml.po.CatalogAll;
 import com.weavernorth.gaoji.vo.OrganizationVo;
+import com.weavernorth.gjcw.Base64Util;
 import com.weavernorth.jcoTest.three.ConnPoolThree;
 import com.weavernorth.jcoTest.two.ConnPoolTwo;
 import com.weavernorth.taide.kaoQin.syjq04.myWeb.*;
+import net.sf.json.JSONObject;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.axis.encoding.Base64;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -30,14 +30,15 @@ import org.dom4j.io.XMLWriter;
 import org.junit.Test;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+import weaver.common.FileUtil;
 import weaver.docs.webservices.DocAttachment;
 import weaver.docs.webservices.DocInfo;
 import weaver.docs.webservices.DocServiceImpl;
+import weaver.file.FileUpload;
 import weaver.general.AES;
-import weaver.general.Base64;
 import weaver.general.StaticObj;
 import weaver.general.TimeUtil;
-import weaver.general.xcommon.FileUtils;
+import weaver.hrm.User;
 import weaver.hrm.webservice.HrmServiceXmlUtil;
 import weaver.integration.util.HTTPUtil;
 import weaver.soa.workflow.request.RequestInfo;
@@ -52,8 +53,10 @@ import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -919,8 +922,8 @@ public class MyTest {
 
     private String hongXingSO() {
         String host = "http://mail.redstarwine.com/cgi-bin/welfax/loginsm.cgi"; // 改成实际邮件服务器域名或 IP
-        String user = "pck@redstarwine.com";
-        String pass = "Pck940523";
+        String user = "ll@redstarwine.com";
+        String pass = "Redstar#0805";
         try {
             URL url = new URL(host);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -954,123 +957,6 @@ public class MyTest {
         }
     }
 
-    /**
-     * 发送邮件
-     */
-    @Test
-    public void test47() {
-        {
-            // 收件人电子邮箱
-            String to = "ccy0625@foxmail.com";
-            // 发件人电子邮箱
-            String from = "295290968@qq.com";
-            // 指定发送邮件的主机为 localhost
-            String host = "smtp.qq.com";
-
-            String html = "<!DOCTYPE html>\n" +
-                    "<html lang=\"en\">\n" +
-                    "<head>\n" +
-                    "    <meta charset=\"UTF-8\">\n" +
-                    "    <title>Title</title>\n" +
-                    "</head>\n" +
-                    "<body>\n" +
-                    "\n" +
-                    "<table border=\"1\">\n" +
-                    "    <tr>\n" +
-                    "        <th>姓名</th>\n" +
-                    "        <th>工资标准</th>\n" +
-                    "        <th>扣税</th>\n" +
-                    "        <th>实发</th>\n" +
-                    "        <th>姓名</th>\n" +
-                    "        <th>工资标准</th>\n" +
-                    "        <th>扣税</th>\n" +
-                    "        <th>实发</th>\n" +
-                    "        <th>姓名</th>\n" +
-                    "        <th>工资标准</th>\n" +
-                    "        <th>扣税</th>\n" +
-                    "        <th>实发</th>\n" +
-                    "        <th>姓名</th>\n" +
-                    "        <th>工资标准</th>\n" +
-                    "        <th>扣税</th>\n" +
-                    "        <th>实发</th>\n" +
-                    "        <th>姓名</th>\n" +
-                    "        <th>工资标准</th>\n" +
-                    "        <th>扣税</th>\n" +
-                    "        <th>实发</th>\n" +
-                    "        <th>姓名</th>\n" +
-                    "        <th>工资标准</th>\n" +
-                    "        <th>扣税</th>\n" +
-                    "        <th>实发</th>\n" +
-                    "    </tr>\n" +
-                    "    <tr>\n" +
-                    "        <td>张全蛋</td>\n" +
-                    "        <td>10,000</td>\n" +
-                    "        <td>1,000</td>\n" +
-                    "        <td>9,000</td>\n" +
-                    "        <td>张全蛋</td>\n" +
-                    "        <td>10,000</td>\n" +
-                    "        <td>1,000</td>\n" +
-                    "        <td>9,000</td>\n" +
-                    "        <td>张全蛋</td>\n" +
-                    "        <td>10,000</td>\n" +
-                    "        <td>1,000</td>\n" +
-                    "        <td>9,000</td>\n" +
-                    "        <td>张全蛋</td>\n" +
-                    "        <td>10,000</td>\n" +
-                    "        <td>1,000</td>\n" +
-                    "        <td>9,000</td>\n" +
-                    "        <td>张全蛋</td>\n" +
-                    "        <td>10,000</td>\n" +
-                    "        <td>1,000</td>\n" +
-                    "        <td>9,000</td>\n" +
-                    "        <td>张全蛋</td>\n" +
-                    "        <td>10,000</td>\n" +
-                    "        <td>1,000</td>\n" +
-                    "        <td>9,000</td>\n" +
-                    "    </tr>\n" +
-                    "</table>\n" +
-                    "\n" +
-                    "</body>\n" +
-                    "</html>";
-
-            // 获取系统属性
-            Properties properties = System.getProperties();
-            properties.put("mail.smtp.auth", "true");
-            properties.setProperty("mail.user", from);
-            properties.setProperty("mail.password", "adnnfwimpfqxbhje");
-            // 设置邮件服务器
-            properties.setProperty("mail.smtp.host", host);
-            // 获取默认session对象
-
-            // 获取默认session对象
-            Session session = Session.getDefaultInstance(properties, new Authenticator() {
-                public PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("295290968@qq.com", "adnnfwimpfqxbhje"); //发件人邮件用户名、授权码
-                }
-            });
-
-            try {
-                // 创建默认的 MimeMessage 对象
-                MimeMessage message = new MimeMessage(session);
-                // Set From: 头部头字段
-                message.setFrom(new InternetAddress(from));
-                // Set To: 头部头字段
-                message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-                // Set Subject: 头部头字段
-                message.setSubject("头字段");
-                // 设置消息体
-                // message.setText("消息体");
-                // 设置html内容为邮件正文，指定MIME类型为text/html类型，并指定字符编码为gbk
-                message.setContent(html, "text/html;charset=gbk"); // 会覆盖消息体
-                // 发送消息
-                Transport.send(message);
-                System.out.println("Sent message successfully....");
-            } catch (Exception mex) {
-                mex.printStackTrace();
-            }
-        }
-
-    }
 
     @Test
     public void test48() throws Exception {
@@ -1109,8 +995,8 @@ public class MyTest {
             DocAttachment da = new DocAttachment();
             da.setDocid(0);
             da.setImagefileid(0);
-            da.setFilecontent(Arrays.toString(Base64.encode(content)));
-           // da.setFilerealpath("d:\\service test.doc");
+            da.setFilecontent(Base64.encode(content));
+            // da.setFilerealpath("d:\\service test.doc");
             da.setIszip(1);
             da.setFilename("3-6-1519.doc");
             da.setIsextfile("1");
@@ -1131,9 +1017,14 @@ public class MyTest {
             doc.setDoccontent("service html 文档 content 22222");
             doc.setAttachments(new DocAttachment[]{da});
 
+            // 用户对象
+            User user = new User();
+            user.setAccount("ly");
+            user.setUid(150);
+
             // 执行创建
             DocServiceImpl docService = new DocServiceImpl();
-            int doc2 = docService.createDoc(doc, "150");
+            int doc2 = docService.createDocByUser(doc, user);
             System.out.println("文件id： " + doc2);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1142,14 +1033,71 @@ public class MyTest {
 
     @Test
     public void test49() {
-        BigDecimal a = new BigDecimal("0.1");
-        BigDecimal b = new BigDecimal("0.48");
-        BigDecimal c = new BigDecimal("0.3");
-        BigDecimal d = new BigDecimal("0.12");
-        System.out.println(0.1 + 0.48 + 0.3 + 0.12);
-        System.out.println(a.add(b).add(c).add(d));
+        String s = "法规及货款wesdfy989";
+
+        char[] chars = MD5(s).toCharArray();
+        System.out.println("chars: " + new Gson().toJson(chars));
+
+        String arrayentrypt = arrayEncrypt(chars);
+        System.out.println(arrayentrypt);
     }
 
+    private String arrayEncrypt(char[] param) {
+        String arr1 = "Aa4bcEMdI0CeNfSghJijBk1lKTYmnopF7qLOrUs9ZD2GtuVv8wHPx3y5zWQ6RX";
+        String arr2 = "CN0HabcDdWLX8O5YeZfIghVBMiJEjPk1lKUm9noQ2Fpqrs6Rtu3vwSxGAy7zT4";
+        StringBuilder result = new StringBuilder();
+        for (char s : param) {
+            result.append(arr2.charAt(arr1.indexOf(s)));
+        }
+        return result.toString();
+    }
+
+    public String MD5(String content) {
+        MessageDigest ins = null;
+        try {
+            ins = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        ins.update(content.getBytes(Charset.forName("UTF-8")));
+        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+        byte[] tmp = ins.digest();
+        char[] str = new char[16 * 2];
+        int k = 0;
+        for (int i = 0; i < 16; i++) {
+            byte byte0 = tmp[i];
+            str[k++] = hexDigits[byte0 >>> 4 & 0xf];
+            str[k++] = hexDigits[byte0 & 0xf];
+        }
+        return new String(str).toUpperCase();
+    }
+
+
+    @Test
+    public void test51() {
+
+        String returnHtml = "<p style=\"font-family:&#39;微软雅黑&#39;,&#39;Microsoft YaHei&#39;;font-size:12px;\">2019-03-13 test签字意见~！</p>";
+
+        String one = "<span style=\"color: rgb(255, 0, 0);\">";
+        String two = "</span>";
+
+        String group = "";
+        String reg = ">(.*?)</p>";
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(returnHtml);
+        if (matcher.find()) {
+            group = matcher.group(1);
+        }
+
+        System.out.println(group);
+        String s = matcher.replaceAll(">" + one + group + two + "</p>");
+        System.out.println(s);
+    }
+
+    @Test
+    public void test52() throws JCoException {
+        JCoDestination jCoDestination = ConnPoolThree.getJCoDestination();
+    }
 
 }
 

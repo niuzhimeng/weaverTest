@@ -27,7 +27,7 @@ public class ConnPoolThree {
         // 如果小于JCO_POOL_CAPACITY的值，则自动设置为该值，在没有设置JCO_POOL_CAPACITY的情况下为0
         properties.setProperty(DestinationDataProvider.JCO_PEAK_LIMIT, "10"); // 最大活动连接数
         properties.setProperty(DestinationDataProvider.JCO_POOL_CAPACITY, "5"); // 最大空闲连接数
-        createDestinationDataFile(CONN_NAME, properties);
+        createDestinationDataFile(properties);
 
         return JCoDestinationManager.getDestination(CONN_NAME);
     }
@@ -35,8 +35,8 @@ public class ConnPoolThree {
     /**
      * 创建连信息接配置文件
      */
-    private static void createDestinationDataFile(String destinationName, Properties properties) {
-        File destCfg = new File(destinationName + ".jcoDestination");
+    private static void createDestinationDataFile(Properties properties) {
+        File destCfg = new File(ConnPoolThree.CONN_NAME + ".jcoDestination");
         try {
             if (!destCfg.exists()) {
                 FileOutputStream fos = new FileOutputStream(destCfg, false);
