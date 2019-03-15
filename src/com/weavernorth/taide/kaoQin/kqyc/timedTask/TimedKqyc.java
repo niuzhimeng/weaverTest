@@ -68,7 +68,7 @@ public class TimedKqyc extends BaseCronJob {
             //赋权
             moderightinfo.setNewRight(true);
             RecordSet maxSet = new RecordSet();
-            maxSet.executeSql("select id from uf_sap_kqyc where MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE >= '" + currentTimeString + "'");
+            maxSet.executeSql("select id from uf_sap_kqyc where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + currentTimeString + "'");
 
             int maxId;
             while (maxSet.next()) {

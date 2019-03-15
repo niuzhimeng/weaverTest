@@ -125,7 +125,7 @@ public class ConnUtil {
             //赋权
             moderightinfo.setNewRight(true);
             RecordSet maxSet = new RecordSet();
-            maxSet.executeSql("select id from uf_dep_log where MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE >= '" + TimeUtil.timeAdd(currentTimeString, -10) + "'");
+            maxSet.executeSql("select id from uf_dep_log where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + TimeUtil.timeAdd(currentTimeString, -10) + "'");
 
             int maxId;
             while (maxSet.next()) {

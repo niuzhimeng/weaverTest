@@ -17,9 +17,15 @@ public class FeiYongSq_gd extends BaseAction {
     public String execute(RequestInfo requestInfo) {
         baseBean.writeLog("费用申请归档前点接口执行---------------------" + TimeUtil.getCurrentTimeString());
         try {
-            String tableName = requestInfo.getRequestManager().getBillTableName();
-            String requestId = requestInfo.getRequestid();
             RecordSet recordSet = new RecordSet();
+            int formid = requestInfo.getRequestManager().getFormid();
+            String tableName = "";
+            recordSet.executeQuery("SELECT tablename FROM workflow_bill WHERE id = '" + formid + "'"); // 均可获取表名
+            if (recordSet.next()) {
+                tableName = recordSet.getString("tablename");
+            }
+            String requestId = requestInfo.getRequestid();
+
             recordSet.executeSql("select * from " + tableName + " where requestid = '" + requestId + "'");
             String lxbm = ""; //立项编码
             double bcsqje = 0;//本次申请金额

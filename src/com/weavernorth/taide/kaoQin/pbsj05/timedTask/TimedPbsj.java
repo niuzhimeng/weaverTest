@@ -74,7 +74,7 @@ public class TimedPbsj extends BaseCronJob {
             calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + before + after); // 往后调n天
             String after10 = new SimpleDateFormat("yyyyMMdd").format(calendar.getTime());
 
-            recordSet.executeQuery("select id, workcode from HRMRESOURCE_SAP");
+            recordSet.executeQuery("select id, workcode from HRMRESOURCE_SAP where length(WORKCODE) >= 8");
 
             String workCode; // 工号
             while (recordSet.next()) {
@@ -132,7 +132,7 @@ public class TimedPbsj extends BaseCronJob {
             //赋权
             moderightinfo.setNewRight(true);
             RecordSet maxSet = new RecordSet();
-            maxSet.executeSql("select id from uf_sap_pbb where MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE >= '" + currentTimeString + "'");
+            maxSet.executeSql("select id from uf_sap_pbb where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + currentTimeString + "'");
 
             int maxId;
             while (maxSet.next()) {

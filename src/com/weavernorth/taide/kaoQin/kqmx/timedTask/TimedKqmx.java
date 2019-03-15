@@ -1,6 +1,5 @@
 package com.weavernorth.taide.kaoQin.kqmx.timedTask;
 
-import com.google.gson.Gson;
 import com.weaver.general.TimeUtil;
 import com.weavernorth.taide.kaoQin.kqmx.myWeb.*;
 import com.weavernorth.taide.util.ConnUtil;
@@ -18,7 +17,6 @@ public class TimedKqmx extends BaseCronJob {
     private ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
     private String dateStr = "";
-    private int stnCount; // 同步数据量
 
     public TimedKqmx() {
     }
@@ -29,6 +27,7 @@ public class TimedKqmx extends BaseCronJob {
 
     @Override
     public void execute() {
+        int stnCount = 0; // 同步数据量
         long start = System.currentTimeMillis(); // 开始时间戳
 
         int modeId = ConnUtil.getModeIdByType(2);
@@ -60,7 +59,8 @@ public class TimedKqmx extends BaseCronJob {
                 "?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?)";
         String workCode = ""; // 工号
         try {
-            recordSet.executeQuery("select id, workcode from HRMRESOURCE where status < 4");
+            recordSet.executeQuery("select h.id, h.workcode,h.LASTNAME from HRMRESOURCE h where h.status < 4 and length(h.WORKCODE) >= 8");
+            baseBean.writeLog("总人数： " + recordSet.getCounts());
             int id; // 人员id
 
             // 日期格式 201901，<= modeDay传本月, > modeDay传下一个月
@@ -86,9 +86,6 @@ public class TimedKqmx extends BaseCronJob {
             while (recordSet.next()) {
                 workCode = recordSet.getString("workcode");
                 id = recordSet.getInt("id");
-                if (workCode.length() < 8) {
-                    continue;
-                }
 
                 // 拼接对象
                 DT_HRI007_INSENDER dt_hri007_insender = new DT_HRI007_INSENDER();
@@ -119,7 +116,7 @@ public class TimedKqmx extends BaseCronJob {
                 dt_hri007_in.setDATA(dt_hri007_indata);
 
                 DT_HRI007_OUTRETURN[] execute = KqmxUtil.execute(dt_hri007_in);
-                stnCount = execute.length;
+                stnCount += execute.length;
                 if (execute != null && execute.length > 0) {
                     // 删除当前人员旧的考勤明细数据
                     String deleteSql = "delete from uf_workdetails where OAID = '" + id + "' and month = '" + myMonth + "'";
@@ -231,7 +228,7 @@ public class TimedKqmx extends BaseCronJob {
             //赋权
             moderightinfo.setNewRight(true);
             RecordSet maxSet = new RecordSet();
-            maxSet.executeSql("select id from uf_workdetails where MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE >= '" + currentTimeString + "'");
+            maxSet.executeSql("select id from uf_workdetails where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + currentTimeString + "'");
 
             int maxId;
             while (maxSet.next()) {

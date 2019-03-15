@@ -17,10 +17,15 @@ public class FeiYongZf_tj extends BaseAction {
     @Override
     public String execute(RequestInfo requestInfo) {
         baseBean.writeLog("费用支付提交接口执行---------------------" + weaver.general.TimeUtil.getCurrentTimeString());
-        String tableName = requestInfo.getRequestManager().getBillTableName();
+        RecordSet recordSet = new RecordSet();
+        int formid = requestInfo.getRequestManager().getFormid();
+        String tableName = "";
+        recordSet.executeQuery("SELECT tablename FROM workflow_bill WHERE id = '" + formid + "'"); // 均可获取表名
+        if (recordSet.next()) {
+            tableName = recordSet.getString("tablename");
+        }
         String requestId = requestInfo.getRequestid();
         try {
-            RecordSet recordSet = new RecordSet();
             recordSet.executeSql("select * from " + tableName + " where requestid = '" + requestId + "'");
             String fysqbh = ""; //费用申请编码
             double zfje = 0;//支付金额

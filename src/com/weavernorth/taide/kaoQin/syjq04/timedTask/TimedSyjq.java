@@ -37,14 +37,11 @@ public class TimedSyjq extends BaseCronJob {
                 "values(?,?,?,?,?,?,?, ?,?,?,?,?)";
         try {
             statement.setStatementSql(insertSql);
-            recordSet.executeQuery("select id, workcode from hrmresource where status < 4");
+            recordSet.executeQuery("select h.id, h.workcode,h.LASTNAME from HRMRESOURCE h where h.status < 4 and length(h.WORKCODE) >= 8");
 
             String workCode; // 工号
             while (recordSet.next()) {
                 workCode = recordSet.getString("workcode");
-                if (workCode.length() < 8) {
-                    continue;
-                }
                 //拼接参数
                 DT_HR0004_IN dt_hr0004_in = new DT_HR0004_IN();
                 dt_hr0004_in.setKTART("");
@@ -87,7 +84,7 @@ public class TimedSyjq extends BaseCronJob {
             //赋权
             moderightinfo.setNewRight(true);
             RecordSet maxSet = new RecordSet();
-            maxSet.executeSql("select id from uf_sap_syjq where MODEDATACREATEDATE || ' ' || MODEDATACREATEDATE >= '" + currentTimeString + "'");
+            maxSet.executeSql("select id from uf_sap_syjq where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + currentTimeString + "'");
 
             int maxId;
             while (maxSet.next()) {
