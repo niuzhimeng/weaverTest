@@ -59,7 +59,7 @@ public class TimedKqmx extends BaseCronJob {
                 "?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?)";
         String workCode = ""; // 工号
         try {
-            recordSet.executeQuery("select h.id, h.workcode,h.LASTNAME from HRMRESOURCE h where h.status < 4 and length(h.WORKCODE) >= 8");
+            recordSet.executeQuery("select id, workcode from HRMRESOURCE_SAP where length(WORKCODE) >= 8");
             baseBean.writeLog("总人数： " + recordSet.getCounts());
             int id; // 人员id
 
@@ -84,6 +84,11 @@ public class TimedKqmx extends BaseCronJob {
 
             statement.setStatementSql(insertSql);
             while (recordSet.next()) {
+                if (stnCount % 500 == 0) {
+                    statement.close();
+                    statement = new ConnStatement();
+                    statement.setStatementSql(insertSql);
+                }
                 workCode = recordSet.getString("workcode");
                 id = recordSet.getInt("id");
 
