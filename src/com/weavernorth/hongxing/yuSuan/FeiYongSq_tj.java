@@ -23,10 +23,14 @@ public class FeiYongSq_tj extends BaseAction {
             recordSet.executeSql("select * from " + tableName + " where requestid = '" + requestId + "'");
             String lxbm = ""; //立项编码
             double bcsqje = 0;//本次申请金额
+
             if (recordSet.next()) {
                 lxbm = recordSet.getString("lxbm");
                 bcsqje = recordSet.getDouble("bcsqje") < 0 ? 0 : recordSet.getDouble("bcsqje");
             }
+
+            this.writeLog("立项编码： "+ lxbm);
+            this.writeLog("本次申请金额： "+ bcsqje);
 
             double kyje = 0;//可用金额
             double spzje = 0;//审批中金额
@@ -35,8 +39,15 @@ public class FeiYongSq_tj extends BaseAction {
                 kyje = recordSet.getDouble("kyje") < 0 ? 0 : recordSet.getDouble("kyje");
                 spzje = recordSet.getDouble("spzje") < 0 ? 0 : recordSet.getDouble("spzje");
             }
+
+            this.writeLog("可用金额： "+ kyje);
+            this.writeLog("审批中金额： "+ spzje);
+
             spzje += bcsqje;
             kyje -= bcsqje;
+
+            this.writeLog("计算后可用金额： "+ kyje);
+            this.writeLog("计算后审批中金额： "+ spzje);
 
             String sql = "update uf_lxsq  set spzje = ?, kyje = ? where lxbm = ?";
             statement.setStatementSql(sql);

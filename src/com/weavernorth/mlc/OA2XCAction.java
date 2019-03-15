@@ -4,12 +4,11 @@ import com.weavernorth.mlc.webclient.*;
 import net.sf.json.JSONObject;
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
+import weaver.general.TimeUtil;
 import weaver.integration.util.HTTPUtil;
 import weaver.interfaces.workflow.action.Action;
 import weaver.soa.workflow.request.RequestInfo;
 
-import javax.xml.rpc.ServiceException;
-import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,7 +24,7 @@ public class OA2XCAction extends BaseBean implements Action {
         Date dt = null;
         try {
             dt = sdf.parse(str);
-        } catch ( ParseException e ) {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         Calendar rightNow = Calendar.getInstance();
@@ -40,7 +39,7 @@ public class OA2XCAction extends BaseBean implements Action {
         Date dt = null;
         try {
             dt = sdf.parse(str);
-        } catch ( ParseException e ) {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         Calendar rightNow = Calendar.getInstance();
@@ -48,9 +47,12 @@ public class OA2XCAction extends BaseBean implements Action {
         rightNow.add(Calendar.DATE, +3);// 日期加三天
         return sdf.format(rightNow.getTime());
     }
+
     @Override
     public String execute(RequestInfo requestInfo) {
-        String Requestid = requestInfo.getRequestid();
+
+        String requestid = requestInfo.getRequestid();
+        this.writeLog("携程预推送信息 start=============" + TimeUtil.getCurrentTimeString() + " request: " + requestid);
 
         //获取ticket
         String ticketUrl = "https://ct.ctrip.com/corpservice/authorize/getticket";
@@ -60,13 +62,15 @@ public class OA2XCAction extends BaseBean implements Action {
         map.put("appKey", appKey);
         map.put("appSecurity", appSecurity);
         String ticket = HTTPUtil.doPost(ticketUrl, map);
-        this.writeLog("*******************************" + ticket);
+        this.writeLog("ticket ***************************" + ticket);
+
         JSONObject object1 = JSONObject.fromObject(ticket);
-        String contentcode2 = object1.getString("Token");
-        this.writeLog("****************************" + contentcode2);
+        String token = object1.getString("Token");
+        this.writeLog("Token *************************" + token);
+
         //从OA表单中取数据
         RecordSet rs = new RecordSet();
-        rs.execute("select * from formtable_main_49 where requestid='" + Requestid + "'");
+        rs.execute("select * from formtable_main_49 where requestid='" + requestid + "'");
         if (rs.next()) {
             String mid = rs.getString("id");
             writeLog("主表ID-------------->" + mid);
@@ -78,11 +82,11 @@ public class OA2XCAction extends BaseBean implements Action {
             rs2.execute("select * from hrmresource where id ='" + sqr + "'");
             rs2.next();
             String lastname = rs2.getString("lastname");
-            this.writeLog("************"+lastname);
+            this.writeLog("lastname************" + lastname);
             //调用提前审批接口
             ApprovalLocator approvalLocator = new ApprovalLocator();
             SetApprovalRequest request = new SetApprovalRequest();
-            request.setAuth(new Authentification("obk_mljr", contentcode2));
+            request.setAuth(new Authentification("obk_mljr", token));
             request.setApprovalNumber(sqdh);
             request.setEmployeeID(sqrgh);
             request.setStatus(1);
@@ -90,70 +94,78 @@ public class OA2XCAction extends BaseBean implements Action {
             rs1.execute("select * from formtable_main_49_dt2 where mainid='" + mid + "'");
             RecordSet rs3 = new RecordSet();
             rs3.execute("select * from formtable_main_49_dt3 where mainid='" + mid + "'");
+
             //明细表1----------------- 交通费
+            FlightEndorsementDetail[] flightEndorsementDetails = new FlightEndorsementDetail[rs1.getCounts()];
+            int i = 0;
             while (rs1.next()) {
                 String startdate = rs1.getString("ksrq");
-                this.writeLog("************"+startdate);
+                this.writeLog("************" + startdate);
                 String enddate = rs1.getString("jsrq");
-                this.writeLog("************"+enddate);
-                String jtgj = rs1.getString("jtgj");
-                this.writeLog("************"+jtgj);
+                this.writeLog("************" + enddate);
+                String jtgj = rs1.getString("jtgj"); // 交通工具
+                this.writeLog("************" + jtgj);
                 String cfd = rs1.getString("cfd");
-                this.writeLog("************"+cfd);
+                this.writeLog("************" + cfd);
                 String mdd = rs1.getString("mdd");
-                this.writeLog("************"+mdd);
+                this.writeLog("************" + mdd);
                 if (jtgj.equals("0")) {
-                    FlightEndorsementDetail[] flightEndorsementDetails = new FlightEndorsementDetail[1];
-                    flightEndorsementDetails[0] = new FlightEndorsementDetail();
-                    flightEndorsementDetails[0].setCurrency(CurrencyType.UnKnow);
-                    flightEndorsementDetails[0].setFlightWay(FlightWayType.RoundTrip);
-                    flightEndorsementDetails[0].setDepartDateBegin(DateCut(startdate));
-                    flightEndorsementDetails[0].setDepartDateEnd(DateAdd(enddate));
-                    flightEndorsementDetails[0].setReturnDateBegin(DateCut(startdate));//出发结束时间
-                    flightEndorsementDetails[0].setReturnDateEnd(DateAdd(enddate));//出发结束时间
-                    flightEndorsementDetails[0].setDepartCityCodes(new String[]{cfd});//出发城市 暂写死上海
-                    flightEndorsementDetails[0].setArrivalCityCodes(new String[]{mdd});//到达城市 暂写死深圳
+                    flightEndorsementDetails[i] = new FlightEndorsementDetail();
+                    flightEndorsementDetails[i].setCurrency(CurrencyType.UnKnow);
+                    flightEndorsementDetails[i].setFlightWay(FlightWayType.RoundTrip);
+                    flightEndorsementDetails[i].setDepartDateBegin(DateCut(startdate));
+                    flightEndorsementDetails[i].setDepartDateEnd(DateAdd(enddate));
+                    flightEndorsementDetails[i].setReturnDateBegin(DateCut(startdate));//出发结束时间
+                    flightEndorsementDetails[i].setReturnDateEnd(DateAdd(enddate));//出发结束时间
+                    flightEndorsementDetails[i].setDepartCityCodes(new String[]{cfd});//出发城市 暂写死上海
+                    flightEndorsementDetails[i].setArrivalCityCodes(new String[]{mdd});//到达城市 暂写死深圳
                     // 出行人
                     PassengerDetail[] flightPassengerDetail = new PassengerDetail[1];
                     flightPassengerDetail[0] = new PassengerDetail();
                     flightPassengerDetail[0].setName(lastname);// 有外籍人员？
-                    flightEndorsementDetails[0].setPassengerList(flightPassengerDetail);
-                    request.setFlightEndorsementDetails(flightEndorsementDetails);
-                    //明细表2----------------- 住宿费
-                    while (rs3.next()) {
-                        String startdate1 = rs3.getString("rzrq");
-                        this.writeLog("************"+startdate1);
-                        String enddate1 = rs3.getString("ldrq");
-                        this.writeLog("************"+enddate1);
-                        String rzcs = rs3.getString("rzcs");
-                        this.writeLog("************"+rzcs);
-                        HotelEndorsementDetail[] hotelEndorsementDetails = new HotelEndorsementDetail[1];
-                        hotelEndorsementDetails[0] = new HotelEndorsementDetail();
-                        hotelEndorsementDetails[0].setProductType(HotelProductTypeEnum.Domestic);
-                        hotelEndorsementDetails[0].setCheckInDateBegin(DateCut(startdate1));//入住开始时间
-                        hotelEndorsementDetails[0].setCheckInDateEnd(DateAdd(enddate1));//入住结束时间
-                        hotelEndorsementDetails[0].setCheckOutDateBegin(DateCut(startdate1));//离店开始时间
-                        hotelEndorsementDetails[0].setCheckOutDateEnd(DateAdd(enddate1));//离店结束时间
-                        hotelEndorsementDetails[0].setCheckInCityCodes(new String[]{rzcs});
-                        PassengerDetail[] flightPassengerDetail1 = new PassengerDetail[1];
-                        flightPassengerDetail1[0] = new PassengerDetail();
-                        flightPassengerDetail1[0].setName(lastname);// 有外籍人员？
-                        hotelEndorsementDetails[0].setPassengerList(flightPassengerDetail1);
-                        request.setHotelEndorsementDetails(hotelEndorsementDetails);
-                        this.writeLog("***********"+request);
-
-                    }
+                    flightEndorsementDetails[i].setPassengerList(flightPassengerDetail);
                 }
+                i++;
             }
-            SetApprovalResponse res = null;
+
+            //明细表2----------------- 住宿费
+            HotelEndorsementDetail[] hotelEndorsementDetails = new HotelEndorsementDetail[rs3.getCounts()];
+            int j = 0;
+            while (rs3.next()) {
+                String startdate1 = rs3.getString("rzrq");
+                this.writeLog("************" + startdate1);
+                String enddate1 = rs3.getString("ldrq");
+                this.writeLog("************" + enddate1);
+                String rzcs = rs3.getString("rzcs");
+                this.writeLog("************" + rzcs);
+
+                hotelEndorsementDetails[j] = new HotelEndorsementDetail();
+                hotelEndorsementDetails[j].setProductType(HotelProductTypeEnum.Domestic);
+                hotelEndorsementDetails[j].setCheckInDateBegin(DateCut(startdate1));//入住开始时间
+                hotelEndorsementDetails[j].setCheckInDateEnd(DateAdd(enddate1));//入住结束时间
+                hotelEndorsementDetails[j].setCheckOutDateBegin(DateCut(startdate1));//离店开始时间
+                hotelEndorsementDetails[j].setCheckOutDateEnd(DateAdd(enddate1));//离店结束时间
+                hotelEndorsementDetails[j].setCheckInCityCodes(new String[]{rzcs});
+
+                PassengerDetail[] flightPassengerDetail1 = new PassengerDetail[1];
+                flightPassengerDetail1[0] = new PassengerDetail();
+                flightPassengerDetail1[0].setName(lastname);// 有外籍人员？
+                hotelEndorsementDetails[j].setPassengerList(flightPassengerDetail1);
+                j++;
+                this.writeLog("***********" + request);
+
+            }
+
+            request.setFlightEndorsementDetails(flightEndorsementDetails);
+            request.setHotelEndorsementDetails(hotelEndorsementDetails);
+
             try {
-                res = approvalLocator.getws().setApproval(request);
-            } catch ( RemoteException e ) {
-                e.printStackTrace();
-            } catch ( ServiceException e ) {
-                e.printStackTrace();
+                SetApprovalResponse res = approvalLocator.getws().setApproval(request);
+                this.writeLog("携程返回信息： " + res.getStatus().getMessage());
+            } catch (Exception e) {
+                this.writeLog("携程预推送信息异常： " + e);
             }
-            this.writeLog("********************************" + res.getStatus().getMessage());
+            this.writeLog("携程预推送信息 end=============" + TimeUtil.getCurrentTimeString() + " request: " + requestid);
 
         }
 

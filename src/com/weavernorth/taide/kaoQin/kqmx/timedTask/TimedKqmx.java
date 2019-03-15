@@ -1,5 +1,6 @@
 package com.weavernorth.taide.kaoQin.kqmx.timedTask;
 
+import com.google.gson.Gson;
 import com.weaver.general.TimeUtil;
 import com.weavernorth.taide.kaoQin.kqmx.myWeb.*;
 import com.weavernorth.taide.util.ConnUtil;
@@ -67,7 +68,7 @@ public class TimedKqmx extends BaseCronJob {
             int currDay = Integer.parseInt(dateString.substring(8, 10));
             int modeDay = 0; // 建模里的标准日期
             RecordSet daySet = new RecordSet();
-            daySet.executeQuery("select loginid form uf_loginInfo WHERE dataType = 2");
+            daySet.executeQuery("select loginid from uf_loginInfo WHERE dataType = 2");
             if (daySet.next()) {
                 modeDay = daySet.getInt("loginid");
             }
@@ -78,6 +79,8 @@ public class TimedKqmx extends BaseCronJob {
             } else {
                 myMonth = weaver.general.TimeUtil.dateAdd(dateString, 30).substring(0, 7).replace("-", "");
             }
+
+            baseBean.writeLog("考勤明细发送月份： " + myMonth);
 
             statement.setStatementSql(insertSql);
             while (recordSet.next()) {
