@@ -1,4 +1,4 @@
-package com.weavernorth.jcoTest.three;
+package com.weavernorth.taide.kaoQin.jcoTimed;
 
 import com.sap.conn.jco.JCoDestination;
 import com.sap.conn.jco.JCoDestinationManager;

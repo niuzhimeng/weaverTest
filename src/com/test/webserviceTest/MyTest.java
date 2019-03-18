@@ -1124,8 +1124,10 @@ public class MyTest {
     }
 
     @Test
-    public void test54() {
-        new WorkflowServiceImpl().deleteRequest(1376, 1); // int 请求id,int 用户id
+    public void test54() throws Exception {
+        JCoDestination jCoDestination = com.weavernorth.taide.kaoQin.jcoTimed.ConnPoolThree.getJCoDestination();
+        JCoFunction function = jCoDestination.getRepository().getFunctionTemplate("ZMMI0005").getFunction();
+
 
 
     }

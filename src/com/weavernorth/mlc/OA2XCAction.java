@@ -152,12 +152,13 @@ public class OA2XCAction extends BaseBean implements Action {
                 flightPassengerDetail1[0].setName(lastname);// 有外籍人员？
                 hotelEndorsementDetails[j].setPassengerList(flightPassengerDetail1);
                 j++;
-                this.writeLog("***********" + request);
 
             }
 
             request.setFlightEndorsementDetails(flightEndorsementDetails);
             request.setHotelEndorsementDetails(hotelEndorsementDetails);
+
+            this.writeLog("***********" + request);
 
             try {
                 SetApprovalResponse res = approvalLocator.getws().setApproval(request);
