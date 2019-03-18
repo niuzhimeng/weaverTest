@@ -19,7 +19,7 @@ public class CheckQj extends BaseAction {
         String requestId = requestInfo.getRequestid();
         String operatetype = requestInfo.getRequestManager().getSrc();
         String tableName = requestInfo.getRequestManager().getBillTableName();
-        this.writeLog("公出流程提交校验 start requestid --- " + requestId + "  operatetype --- " + operatetype + "   fromTable --- " + tableName);
+        this.writeLog("请假流程提交校验 start requestid --- " + requestId + "  operatetype --- " + operatetype + "   fromTable --- " + tableName);
         try {
             RecordSet recordSet = new RecordSet();
             recordSet.executeQuery("select * from uf_loginInfo where dataType = 4");
@@ -66,7 +66,7 @@ public class CheckQj extends BaseAction {
                 }
             }
         } catch (Exception e) {
-            this.writeLog("公出流程提交校验 异常： " + e);
+            this.writeLog("请假流程提交校验 异常： " + e);
         }
         return "1";
     }

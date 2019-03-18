@@ -13,11 +13,9 @@ import com.test.webserviceTest.vo.DaYin;
 import com.test.webserviceTest.vo.Student;
 import com.weavernorth.B1.zyml.po.CatalogAll;
 import com.weavernorth.gaoji.vo.OrganizationVo;
-import com.weavernorth.gjcw.Base64Util;
 import com.weavernorth.jcoTest.three.ConnPoolThree;
 import com.weavernorth.jcoTest.two.ConnPoolTwo;
 import com.weavernorth.taide.kaoQin.syjq04.myWeb.*;
-import net.sf.json.JSONObject;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.Base64;
@@ -27,26 +25,29 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Period;
+import org.joda.time.PeriodType;
 import org.junit.Test;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
-import weaver.common.FileUtil;
+import weaver.conn.RecordSet;
 import weaver.docs.webservices.DocAttachment;
 import weaver.docs.webservices.DocInfo;
 import weaver.docs.webservices.DocServiceImpl;
-import weaver.file.FileUpload;
 import weaver.general.AES;
 import weaver.general.StaticObj;
 import weaver.general.TimeUtil;
+import weaver.general.Util;
 import weaver.hrm.User;
+import weaver.hrm.report.schedulediff.HrmScheduleDiffUtil;
 import weaver.hrm.webservice.HrmServiceXmlUtil;
 import weaver.integration.util.HTTPUtil;
+import weaver.mobile.webservices.workflow.WorkflowServiceImpl;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.xml.rpc.ServiceException;
 import java.io.*;
 import java.math.BigDecimal;
@@ -1096,8 +1097,39 @@ public class MyTest {
 
     @Test
     public void test52() throws JCoException {
-        JCoDestination jCoDestination = ConnPoolThree.getJCoDestination();
+        String startDayStr = "2019-03-28";
+        String endDayStr = "2019-04-15";
+        DateTime endDateTime = new DateTime(endDayStr);
+
+        DateTime dt = new DateTime();
+        DateTime dateTime = dt.dayOfMonth().withMaximumValue();
+        String s = dateTime.toString("yyyy-MM-dd");
+
+        DateTime startDateTime = new DateTime(startDayStr); // 假期开始
+        Period period = new Period(startDateTime, endDateTime, PeriodType.yearMonthDayTime());
+
+        int days = Days.daysBetween(startDateTime, endDateTime).getDays();
+        System.out.println(period.getDays());
+        System.out.println("开始日期 -> 当月结束天数： " + days);
+
     }
+
+    /**
+     * 判断日期是否为节假日
+     */
+    @Test
+    public void test53() {
+        HrmScheduleDiffUtil hrmScheduleDiffUtil = new HrmScheduleDiffUtil();
+        //hrmScheduleDiffUtil.getIsWorkday();
+    }
+
+    @Test
+    public void test54() {
+        new WorkflowServiceImpl().deleteRequest(1376, 1); // int 请求id,int 用户id
+
+
+    }
+
 
 }
 
