@@ -12,12 +12,9 @@ import weaver.soa.workflow.request.RequestInfo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
-/**
- * Created by 高恩琪(EBU-8 mobile 15090115523) on 2019/1/18.
- */
+
 public class OA2XCAction extends BaseBean implements Action {
 
     private Gson gson = new Gson();
@@ -73,70 +70,81 @@ public class OA2XCAction extends BaseBean implements Action {
                 RecordSet rs3 = new RecordSet();
                 rs3.execute("select * from formtable_main_49_dt3 where mainid='" + mid + "'");
 
-                //明细表1----------------- 交通费
-                this.writeLog("交通费行数： " + rs1.getCounts());
-                FlightEndorsementDetail[] flightEndorsementDetails = new FlightEndorsementDetail[rs1.getCounts()];
-                int i = 0;
-                while (rs1.next()) {
-                    String startdate = rs1.getString("ksrq");
-                    this.writeLog("开始日期************" + startdate);
-                    String enddate = rs1.getString("jsrq");
-                    this.writeLog("结束日期************" + enddate);
-                    String jtgj = rs1.getString("jtgj"); // 交通工具
-                    this.writeLog("交通工具************" + jtgj);
-                    String cfd = rs1.getString("cfd");
-                    this.writeLog("出发地************" + cfd);
-                    String mdd = rs1.getString("mdd");
-                    this.writeLog("目的地************" + mdd);
-                    if (jtgj.equals("0")) {
-                        flightEndorsementDetails[i] = new FlightEndorsementDetail();
-                        flightEndorsementDetails[i].setCurrency(CurrencyType.UnKnow);
-                        flightEndorsementDetails[i].setFlightWay(FlightWayType.RoundTrip);
-                        flightEndorsementDetails[i].setDepartDateBegin(DateCut(startdate));
-                        flightEndorsementDetails[i].setDepartDateEnd(DateAdd(enddate));
-                        flightEndorsementDetails[i].setReturnDateBegin(DateCut(startdate));//出发结束时间
-                        flightEndorsementDetails[i].setReturnDateEnd(DateAdd(enddate));//出发结束时间
-                        flightEndorsementDetails[i].setDepartCityCodes(new String[]{cfd});//出发城市 暂写死上海
-                        flightEndorsementDetails[i].setArrivalCityCodes(new String[]{mdd});//到达城市 暂写死深圳
-                        // 出行人
-                        PassengerDetail[] flightPassengerDetail = new PassengerDetail[1];
-                        flightPassengerDetail[0] = new PassengerDetail();
-                        flightPassengerDetail[0].setName(lastname);// 有外籍人员？
-                        flightEndorsementDetails[i].setPassengerList(flightPassengerDetail);
-                    }
-                    i++;
-                }
+                //明细表1====================== 交通费 ============================
+                int jtfCounts = rs1.getCounts(); // 交通费行数
+                this.writeLog("交通费行数： " + jtfCounts);
+                FlightEndorsementDetail[] flightEndorsementDetails = new FlightEndorsementDetail[0];
+                if (jtfCounts > 0) {
 
+                    List<String> allList = new ArrayList<String>(); // 出发地 + 目的地数组
+
+                    List<String> beginStartDateList = new ArrayList<String>(); // 开始日期集合
+
+                    while (rs1.next()) {
+                        beginStartDateList.add(rs1.getString("ksrq")); // 开始日期
+                        beginStartDateList.add(rs1.getString("jsrq")); // 结束日期
+
+                        allList.add(rs1.getString("cfd")); // 出发地
+                        allList.add(rs1.getString("mdd")); // 目的地
+                    }
+                    String[] allArrays = new String[allList.size()];
+                    allList.toArray(allArrays);
+
+                    // 日期排序
+                    Collections.sort(beginStartDateList);
+
+                    flightEndorsementDetails = new FlightEndorsementDetail[1];
+                    flightEndorsementDetails[0] = new FlightEndorsementDetail();
+                    flightEndorsementDetails[0].setCurrency(CurrencyType.UnKnow);
+                    flightEndorsementDetails[0].setFlightWay(FlightWayType.RoundTrip);
+                    flightEndorsementDetails[0].setDepartDateBegin(DateCut(beginStartDateList.get(0))); // 开始日期最小的
+                    flightEndorsementDetails[0].setDepartDateEnd(DateAdd(beginStartDateList.get(beginStartDateList.size() - 1))); // 开始日期最大的
+                    flightEndorsementDetails[0].setReturnDateBegin(DateCut(beginStartDateList.get(0))); //结束时间最小的
+                    flightEndorsementDetails[0].setReturnDateEnd(DateAdd(beginStartDateList.get(beginStartDateList.size() - 1))); //结束时间最大的
+                    flightEndorsementDetails[0].setDepartCityCodes(allArrays); // 出发城市数组
+                    flightEndorsementDetails[0].setArrivalCityCodes(allArrays); //到达城市数组
+                    // 出行人
+                    PassengerDetail[] flightPassengerDetail = new PassengerDetail[1];
+                    flightPassengerDetail[0] = new PassengerDetail();
+                    flightPassengerDetail[0].setName(lastname);// 有外籍人员？
+                    flightEndorsementDetails[0].setPassengerList(flightPassengerDetail);
+                }
                 this.writeLog("交通费发送数组：" + gson.toJson(flightEndorsementDetails));
 
-                //明细表2----------------- 住宿费
-                this.writeLog("住宿费行数： " + rs3.getCounts());
-                HotelEndorsementDetail[] hotelEndorsementDetails = new HotelEndorsementDetail[rs3.getCounts()];
-                int j = 0;
-                while (rs3.next()) {
-                    String startdate1 = rs3.getString("rzrq");
-                    this.writeLog("入住日期************" + startdate1);
-                    String enddate1 = rs3.getString("ldrq");
-                    this.writeLog("离店日期************" + enddate1);
-                    String rzcs = rs3.getString("rzcs");
-                    this.writeLog("入住城市************" + rzcs);
+                //明细表2 ======================  住宿费 ======================
+                int zsfCounts = rs3.getCounts();
+                this.writeLog("住宿费行数： " + zsfCounts);
+                HotelEndorsementDetail[] hotelEndorsementDetails = new HotelEndorsementDetail[0];
+                if (zsfCounts > 0) {
+                    String[] ruZhuCity = new String[zsfCounts]; // 入住城市数组
 
-                    hotelEndorsementDetails[j] = new HotelEndorsementDetail();
-                    hotelEndorsementDetails[j].setProductType(HotelProductTypeEnum.Domestic);
-                    hotelEndorsementDetails[j].setCheckInDateBegin(DateCut(startdate1)); // 入住开始时间
-                    hotelEndorsementDetails[j].setCheckInDateEnd(DateAdd(enddate1)); // 入住结束时间
-                    hotelEndorsementDetails[j].setCheckOutDateBegin(DateCut(startdate1)); // 离店开始时间
-                    hotelEndorsementDetails[j].setCheckOutDateEnd(DateAdd(enddate1)); // 离店结束时间
-                    hotelEndorsementDetails[j].setCheckInCityCodes(new String[]{rzcs});
+                    List<String> rzStartDateList = new ArrayList<String>(); // 开始日期集合
+
+                    int j = 0;
+                    while (rs3.next()) {
+                        rzStartDateList.add(rs3.getString("rzrq"));
+                        rzStartDateList.add(rs3.getString("ldrq"));
+
+                        ruZhuCity[j] = rs3.getString("rzcs");
+                        j++;
+                    }
+                    // 日期排序
+                    Collections.sort(rzStartDateList);
+
+                    hotelEndorsementDetails = new HotelEndorsementDetail[1];
+                    hotelEndorsementDetails[0] = new HotelEndorsementDetail();
+                    hotelEndorsementDetails[0].setProductType(HotelProductTypeEnum.Domestic);
+                    hotelEndorsementDetails[0].setCheckInDateBegin(DateCut(rzStartDateList.get(0))); // 入住开始时间
+                    hotelEndorsementDetails[0].setCheckInDateEnd(DateAdd(rzStartDateList.get(rzStartDateList.size() - 1))); // 入住结束时间
+                    hotelEndorsementDetails[0].setCheckOutDateBegin(DateCut(rzStartDateList.get(0))); // 离店开始时间
+                    hotelEndorsementDetails[0].setCheckOutDateEnd(DateAdd(rzStartDateList.get(rzStartDateList.size() - 1))); // 离店结束时间
+                    hotelEndorsementDetails[0].setCheckInCityCodes(ruZhuCity); // 入住城市数组
 
                     PassengerDetail[] flightPassengerDetail1 = new PassengerDetail[1];
                     flightPassengerDetail1[0] = new PassengerDetail();
                     flightPassengerDetail1[0].setName(lastname);// 有外籍人员？
-                    hotelEndorsementDetails[j].setPassengerList(flightPassengerDetail1);
-                    j++;
-
+                    hotelEndorsementDetails[0].setPassengerList(flightPassengerDetail1);
                 }
-
                 this.writeLog("住宿费发送数组：" + gson.toJson(hotelEndorsementDetails));
 
                 request.setFlightEndorsementDetails(flightEndorsementDetails);
