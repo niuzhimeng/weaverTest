@@ -19,10 +19,11 @@ public class TimedSyjq extends BaseCronJob {
 
     private ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
-    private int stnCount; // 同步数据量
+
 
     @Override
     public void execute() {
+        int stnCount = 0; // 同步数据量
         int modeId = ConnUtil.getModeIdByType(6);
         String currentTimeString = TimeUtil.getCurrentTimeString();
         baseBean.writeLog("定时获取剩余假期接口执行==========： " + currentTimeString);
@@ -54,7 +55,7 @@ public class TimedSyjq extends BaseCronJob {
 
                 // 调用接口
                 DT_HR0004_OUTOUTPUT[] execute = SyjqUtil.execute(dt_hr0004_in);
-                stnCount = execute.length;
+                stnCount += execute.length;
                 if (execute != null && execute.length > 0) {
                     // 删除当前人员旧数据
                     deleteSet.execute("delete from uf_sap_syjq where xm = '" + recordSet.getString("id") + "'");

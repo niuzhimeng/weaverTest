@@ -1,5 +1,6 @@
 package com.weavernorth.mlc;
 
+import com.google.gson.Gson;
 import com.weavernorth.mlc.webclient.*;
 import net.sf.json.JSONObject;
 import weaver.conn.RecordSet;
@@ -18,6 +19,9 @@ import java.util.Date;
  * Created by 高恩琪(EBU-8 mobile 15090115523) on 2019/1/18.
  */
 public class OA2XCAction extends BaseBean implements Action {
+
+    private Gson gson = new Gson();
+
     //日期减三天
     public String DateCut(String str) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -75,6 +79,7 @@ public class OA2XCAction extends BaseBean implements Action {
             String mid = rs.getString("id");
             writeLog("主表ID-------------->" + mid);
             String sqdh = rs.getString("sqdh");
+            this.writeLog("申请单号: " + sqdh);
             String sqrgh = rs.getString("sqrgh");
             String sqr = rs.getString("sqr");
             //取人力资源表
@@ -100,15 +105,15 @@ public class OA2XCAction extends BaseBean implements Action {
             int i = 0;
             while (rs1.next()) {
                 String startdate = rs1.getString("ksrq");
-                this.writeLog("************" + startdate);
+                this.writeLog("开始日期************" + startdate);
                 String enddate = rs1.getString("jsrq");
-                this.writeLog("************" + enddate);
+                this.writeLog("结束日期************" + enddate);
                 String jtgj = rs1.getString("jtgj"); // 交通工具
-                this.writeLog("************" + jtgj);
+                this.writeLog("交通工具************" + jtgj);
                 String cfd = rs1.getString("cfd");
-                this.writeLog("************" + cfd);
+                this.writeLog("出发地************" + cfd);
                 String mdd = rs1.getString("mdd");
-                this.writeLog("************" + mdd);
+                this.writeLog("目的地************" + mdd);
                 if (jtgj.equals("0")) {
                     flightEndorsementDetails[i] = new FlightEndorsementDetail();
                     flightEndorsementDetails[i].setCurrency(CurrencyType.UnKnow);
@@ -133,11 +138,11 @@ public class OA2XCAction extends BaseBean implements Action {
             int j = 0;
             while (rs3.next()) {
                 String startdate1 = rs3.getString("rzrq");
-                this.writeLog("************" + startdate1);
+                this.writeLog("入住日期************" + startdate1);
                 String enddate1 = rs3.getString("ldrq");
-                this.writeLog("************" + enddate1);
+                this.writeLog("离店日期************" + enddate1);
                 String rzcs = rs3.getString("rzcs");
-                this.writeLog("************" + rzcs);
+                this.writeLog("入住城市************" + rzcs);
 
                 hotelEndorsementDetails[j] = new HotelEndorsementDetail();
                 hotelEndorsementDetails[j].setProductType(HotelProductTypeEnum.Domestic);
@@ -158,11 +163,11 @@ public class OA2XCAction extends BaseBean implements Action {
             request.setFlightEndorsementDetails(flightEndorsementDetails);
             request.setHotelEndorsementDetails(hotelEndorsementDetails);
 
-            this.writeLog("***********" + request);
+            this.writeLog("发送json***********" + gson.toJson(request));
 
             try {
                 SetApprovalResponse res = approvalLocator.getws().setApproval(request);
-                this.writeLog("携程返回信息： " + res.getStatus().getMessage());
+                this.writeLog("携程返回信息： " + gson.toJson(res));
             } catch (Exception e) {
                 this.writeLog("携程预推送信息异常： " + e);
             }
