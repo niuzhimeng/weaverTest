@@ -46,9 +46,9 @@ public class TimedPbsj extends BaseCronJob {
 
         ConnStatement statement = new ConnStatement();
         String insertSql = "insert into uf_sap_pbb(pb01, pb02, pb03, pb04, pb05, " +
-                "pb06, pb07, pb08, pb09, pb10, pb00, " +
+                "pb06, pb07, pb08, pb09, pb10, pb00, pb11, " +
                 "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) " +
-                "values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,? ,?)";
+                "values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?)";
         try {
             int before = 5; // 当前日期 往前天数
             int after = 10; // 当前日期 往后天数
@@ -74,14 +74,9 @@ public class TimedPbsj extends BaseCronJob {
             calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + before + after); // 往后调n天
             String after10 = new SimpleDateFormat("yyyyMMdd").format(calendar.getTime());
 
-            recordSet.executeQuery("select id, workcode from HRMRESOURCE_SAP where length(WORKCODE) >= 8");
+            recordSet.executeQuery("select h.id, h.workcode, h.departmentid from HRMRESOURCE_SAP s left join HRMRESOURCE h ON h.ID = s.ID where length(s.WORKCODE) >= 8");
 
-            String workCode; // 工号
             while (recordSet.next()) {
-                workCode = recordSet.getString("workcode");
-                if (workCode.length() < 8) {
-                    continue;
-                }
                 statement.setStatementSql(insertSql);
                 //拼接参数对象
                 DT_HR0003_ININPUT dt_hr0003_ininput = new DT_HR0003_ININPUT();
@@ -95,7 +90,7 @@ public class TimedPbsj extends BaseCronJob {
                 dt_hr0003_ininputs[0] = dt_hr0003_ininput;
                 DT_HR0003_OUTOUTPUT[] execute = PbsjUtil.execute(dt_hr0003_ininputs);
                 stnCount = execute.length;
-                if (execute != null && execute.length > 0) {
+                if (execute.length > 0) {
                     // 删除当前人员旧的排班数据
                     String deleteSql = "delete from uf_sap_pbb where pb01 = '" + recordSet.getString("workcode") + "' and pb02 >= '" + deleteDate + "'";
                     deleteSet.execute(deleteSql);
@@ -113,12 +108,13 @@ public class TimedPbsj extends BaseCronJob {
                         statement.setString(10, pjTime(en.getSOEND())); // 班次结束时间
 
                         statement.setString(11, recordSet.getString("id")); // 人员主键
+                        statement.setString(12, recordSet.getString("departmentid")); // 部门
 
-                        statement.setInt(12, modeId);//模块id
-                        statement.setString(13, "1");//创建人id
-                        statement.setString(14, "0");//一个默认值0
-                        statement.setString(15, TimeUtil.getCurrentTimeString().substring(0, 10));
-                        statement.setString(16, TimeUtil.getCurrentTimeString().substring(11));
+                        statement.setInt(13, modeId);//模块id
+                        statement.setString(14, "1");//创建人id
+                        statement.setString(15, "0");//一个默认值0
+                        statement.setString(16, TimeUtil.getCurrentTimeString().substring(0, 10));
+                        statement.setString(17, TimeUtil.getCurrentTimeString().substring(11));
                         statement.executeUpdate();
                     }
                 }

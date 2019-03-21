@@ -52,14 +52,15 @@ public class TimedKqmx extends BaseCronJob {
                 "Z15, Z16, Z17, Z18, Z19, " +
                 "Z20, Z21, Z22, Z23, Z24, " +
                 "Z25, Z26, Z27, Z28, Z29, " +
-                "Z30, Z31, month, " +
+                "Z30, Z31, month, bm, " +
                 "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) " +
                 "values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?," +
                 "?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?," +
-                "?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?)";
+                "?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?)";
         String workCode = ""; // 工号
+        String departmentId; // 部门id
         try {
-            recordSet.executeQuery("select id, workcode from HRMRESOURCE_SAP where length(WORKCODE) >= 8");
+            recordSet.executeQuery("select h.id, h.workcode, h.departmentid from HRMRESOURCE_SAP s left join HRMRESOURCE h ON h.ID = s.ID where length(s.WORKCODE) >= 8");
             baseBean.writeLog("总人数： " + recordSet.getCounts());
             int id; // 人员id
 
@@ -90,6 +91,7 @@ public class TimedKqmx extends BaseCronJob {
                     statement.setStatementSql(insertSql);
                 }
                 workCode = recordSet.getString("workcode");
+                departmentId = recordSet.getString("departmentid");
                 id = recordSet.getInt("id");
 
                 // 拼接对象
@@ -216,12 +218,13 @@ public class TimedKqmx extends BaseCronJob {
                         statement.setString(72, en.getZ30());
                         statement.setString(73, en.getZ31());
                         statement.setString(74, myMonth);
+                        statement.setString(75, departmentId);
 
-                        statement.setInt(75, modeId);//模块id
-                        statement.setString(76, "1");//创建人id
-                        statement.setString(77, "0");//一个默认值0
-                        statement.setString(78, TimeUtil.getCurrentTimeString().substring(0, 10));
-                        statement.setString(79, TimeUtil.getCurrentTimeString().substring(11));
+                        statement.setInt(76, modeId);//模块id
+                        statement.setString(77, "1");//创建人id
+                        statement.setString(78, "0");//一个默认值0
+                        statement.setString(79, TimeUtil.getCurrentTimeString().substring(0, 10));
+                        statement.setString(80, TimeUtil.getCurrentTimeString().substring(11));
                         statement.executeUpdate();
                     }
                 }

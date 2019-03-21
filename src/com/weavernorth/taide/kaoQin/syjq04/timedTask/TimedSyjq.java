@@ -33,16 +33,19 @@ public class TimedSyjq extends BaseCronJob {
         RecordSet recordSet = new RecordSet();
         RecordSet deleteSet = new RecordSet();
         ConnStatement statement = new ConnStatement();
-        String insertSql = "insert into uf_sap_syjq(xm, ygbh, delx, cxrq, sydes, jldw, jqlx, " +
+        String insertSql = "insert into uf_sap_syjq(xm, ygbh, delx, cxrq, sydes, jldw, jqlx, bm, " +
                 "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) " +
-                "values(?,?,?,?,?,?,?, ?,?,?,?,?)";
+                "values(?,?,?,?,?,?,?, ?,?,?,?,?, ?)";
         try {
             statement.setStatementSql(insertSql);
-            recordSet.executeQuery("select h.id, h.workcode,h.LASTNAME from HRMRESOURCE h where h.status < 4 and length(h.WORKCODE) >= 8");
+            recordSet.executeQuery("select h.id, h.workcode,h.LASTNAME, h.DEPARTMENTID from HRMRESOURCE h where h.status < 4 and length(h.WORKCODE) >= 8");
 
             String workCode; // 工号
+            String departmentId; // 部门id
             while (recordSet.next()) {
                 workCode = recordSet.getString("workcode");
+                departmentId = recordSet.getString("DEPARTMENTID");
+
                 //拼接参数
                 DT_HR0004_IN dt_hr0004_in = new DT_HR0004_IN();
                 dt_hr0004_in.setKTART("");
@@ -56,7 +59,7 @@ public class TimedSyjq extends BaseCronJob {
                 // 调用接口
                 DT_HR0004_OUTOUTPUT[] execute = SyjqUtil.execute(dt_hr0004_in);
                 stnCount += execute.length;
-                if (execute != null && execute.length > 0) {
+                if (execute.length > 0) {
                     // 删除当前人员旧数据
                     deleteSet.execute("delete from uf_sap_syjq where xm = '" + recordSet.getString("id") + "'");
                     for (DT_HR0004_OUTOUTPUT en : execute) {
@@ -65,14 +68,16 @@ public class TimedSyjq extends BaseCronJob {
                         statement.setString(3, en.getKTART()); // 类型转为汉字
                         statement.setString(4, en.getZBEGDA());
                         statement.setString(5, en.getZANZHL());
+
                         statement.setString(6, en.getEITXT());
                         statement.setString(7, changeType(en.getKTART()));
+                        statement.setString(8, departmentId);
 
-                        statement.setInt(8, modeId);//模块id
-                        statement.setString(9, "1");//创建人id
-                        statement.setString(10, "0");//一个默认值0
-                        statement.setString(11, TimeUtil.getCurrentTimeString().substring(0, 10));
-                        statement.setString(12, TimeUtil.getCurrentTimeString().substring(11));
+                        statement.setInt(9, modeId);//模块id
+                        statement.setString(10, "1");//创建人id
+                        statement.setString(11, "0");//一个默认值0
+                        statement.setString(12, TimeUtil.getCurrentTimeString().substring(0, 10));
+                        statement.setString(13, TimeUtil.getCurrentTimeString().substring(11));
                         statement.executeUpdate();
                     }
                 }

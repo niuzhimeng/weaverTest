@@ -30,9 +30,9 @@ public class TimedKqyc extends BaseCronJob {
         RecordSet deleteSet = new RecordSet();
 
         ConnStatement statement = new ConnStatement();
-        String insertSql = "insert into uf_sap_kqyc(xm, gh, rq, wbms, kssj, jssj, sjkssj, sjjssj, " +
+        String insertSql = "insert into uf_sap_kqyc(xm, gh, rq, wbms, kssj, jssj, sjkssj, sjjssj, bm, " +
                 "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) " +
-                "values(?,?,?,?,?,?,?,?, ?,?,?,?,?)";
+                "values(?,?,?,?,?,?,?,?, ?,?,?,?,?,?)";
         try {
             statement.setStatementSql(insertSql);
             DT_HRI006_OUTRETURN[] execute = KqycUtil.execute();
@@ -41,8 +41,17 @@ public class TimedKqyc extends BaseCronJob {
             if (execute.length > 0) {
                 // 删除所有旧的数据
                 deleteSet.execute("delete from uf_sap_kqyc");
+                String id = "";
+                String departmentid = "";
                 for (DT_HRI006_OUTRETURN en : execute) {
-                    statement.setString(1, getIdByWorkCode(en.getPERNR())); // 人员id
+                    // 根据工号查询id与部门id
+                    recordSet.executeQuery("select id, departmentid from HRMRESOURCE where WORKCODE = '" + en.getPERNR() + "'");
+                    if (recordSet.next()) {
+                        id = recordSet.getString("id");
+                        departmentid = recordSet.getString("departmentid");
+                    }
+
+                    statement.setString(1, id); // 人员id
                     statement.setString(2, en.getPERNR()); // 人员编号
                     statement.setString(3, pjDate(en.getDATUM())); // 日期
                     statement.setString(4, en.getZTEXT()); // 文本描述
@@ -51,12 +60,13 @@ public class TimedKqyc extends BaseCronJob {
                     statement.setString(6, en.getSOEND()); // 班次结束时间
                     statement.setString(7, en.getFTKLA()); // 实际开始时间
                     statement.setString(8, en.getTPKLA()); // 实际结束时间
+                    statement.setString(9, departmentid); // 部门
 
-                    statement.setInt(9, modeId);//模块id
-                    statement.setString(10, "1");//创建人id
-                    statement.setString(11, "0");//一个默认值0
-                    statement.setString(12, TimeUtil.getCurrentTimeString().substring(0, 10));
-                    statement.setString(13, TimeUtil.getCurrentTimeString().substring(11));
+                    statement.setInt(10, modeId);//模块id
+                    statement.setString(11, "1");//创建人id
+                    statement.setString(12, "0");//一个默认值0
+                    statement.setString(13, TimeUtil.getCurrentTimeString().substring(0, 10));
+                    statement.setString(14, TimeUtil.getCurrentTimeString().substring(11));
                     statement.executeUpdate();
                 }
             }
@@ -94,15 +104,4 @@ public class TimedKqyc extends BaseCronJob {
         return date;
     }
 
-    /**
-     * 根据工号获取id
-     */
-    private String getIdByWorkCode(String workCode) {
-        String id = "";
-        recordSet.executeQuery("select id from HRMRESOURCE where WORKCODE = '" + workCode + "'");
-        if (recordSet.next()) {
-            id = recordSet.getString("id");
-        }
-        return id;
-    }
 }
