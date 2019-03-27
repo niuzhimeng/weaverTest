@@ -15,6 +15,7 @@ import com.weavernorth.B1.zyml.po.CatalogAll;
 import com.weavernorth.gaoji.vo.OrganizationVo;
 import com.weavernorth.jcoTest.three.ConnPoolThree;
 import com.weavernorth.jcoTest.two.ConnPoolTwo;
+import com.weavernorth.taide.kaoQin.jbxx.myWeb.DT_HRI011_IN;
 import com.weavernorth.taide.kaoQin.syjq04.myWeb.*;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -32,19 +33,16 @@ import org.joda.time.PeriodType;
 import org.junit.Test;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
-import weaver.conn.RecordSet;
 import weaver.docs.webservices.DocAttachment;
 import weaver.docs.webservices.DocInfo;
 import weaver.docs.webservices.DocServiceImpl;
 import weaver.general.AES;
 import weaver.general.StaticObj;
 import weaver.general.TimeUtil;
-import weaver.general.Util;
 import weaver.hrm.User;
 import weaver.hrm.report.schedulediff.HrmScheduleDiffUtil;
 import weaver.hrm.webservice.HrmServiceXmlUtil;
 import weaver.integration.util.HTTPUtil;
-import weaver.mobile.webservices.workflow.WorkflowServiceImpl;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
@@ -71,6 +69,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class MyTest {
+
 
     @Test
     public void test1() {
@@ -1125,10 +1124,21 @@ public class MyTest {
 
     @Test
     public void test54() throws Exception {
-        JCoDestination jCoDestination = com.weavernorth.taide.kaoQin.jcoTimed.ConnPoolThree.getJCoDestination();
-        JCoFunction function = jCoDestination.getRepository().getFunctionTemplate("ZMMI0005").getFunction();
+        System.out.println(diGui(5));
 
+    }
 
+    private int diGui(int n) {
+        if (n < 1) {
+            return 1;
+        }
+        return n * diGui(n - 1);
+    }
+
+    @Test
+    public void test55(){
+        HrmScheduleDiffUtil hrmScheduleDiffUtil = new HrmScheduleDiffUtil();
+       // hrmScheduleDiffUtil.getTotalWorkingDays()
 
     }
 

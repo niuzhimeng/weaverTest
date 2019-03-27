@@ -47,7 +47,7 @@ public class CreatePurchaseImpl implements CreatePurchase {
 
             int i = 0;
             mainField[i] = new WorkflowRequestTableField();
-            mainField[i].setFieldName("sqr");// 字段名
+            mainField[i].setFieldName("sqxm");// 字段名
             mainField[i].setFieldValue(creatorId); // 申请人
             mainField[i].setView(true); //字段是否可见
             mainField[i].setEdit(true); //字段是否可编辑
