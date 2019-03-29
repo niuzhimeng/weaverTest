@@ -1,6 +1,7 @@
 package com.weavernorth.taide.kaoQin.jbxx;
 
 import com.google.gson.Gson;
+import com.weaver.general.TimeUtil;
 import com.weavernorth.taide.kaoQin.jbxx.myWeb.*;
 import com.weavernorth.taide.util.ConnUtil;
 import weaver.conn.RecordSet;
@@ -35,7 +36,6 @@ public class BaseInfoAction extends BaseAction {
                 int mainId = recordSet.getInt("id");
                 String lcbh = recordSet.getString("lcbh"); // 流程编号
                 String workCode = recordSet.getString("sqgh"); // 工号
-                String option = "INS"; // 操作类型 INS/MOD
 
                 // 查询明细表 - 个人信息
                 RecordSet mxSet = new RecordSet();
@@ -43,14 +43,16 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP0002[] dt_hri011_indataitemsp0002s = new DT_HRI011_INDATAITEMSP0002[mxSet.getCounts()];
                 int i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "SUBTY");
+
                     DT_HRI011_INDATAITEMSP0002 dt_hri011_indataitemsp0002 = new DT_HRI011_INDATAITEMSP0002();
                     dt_hri011_indataitemsp0002.setPERNR(workCode); // 工号
                     dt_hri011_indataitemsp0002.setBEGDA(changeDays(mxSet.getString("BEGDA"))); // 开始日期
-                    dt_hri011_indataitemsp0002.setENDDA(changeDays(mxSet.getString("ENDDA"))); // 结束日期
-                    dt_hri011_indataitemsp0002.setSUBTY(mxSet.getString("FATXT")); //子信息类型
-                    dt_hri011_indataitemsp0002.setSEQNR(""); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp0002.setENDDA(changeDays(usrties[2])); // 结束日期
+                    dt_hri011_indataitemsp0002.setSUBTY(usrties[3]); //子信息类型
+                    dt_hri011_indataitemsp0002.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
-                    dt_hri011_indataitemsp0002.setOPTION(option); // INS/MOD
+                    dt_hri011_indataitemsp0002.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp0002.setFATXT(mxSet.getString("FATXT")); // 婚姻状况
                     dt_hri011_indataitemsp0002.setANZKD(mxSet.getString("ANZKD")); // 子女数目
 
@@ -68,16 +70,18 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP0015[] dt_hri011_indataitemsp0015s = new DT_HRI011_INDATAITEMSP0015[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "USRTY");
+
                     DT_HRI011_INDATAITEMSP0015 dt_hri011_indataitemsp0015 = new DT_HRI011_INDATAITEMSP0015();
                     dt_hri011_indataitemsp0015.setPERNR(workCode); // 员工编号
                     dt_hri011_indataitemsp0015.setBEGDA(changeDays(mxSet.getString("BEGDA"))); // 开始日期
-                    dt_hri011_indataitemsp0015.setENDDA(changeDays(mxSet.getString("ENDDA"))); // 结束日期
+                    dt_hri011_indataitemsp0015.setENDDA(changeDays(usrties[2])); // 结束日期
                     dt_hri011_indataitemsp0015.setUSRTY(mxSet.getString("USRTY")); //通讯类型
                     dt_hri011_indataitemsp0015.setUSRID(mxSet.getString("USRID")); // 标识号
 
-                    dt_hri011_indataitemsp0015.setSUBTY(mxSet.getString("USRTY")); // 子信息类型(填通讯类型)
-                    dt_hri011_indataitemsp0015.setSEQNR(mxSet.getString("")); // 有相同代码的信息类型记录数
-                    dt_hri011_indataitemsp0015.setOPTION(option); // INS/MOD
+                    dt_hri011_indataitemsp0015.setSUBTY(usrties[3]); // 子信息类型(填通讯类型)
+                    dt_hri011_indataitemsp0015.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp0015.setOPTION(usrties[0]); // INS/MOD
 
                     dt_hri011_indataitemsp0015.setAdditional1("");
                     dt_hri011_indataitemsp0015.setAdditional2("");
@@ -92,14 +96,16 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP0021[] dt_hri011_indataitemsp0021s = new DT_HRI011_INDATAITEMSP0021[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "FAMSA");
+
                     DT_HRI011_INDATAITEMSP0021 dt_hri011_indataitemsp0021 = new DT_HRI011_INDATAITEMSP0021();
                     dt_hri011_indataitemsp0021.setPERNR(workCode); // 工号
                     dt_hri011_indataitemsp0021.setBEGDA(changeDays(mxSet.getString("BEGDA"))); // 开始日期
-                    dt_hri011_indataitemsp0021.setENDDA(changeDays(mxSet.getString("ENDDA"))); // 结束日期
-                    dt_hri011_indataitemsp0021.setSUBTY(mxSet.getString("FAMSA")); //子信息类型
-                    dt_hri011_indataitemsp0021.setSEQNR(""); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp0021.setENDDA(changeDays(usrties[2])); // 结束日期
+                    dt_hri011_indataitemsp0021.setSUBTY(usrties[3]); //子信息类型
+                    dt_hri011_indataitemsp0021.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
-                    dt_hri011_indataitemsp0021.setOPTION(option); // INS/MOD
+                    dt_hri011_indataitemsp0021.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp0021.setFAMSA(mxSet.getString("FAMSA")); // 成员
                     dt_hri011_indataitemsp0021.setFANAM(mxSet.getString("FANAM")); // 姓名
                     dt_hri011_indataitemsp0021.setFASEX(mxSet.getString("FASEX")); // 性别
@@ -123,14 +129,16 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP0022[] dt_hri011_indataitemsp0022s = new DT_HRI011_INDATAITEMSP0022[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "SLART");
+
                     DT_HRI011_INDATAITEMSP0022 dt_hri011_indataitemsp0022 = new DT_HRI011_INDATAITEMSP0022();
                     dt_hri011_indataitemsp0022.setBEGDA(changeDays(mxSet.getString("BEGDA")));
-                    dt_hri011_indataitemsp0022.setENDDA(changeDays(mxSet.getString("ENDDA")));
+                    dt_hri011_indataitemsp0022.setENDDA(changeDays(usrties[2]));
                     dt_hri011_indataitemsp0022.setPERNR(workCode);
-                    dt_hri011_indataitemsp0022.setSUBTY(mxSet.getString("SLART")); // 子信息类型(填教育类型)
-                    dt_hri011_indataitemsp0022.setSEQNR(""); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp0022.setSUBTY(usrties[3]); // 子信息类型(填教育类型)
+                    dt_hri011_indataitemsp0022.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
-                    dt_hri011_indataitemsp0022.setOPTION(option);
+                    dt_hri011_indataitemsp0022.setOPTION(usrties[0]);
                     dt_hri011_indataitemsp0022.setSLART(mxSet.getString("SLART")); // 教育类型
                     dt_hri011_indataitemsp0022.setINSTI(mxSet.getString("INSTI")); // 毕业院校
                     dt_hri011_indataitemsp0022.setSLAND(mxSet.getString("SLAND")); // 国家
@@ -161,14 +169,16 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP9001[] dt_hri011_indataitemsp9001s = new DT_HRI011_INDATAITEMSP9001[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "ZCGLX");
+
                     DT_HRI011_INDATAITEMSP9001 dt_hri011_indataitemsp9001 = new DT_HRI011_INDATAITEMSP9001();
                     dt_hri011_indataitemsp9001.setPERNR(workCode);
                     dt_hri011_indataitemsp9001.setBEGDA(changeDays(mxSet.getString("BEGDA")));
-                    dt_hri011_indataitemsp9001.setENDDA(changeDays(mxSet.getString("ENDDA")));
-                    dt_hri011_indataitemsp9001.setSUBTY(mxSet.getString("ZCGLX")); // 子信息类型(填成果类型)
-                    dt_hri011_indataitemsp9001.setSEQNR(""); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp9001.setENDDA(changeDays(usrties[2]));
+                    dt_hri011_indataitemsp9001.setSUBTY(usrties[3]); // 子信息类型(填成果类型)
+                    dt_hri011_indataitemsp9001.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
-                    dt_hri011_indataitemsp9001.setOPTION(option); // INS/MOD
+                    dt_hri011_indataitemsp9001.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9001.setZCGMC(mxSet.getString("ZCGMC")); // 成果名称
                     dt_hri011_indataitemsp9001.setZFBSJ(mxSet.getString("ZFBSJ")); // 发表或出版时间
                     dt_hri011_indataitemsp9001.setZFBQK(mxSet.getString("ZFBQK")); // 发表期刊或出版社
@@ -188,14 +198,16 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP9002[] dt_hri011_indataitemsp9002s = new DT_HRI011_INDATAITEMSP9002[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "ZZGDJ");
+
                     DT_HRI011_INDATAITEMSP9002 dt_hri011_indataitemsp9002 = new DT_HRI011_INDATAITEMSP9002();
                     dt_hri011_indataitemsp9002.setPERNR(workCode);
                     dt_hri011_indataitemsp9002.setBEGDA(changeDays(mxSet.getString("BEGDA")));
-                    dt_hri011_indataitemsp9002.setENDDA(changeDays(mxSet.getString("ENDDA")));
-                    dt_hri011_indataitemsp9002.setSUBTY(mxSet.getString("ZZGDJ")); // 子信息类型(填资格等级)
-                    dt_hri011_indataitemsp9002.setSEQNR(""); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp9002.setENDDA(changeDays(usrties[2]));
+                    dt_hri011_indataitemsp9002.setSUBTY(usrties[3]); // 子信息类型(填资格等级)
+                    dt_hri011_indataitemsp9002.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
-                    dt_hri011_indataitemsp9002.setOPTION(option); // INS/MOD
+                    dt_hri011_indataitemsp9002.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9002.setZZGMC(mxSet.getString("ZZGMC")); // 资格名称
                     dt_hri011_indataitemsp9002.setZHDSJ(mxSet.getString("ZHDSJ")); // 获得时间
                     dt_hri011_indataitemsp9002.setZZSBH(mxSet.getString("ZZSBH")); // 证书编号
@@ -216,14 +228,16 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP9003[] dt_hri011_indataitemsp9003s = new DT_HRI011_INDATAITEMSP9003[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "ZZCDJ");
+
                     DT_HRI011_INDATAITEMSP9003 dt_hri011_indataitemsp9003 = new DT_HRI011_INDATAITEMSP9003();
                     dt_hri011_indataitemsp9003.setPERNR(workCode);
                     dt_hri011_indataitemsp9003.setBEGDA(changeDays(mxSet.getString("BEGDA")));
-                    dt_hri011_indataitemsp9003.setENDDA(changeDays(mxSet.getString("ENDDA")));
-                    dt_hri011_indataitemsp9003.setSUBTY(mxSet.getString("ZZCDJ")); // 子信息类型(填职称等级)
-                    dt_hri011_indataitemsp9003.setSEQNR(""); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp9003.setENDDA(changeDays(usrties[2]));
+                    dt_hri011_indataitemsp9003.setSUBTY(usrties[3]); // 子信息类型(填职称等级)
+                    dt_hri011_indataitemsp9003.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
-                    dt_hri011_indataitemsp9003.setOPTION(option); // INS/MOD
+                    dt_hri011_indataitemsp9003.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9003.setZZCMC(mxSet.getString("ZZCMC")); // 职称名称
                     dt_hri011_indataitemsp9003.setZSYSJ(mxSet.getString("ZSYSJ")); // 职称授予时间
                     dt_hri011_indataitemsp9003.setZZCZSH(mxSet.getString("ZZCZSH")); // 证书号
@@ -244,14 +258,16 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP9004[] dt_hri011_indataitemsp9004s = new DT_HRI011_INDATAITEMSP9004[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "ZRYLB");
+
                     DT_HRI011_INDATAITEMSP9004 dt_hri011_indataitemsp9004 = new DT_HRI011_INDATAITEMSP9004();
                     dt_hri011_indataitemsp9004.setPERNR(workCode);
                     dt_hri011_indataitemsp9004.setBEGDA(changeDays(mxSet.getString("BEGDA")));
-                    dt_hri011_indataitemsp9004.setENDDA(changeDays(mxSet.getString("ENDDA")));
-                    dt_hri011_indataitemsp9004.setSUBTY(mxSet.getString("ZRYLB")); // 子信息类型(填荣誉类别)
-                    dt_hri011_indataitemsp9004.setSEQNR(""); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp9004.setENDDA(changeDays(usrties[2]));
+                    dt_hri011_indataitemsp9004.setSUBTY(usrties[3]); // 子信息类型(填荣誉类别)
+                    dt_hri011_indataitemsp9004.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
-                    dt_hri011_indataitemsp9004.setOPTION(option); // INS/MOD
+                    dt_hri011_indataitemsp9004.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9004.setZRYLB(mxSet.getString("ZRYLB")); // 荣誉类别
                     dt_hri011_indataitemsp9004.setZRYMC(mxSet.getString("ZRYMC")); // 荣誉名称
                     dt_hri011_indataitemsp9004.setZHDSJ(mxSet.getString("ZHDSJ")); // 荣誉获得时间
@@ -276,14 +292,16 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP9007[] dt_hri011_indataitemsp9007s = new DT_HRI011_INDATAITEMSP9007[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "ZYBRGX");
+
                     DT_HRI011_INDATAITEMSP9007 dt_hri011_indataitemsp9007 = new DT_HRI011_INDATAITEMSP9007();
                     dt_hri011_indataitemsp9007.setPERNR(workCode);
                     dt_hri011_indataitemsp9007.setBEGDA(changeDays(mxSet.getString("BEGDA")));
-                    dt_hri011_indataitemsp9007.setENDDA(changeDays(mxSet.getString("ENDDA")));
-                    dt_hri011_indataitemsp9007.setSUBTY(mxSet.getString("ZYBRGX")); // 子信息类型(填与本人关系)
-                    dt_hri011_indataitemsp9007.setSEQNR(""); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp9007.setENDDA(changeDays(usrties[2]));
+                    dt_hri011_indataitemsp9007.setSUBTY(usrties[3]); // 子信息类型(填与本人关系)
+                    dt_hri011_indataitemsp9007.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
-                    dt_hri011_indataitemsp9007.setOPTION(option); // INS/MOD
+                    dt_hri011_indataitemsp9007.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9007.setZJJLXRXM(mxSet.getString("ZJJLXRXM")); // 紧急联系人姓名
                     dt_hri011_indataitemsp9007.setZJJLXRDH(mxSet.getString("ZJJLXRDH")); // 紧急联系人电话
                     dt_hri011_indataitemsp9007.setZYBRGX(mxSet.getString("ZYBRGX")); // 与本人关系
@@ -302,14 +320,16 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP9008[] dtHri011Indataitemsp9008s = new DT_HRI011_INDATAITEMSP9008[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "ZPXLX");
+
                     DT_HRI011_INDATAITEMSP9008 dt_hri011_indataitemsp9008 = new DT_HRI011_INDATAITEMSP9008();
                     dt_hri011_indataitemsp9008.setPERNR(workCode);
                     dt_hri011_indataitemsp9008.setBEGDA(changeDays(mxSet.getString("BEGDA")));
-                    dt_hri011_indataitemsp9008.setENDDA(changeDays(mxSet.getString("ENDDA")));
-                    dt_hri011_indataitemsp9008.setSUBTY(mxSet.getString("ZPXLX")); // 子信息类型(填培训类型)
-                    dt_hri011_indataitemsp9008.setSEQNR(""); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp9008.setENDDA(changeDays(usrties[2]));
+                    dt_hri011_indataitemsp9008.setSUBTY(usrties[3]); // 子信息类型(填培训类型)
+                    dt_hri011_indataitemsp9008.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
-                    dt_hri011_indataitemsp9008.setOPTION(option); // INS/MOD
+                    dt_hri011_indataitemsp9008.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9008.setZPXLX(mxSet.getString("ZPXLX")); // 培训类型
                     dt_hri011_indataitemsp9008.setZPXKC(mxSet.getString("ZPXKC")); // 培训课程
                     dt_hri011_indataitemsp9008.setZPXJG(mxSet.getString("ZPXJG")); // 培训机构
@@ -329,14 +349,16 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP9011[] dt_hri011_indataitemsp9011s = new DT_HRI011_INDATAITEMSP9011[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "ZDZLX");
+
                     DT_HRI011_INDATAITEMSP9011 dt_hri011_indataitemsp9011 = new DT_HRI011_INDATAITEMSP9011();
                     dt_hri011_indataitemsp9011.setPERNR(workCode);
                     dt_hri011_indataitemsp9011.setBEGDA(changeDays(mxSet.getString("BEGDA")));
-                    dt_hri011_indataitemsp9011.setENDDA(changeDays(mxSet.getString("ENDDA")));
-                    dt_hri011_indataitemsp9011.setSUBTY(mxSet.getString("ZDZLX")); // 子信息类型(填地址类型)
-                    dt_hri011_indataitemsp9011.setSEQNR(""); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp9011.setENDDA(changeDays(usrties[2]));
+                    dt_hri011_indataitemsp9011.setSUBTY(usrties[3]); // 子信息类型(填地址类型)
+                    dt_hri011_indataitemsp9011.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
-                    dt_hri011_indataitemsp9011.setOPTION(option); // INS/MOD
+                    dt_hri011_indataitemsp9011.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9011.setZDZLX(mxSet.getString("ZDZLX")); // 地址类型
                     dt_hri011_indataitemsp9011.setLAND1(mxSet.getString("LAND1")); //国家代码
                     dt_hri011_indataitemsp9011.setZSHENG(mxSet.getString("ZSHENG")); // 省份
@@ -360,14 +382,16 @@ public class BaseInfoAction extends BaseAction {
                 DT_HRI011_INDATAITEMSP9012[] dt_hri011_indataitemsp9012s = new DT_HRI011_INDATAITEMSP9012[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
+                    String[] usrties = fuZhi(mxSet, "ZYUZH");
+
                     DT_HRI011_INDATAITEMSP9012 dt_hri011_indataitemsp9012 = new DT_HRI011_INDATAITEMSP9012();
                     dt_hri011_indataitemsp9012.setPERNR(workCode);
                     dt_hri011_indataitemsp9012.setBEGDA(changeDays(mxSet.getString("BEGDA")));
-                    dt_hri011_indataitemsp9012.setENDDA(changeDays(mxSet.getString("ENDDA")));
-                    dt_hri011_indataitemsp9012.setSUBTY(mxSet.getString("ZYUZH")); // 子信息类型(填语种)
-                    dt_hri011_indataitemsp9012.setSEQNR(""); // 有相同代码的信息类型记录数
+                    dt_hri011_indataitemsp9012.setENDDA(changeDays(usrties[2]));
+                    dt_hri011_indataitemsp9012.setSUBTY(usrties[3]); // 子信息类型(填语种)
+                    dt_hri011_indataitemsp9012.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
-                    dt_hri011_indataitemsp9012.setOPTION(option); // INS/MOD
+                    dt_hri011_indataitemsp9012.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9012.setZYUZH(mxSet.getString("ZYUZH")); // 语种
                     dt_hri011_indataitemsp9012.setZSLCD(mxSet.getString("ZSLCD")); // 语种熟练程度
                     dt_hri011_indataitemsp9012.setZZSMC(mxSet.getString("ZZSMC")); // 证书名称
@@ -449,6 +473,7 @@ public class BaseInfoAction extends BaseAction {
                     return "0";
                 }
             }
+            this.writeLog("总部新入职人员信息录入 END： " + TimeUtil.getCurrentTimeString());
         } catch (Exception e) {
             this.writeLog("总部新入职人员信息录入 异常： " + e);
             requestInfo.getRequestManager().setMessageid("110000");
@@ -457,6 +482,41 @@ public class BaseInfoAction extends BaseAction {
         }
         return "1";
     }
+
+    /**
+     * @param mxSet 明细表当前RecordSet
+     * @param type  excel中对应字段名，每个明细表不一样
+     * @return
+     */
+    private String[] fuZhi(RecordSet mxSet, String type) {
+
+        String czlx = mxSet.getString("czlx");// 操作类型
+
+        String option;  // 操作类型 INS/MOD
+        String seqnr = "";
+        String endda; // 结束日期
+        String subty = "";
+        if ("0".equals(czlx)) {
+            option = "INS";
+            seqnr = "";
+            endda = "99991231";
+            if ("0".equals(mxSet.getString("sfxy"))) {
+                subty = mxSet.getString(type);
+            }
+        } else {
+            option = "MOD";
+            if ("0".equals(mxSet.getString("sfjl"))) {
+                seqnr = mxSet.getString("seqnr");
+            }
+            endda = mxSet.getString("ENDDA");
+
+            if ("0".equals(mxSet.getString("sfxy"))) {
+                subty = mxSet.getString("SUBTY");
+            }
+        }
+        return new String[]{option, seqnr, endda, subty};
+    }
+
 
     /**
      * 日期去掉横杠

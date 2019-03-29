@@ -15,7 +15,6 @@ import com.weavernorth.B1.zyml.po.CatalogAll;
 import com.weavernorth.gaoji.vo.OrganizationVo;
 import com.weavernorth.jcoTest.three.ConnPoolThree;
 import com.weavernorth.jcoTest.two.ConnPoolTwo;
-import com.weavernorth.taide.kaoQin.jbxx.myWeb.DT_HRI011_IN;
 import com.weavernorth.taide.kaoQin.syjq04.myWeb.*;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -1136,9 +1135,7 @@ public class MyTest {
     }
 
     @Test
-    public void test55(){
-
-
+    public void test55() {
 
     }
 
