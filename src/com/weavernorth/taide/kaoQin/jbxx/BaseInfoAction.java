@@ -147,12 +147,12 @@ public class BaseInfoAction extends BaseAction {
                     dt_hri011_indataitemsp0022.setFACH3(mxSet.getString("FACH3")); // 所学专业
                     dt_hri011_indataitemsp0022.setACAQU(mxSet.getString("ACAQU")); // 学历
                     dt_hri011_indataitemsp0022.setACQID(mxSet.getString("ACQID")); // 学历证书编号
-                    dt_hri011_indataitemsp0022.setACAQD(mxSet.getString("ACAQD")); // 学历授予日期
+                    dt_hri011_indataitemsp0022.setACAQD(changeDays(mxSet.getString("ACAQD"))); // 学历授予日期
                     dt_hri011_indataitemsp0022.setACAQM(mxSet.getString("ACAQM")); // 最高学历标识
 
                     dt_hri011_indataitemsp0022.setSLABS(mxSet.getString("SLABS")); // 学位
                     dt_hri011_indataitemsp0022.setACCID(mxSet.getString("ACCID")); // 学位证书编号
-                    dt_hri011_indataitemsp0022.setACACD(mxSet.getString("ACACD")); // 学位授予日期
+                    dt_hri011_indataitemsp0022.setACACD(changeDays(mxSet.getString("ACACD"))); // 学位授予日期
                     dt_hri011_indataitemsp0022.setACACM(mxSet.getString("ACACM")); // 最高学位标识
 
                     dt_hri011_indataitemsp0022.setAdditional1("");
@@ -180,7 +180,7 @@ public class BaseInfoAction extends BaseAction {
 
                     dt_hri011_indataitemsp9001.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9001.setZCGMC(mxSet.getString("ZCGMC")); // 成果名称
-                    dt_hri011_indataitemsp9001.setZFBSJ(mxSet.getString("ZFBSJ")); // 发表或出版时间
+                    dt_hri011_indataitemsp9001.setZFBSJ(changeDays(mxSet.getString("ZFBSJ"))); // 发表或出版时间
                     dt_hri011_indataitemsp9001.setZFBQK(mxSet.getString("ZFBQK")); // 发表期刊或出版社
                     dt_hri011_indataitemsp9001.setZCGLX(mxSet.getString("ZCGLX")); // 成果类型
 
@@ -209,7 +209,7 @@ public class BaseInfoAction extends BaseAction {
 
                     dt_hri011_indataitemsp9002.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9002.setZZGMC(mxSet.getString("ZZGMC")); // 资格名称
-                    dt_hri011_indataitemsp9002.setZHDSJ(mxSet.getString("ZHDSJ")); // 获得时间
+                    dt_hri011_indataitemsp9002.setZHDSJ(changeDays(mxSet.getString("ZHDSJ"))); // 获得时间
                     dt_hri011_indataitemsp9002.setZZSBH(mxSet.getString("ZZSBH")); // 证书编号
                     dt_hri011_indataitemsp9002.setZZGDJ(mxSet.getString("ZZGDJ")); // 资格等级
 
@@ -239,7 +239,7 @@ public class BaseInfoAction extends BaseAction {
 
                     dt_hri011_indataitemsp9003.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9003.setZZCMC(mxSet.getString("ZZCMC")); // 职称名称
-                    dt_hri011_indataitemsp9003.setZSYSJ(mxSet.getString("ZSYSJ")); // 职称授予时间
+                    dt_hri011_indataitemsp9003.setZSYSJ(changeDays(mxSet.getString("ZSYSJ"))); // 职称授予时间
                     dt_hri011_indataitemsp9003.setZZCZSH(mxSet.getString("ZZCZSH")); // 证书号
                     dt_hri011_indataitemsp9003.setZZCDJ(mxSet.getString("ZZCDJ")); // 职称等级
 
@@ -270,11 +270,11 @@ public class BaseInfoAction extends BaseAction {
                     dt_hri011_indataitemsp9004.setOPTION(usrties[0]); // INS/MOD
                     dt_hri011_indataitemsp9004.setZRYLB(mxSet.getString("ZRYLB")); // 荣誉类别
                     dt_hri011_indataitemsp9004.setZRYMC(mxSet.getString("ZRYMC")); // 荣誉名称
-                    dt_hri011_indataitemsp9004.setZHDSJ(mxSet.getString("ZHDSJ")); // 荣誉获得时间
+                    dt_hri011_indataitemsp9004.setZHDSJ(changeDays(mxSet.getString("ZHDSJ"))); // 荣誉获得时间
                     dt_hri011_indataitemsp9004.setZSYDW(mxSet.getString("ZSYDW")); // 荣誉授予单位
 
                     dt_hri011_indataitemsp9004.setZSYJG(mxSet.getString("ZSYJG")); // 授予机构
-                    dt_hri011_indataitemsp9004.setZSYSJ(mxSet.getString("ZSYSJ")); // 授予时间
+                    dt_hri011_indataitemsp9004.setZSYSJ(changeDays(mxSet.getString("ZSYSJ"))); // 授予时间
                     dt_hri011_indataitemsp9004.setZPZWJ(mxSet.getString("ZPZWJ")); // 批准文件
                     dt_hri011_indataitemsp9004.setZBEIZ(mxSet.getString("ZBEIZ")); // 备注
 
@@ -378,7 +378,7 @@ public class BaseInfoAction extends BaseAction {
                 }
 
                 // 查询明细表 - 语言能力
-                mxSet.executeQuery("select * from " + tableName + "_dt11 where mainid = " + mainId);
+                mxSet.executeQuery("select * from " + tableName + "_dt12 where mainid = " + mainId);
                 DT_HRI011_INDATAITEMSP9012[] dt_hri011_indataitemsp9012s = new DT_HRI011_INDATAITEMSP9012[mxSet.getCounts()];
                 i = 0;
                 while (mxSet.next()) {
@@ -397,7 +397,7 @@ public class BaseInfoAction extends BaseAction {
                     dt_hri011_indataitemsp9012.setZZSMC(mxSet.getString("ZZSMC")); // 证书名称
                     dt_hri011_indataitemsp9012.setZZSBH(mxSet.getString("ZZSBH")); // 证书编号
 
-                    dt_hri011_indataitemsp9012.setZHZRQ(mxSet.getString("ZHZRQ")); // 获证日期
+                    dt_hri011_indataitemsp9012.setZHZRQ(changeDays(mxSet.getString("ZHZRQ"))); // 获证日期
                     dt_hri011_indataitemsp9012.setAdditional1("");
                     dt_hri011_indataitemsp9012.setAdditional2("");
                     dt_hri011_indataitemsp9012.setAdditional3("");
