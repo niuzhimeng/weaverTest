@@ -36,6 +36,7 @@ public class LiZhiBdAction extends BaseAction {
 
                 String czlx = recordSet.getString("czlx");// 操作类型
                 String czyy = recordSet.getString("czyy");// 操作原因
+                String lzbz = recordSet.getString("lzbz");// 备注
 
                 // 拼接对象
                 DT_HRI001_INDATAITEMS dt_hri001_indataitems1 = new DT_HRI001_INDATAITEMS();
@@ -48,7 +49,7 @@ public class LiZhiBdAction extends BaseAction {
                 dt_hri001_indataitems1.setZZJSJ(""); // 直接上级编号
                 dt_hri001_indataitems1.setZLZLX(lzlx); // 离职类型
                 dt_hri001_indataitems1.setZLZYY(lzyy); // 离职原因
-                dt_hri001_indataitems1.setZBEIZ(""); // 备注
+                dt_hri001_indataitems1.setZBEIZ(lzbz); // 备注
 
                 dt_hri001_indataitems1.setAdditional1("");
                 dt_hri001_indataitems1.setAdditional2("");

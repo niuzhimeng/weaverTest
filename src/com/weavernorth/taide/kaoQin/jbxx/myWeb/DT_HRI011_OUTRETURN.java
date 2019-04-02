@@ -18,7 +18,7 @@ public class DT_HRI011_OUTRETURN  implements java.io.Serializable {
     private java.lang.String inputDate;
 
     /* 导入结果 */
-    private java.lang.String MSG_TYP;
+    private java.lang.String MSG_TYPE;
 
     /* 异常原因 */
     private java.lang.String MESSAGE;
@@ -36,14 +36,14 @@ public class DT_HRI011_OUTRETURN  implements java.io.Serializable {
            java.lang.String PERNR,
            java.lang.String ZINFOTYPE,
            java.lang.String inputDate,
-           java.lang.String MSG_TYP,
+           java.lang.String MSG_TYPE,
            java.lang.String MESSAGE,
            java.lang.String additional1,
            java.lang.String additional2) {
            this.PERNR = PERNR;
            this.ZINFOTYPE = ZINFOTYPE;
            this.inputDate = inputDate;
-           this.MSG_TYP = MSG_TYP;
+           this.MSG_TYPE = MSG_TYPE;
            this.MESSAGE = MESSAGE;
            this.additional1 = additional1;
            this.additional2 = additional2;
@@ -111,22 +111,22 @@ public class DT_HRI011_OUTRETURN  implements java.io.Serializable {
 
 
     /**
-     * Gets the MSG_TYP value for this DT_HRI011_OUTRETURN.
+     * Gets the MSG_TYPE value for this DT_HRI011_OUTRETURN.
      * 
-     * @return MSG_TYP   * 导入结果
+     * @return MSG_TYPE   * 导入结果
      */
-    public java.lang.String getMSG_TYP() {
-        return MSG_TYP;
+    public java.lang.String getMSG_TYPE() {
+        return MSG_TYPE;
     }
 
 
     /**
-     * Sets the MSG_TYP value for this DT_HRI011_OUTRETURN.
+     * Sets the MSG_TYPE value for this DT_HRI011_OUTRETURN.
      * 
-     * @param MSG_TYP   * 导入结果
+     * @param MSG_TYPE   * 导入结果
      */
-    public void setMSG_TYP(java.lang.String MSG_TYP) {
-        this.MSG_TYP = MSG_TYP;
+    public void setMSG_TYPE(java.lang.String MSG_TYPE) {
+        this.MSG_TYPE = MSG_TYPE;
     }
 
 
@@ -210,9 +210,9 @@ public class DT_HRI011_OUTRETURN  implements java.io.Serializable {
             ((this.inputDate==null && other.getInputDate()==null) || 
              (this.inputDate!=null &&
               this.inputDate.equals(other.getInputDate()))) &&
-            ((this.MSG_TYP==null && other.getMSG_TYP()==null) || 
-             (this.MSG_TYP!=null &&
-              this.MSG_TYP.equals(other.getMSG_TYP()))) &&
+            ((this.MSG_TYPE==null && other.getMSG_TYPE()==null) || 
+             (this.MSG_TYPE!=null &&
+              this.MSG_TYPE.equals(other.getMSG_TYPE()))) &&
             ((this.MESSAGE==null && other.getMESSAGE()==null) || 
              (this.MESSAGE!=null &&
               this.MESSAGE.equals(other.getMESSAGE()))) &&
@@ -242,8 +242,8 @@ public class DT_HRI011_OUTRETURN  implements java.io.Serializable {
         if (getInputDate() != null) {
             _hashCode += getInputDate().hashCode();
         }
-        if (getMSG_TYP() != null) {
-            _hashCode += getMSG_TYP().hashCode();
+        if (getMSG_TYPE() != null) {
+            _hashCode += getMSG_TYPE().hashCode();
         }
         if (getMESSAGE() != null) {
             _hashCode += getMESSAGE().hashCode();
@@ -283,8 +283,8 @@ public class DT_HRI011_OUTRETURN  implements java.io.Serializable {
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("MSG_TYP");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "MSG_TYP"));
+        elemField.setFieldName("MSG_TYPE");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "MSG_TYPE"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);

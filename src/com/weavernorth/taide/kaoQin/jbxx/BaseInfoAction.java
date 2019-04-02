@@ -133,7 +133,7 @@ public class BaseInfoAction extends BaseAction {
 
                     DT_HRI011_INDATAITEMSP0022 dt_hri011_indataitemsp0022 = new DT_HRI011_INDATAITEMSP0022();
                     dt_hri011_indataitemsp0022.setBEGDA(changeDays(mxSet.getString("BEGDA")));
-                    dt_hri011_indataitemsp0022.setENDDA(changeDays(usrties[2]));
+                    dt_hri011_indataitemsp0022.setENDDA(changeDays(mxSet.getString("ENDDA")));
                     dt_hri011_indataitemsp0022.setPERNR(workCode);
                     dt_hri011_indataitemsp0022.setSUBTY(usrties[3]); // 子信息类型(填教育类型)
                     dt_hri011_indataitemsp0022.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
@@ -325,7 +325,7 @@ public class BaseInfoAction extends BaseAction {
                     DT_HRI011_INDATAITEMSP9008 dt_hri011_indataitemsp9008 = new DT_HRI011_INDATAITEMSP9008();
                     dt_hri011_indataitemsp9008.setPERNR(workCode);
                     dt_hri011_indataitemsp9008.setBEGDA(changeDays(mxSet.getString("BEGDA")));
-                    dt_hri011_indataitemsp9008.setENDDA(changeDays(usrties[2]));
+                    dt_hri011_indataitemsp9008.setENDDA(changeDays(mxSet.getString("ENDDA")));
                     dt_hri011_indataitemsp9008.setSUBTY(usrties[3]); // 子信息类型(填培训类型)
                     dt_hri011_indataitemsp9008.setSEQNR(usrties[1]); // 有相同代码的信息类型记录数
 
@@ -451,11 +451,11 @@ public class BaseInfoAction extends BaseAction {
                 StringBuilder builder = new StringBuilder();
                 StringBuilder logBuilder = new StringBuilder();
                 for (DT_HRI011_OUTRETURN en : returns) {
-                    if ("E".equals(en.getMSG_TYP())) {
-                        builder.append(en.getMSG_TYP()).append(": ").append(en.getMESSAGE()).append("</br>");
+                    if ("E".equals(en.getMSG_TYPE())) {
+                        builder.append(en.getMSG_TYPE()).append(": ").append(en.getMESSAGE()).append("</br>");
                     }
-                    logBuilder.append("sap返回信息： ").append(en.getMSG_TYP()).append(": ").append(en.getMESSAGE()).append(";");
-                    this.writeLog("sap返回信息： " + en.getMSG_TYP() + ": " + en.getMESSAGE());
+                    logBuilder.append("sap返回信息： ").append(en.getMSG_TYPE()).append(": ").append(en.getMESSAGE()).append(";");
+                    this.writeLog("sap返回信息： " + en.getMSG_TYPE() + ": " + en.getMESSAGE());
                 }
 
                 // 返回标记
