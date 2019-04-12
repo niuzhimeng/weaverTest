@@ -126,6 +126,7 @@ public class FeiShengChanAction extends BaseAction {
                 }
 
                 // 将返回信息插入日志
+                this.writeLog("logBuilder: " + logBuilder.toString() + "流程编号： " + lcbh);
                 ConnUtil.insertLogCoon(logBuilder.toString(), lcbh, sendJson, flag);
 
                 if (builder.length() > 0) {
@@ -139,6 +140,7 @@ public class FeiShengChanAction extends BaseAction {
                 String banfn = returns[0].getBANFN();
                 detailSet.execute("update " + tableName + " set BANFN = '" + banfn + "' where requestid = " + requestId);
 
+                this.writeLog("非生产物料请购单 action 结束 " + TimeUtil.getCurrentTimeString());
             } catch (Exception e) {
                 this.writeLog("非生产物料请购单 action 异常： " + e);
                 ConnUtil.insertLogCoon("接口异常", lcbh, sendJson, "E");

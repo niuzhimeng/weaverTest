@@ -1136,9 +1136,9 @@ public class MyTest {
 
     @Test
     public void test55() {
-
+        String returns = HTTPUtil.doGet("http://t.beisendata.tuanche.net/organization/getOrganizationResultList");
+        System.out.println(returns);
     }
-
 
 }
 

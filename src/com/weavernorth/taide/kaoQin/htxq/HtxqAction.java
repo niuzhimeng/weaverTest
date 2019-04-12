@@ -107,11 +107,11 @@ public class HtxqAction extends BaseAction {
                     StringBuilder builder = new StringBuilder();
                     StringBuilder logBuilder = new StringBuilder();
                     for (DT_HRI010_OUTRETURN en : returns) {
-                        if ("E".equals(en.getInputResult())) {
-                            builder.append(en.getInputResult()).append(": ").append(en.getReason()).append("</br>");
+                        if ("E".equals(en.getMSG_TYPE())) {
+                            builder.append(en.getMSG_TYPE()).append(": ").append(en.getReason()).append("</br>");
                         }
-                        logBuilder.append("sap返回信息： ").append(en.getInputResult()).append(": ").append(en.getReason()).append(";");
-                        this.writeLog("sap返回信息： " + en.getInputResult() + ": " + en.getReason());
+                        logBuilder.append("sap返回信息： ").append(en.getMSG_TYPE()).append(": ").append(en.getReason()).append(";");
+                        this.writeLog("sap返回信息： " + en.getMSG_TYPE() + ": " + en.getReason());
                     }
 
                     // 返回标记

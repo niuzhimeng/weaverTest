@@ -7,7 +7,7 @@
 
 package com.weavernorth.taide.kaoQin.htxq.myWeb;
 
-public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
+public class DT_HRI010_OUTRETURN implements java.io.Serializable {
     /* 人员号 */
     private java.lang.String PERNR;
 
@@ -15,7 +15,7 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
     private java.lang.String inputDate;
 
     /* 导入结果 */
-    private java.lang.String inputResult;
+    private java.lang.String MSG_TYPE;
 
     /* 异常原因 */
     private java.lang.String reason;
@@ -32,13 +32,13 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
     public DT_HRI010_OUTRETURN(
            java.lang.String PERNR,
            java.lang.String inputDate,
-           java.lang.String inputResult,
+           java.lang.String MSG_TYPE,
            java.lang.String reason,
            java.lang.String additional1,
            java.lang.String additional2) {
            this.PERNR = PERNR;
            this.inputDate = inputDate;
-           this.inputResult = inputResult;
+           this.MSG_TYPE = MSG_TYPE;
            this.reason = reason;
            this.additional1 = additional1;
            this.additional2 = additional2;
@@ -47,7 +47,7 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
 
     /**
      * Gets the PERNR value for this DT_HRI010_OUTRETURN.
-     * 
+     *
      * @return PERNR   * 人员号
      */
     public java.lang.String getPERNR() {
@@ -57,7 +57,7 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
 
     /**
      * Sets the PERNR value for this DT_HRI010_OUTRETURN.
-     * 
+     *
      * @param PERNR   * 人员号
      */
     public void setPERNR(java.lang.String PERNR) {
@@ -67,7 +67,7 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
 
     /**
      * Gets the inputDate value for this DT_HRI010_OUTRETURN.
-     * 
+     *
      * @return inputDate   * 导入日期
      */
     public java.lang.String getInputDate() {
@@ -77,7 +77,7 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
 
     /**
      * Sets the inputDate value for this DT_HRI010_OUTRETURN.
-     * 
+     *
      * @param inputDate   * 导入日期
      */
     public void setInputDate(java.lang.String inputDate) {
@@ -86,28 +86,28 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
 
 
     /**
-     * Gets the inputResult value for this DT_HRI010_OUTRETURN.
-     * 
-     * @return inputResult   * 导入结果
+     * Gets the MSG_TYPE value for this DT_HRI010_OUTRETURN.
+     *
+     * @return MSG_TYPE   * 导入结果
      */
-    public java.lang.String getInputResult() {
-        return inputResult;
+    public java.lang.String getMSG_TYPE() {
+        return MSG_TYPE;
     }
 
 
     /**
-     * Sets the inputResult value for this DT_HRI010_OUTRETURN.
-     * 
-     * @param inputResult   * 导入结果
+     * Sets the MSG_TYPE value for this DT_HRI010_OUTRETURN.
+     *
+     * @param MSG_TYPE   * 导入结果
      */
-    public void setInputResult(java.lang.String inputResult) {
-        this.inputResult = inputResult;
+    public void setMSG_TYPE(java.lang.String MSG_TYPE) {
+        this.MSG_TYPE = MSG_TYPE;
     }
 
 
     /**
      * Gets the reason value for this DT_HRI010_OUTRETURN.
-     * 
+     *
      * @return reason   * 异常原因
      */
     public java.lang.String getReason() {
@@ -117,7 +117,7 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
 
     /**
      * Sets the reason value for this DT_HRI010_OUTRETURN.
-     * 
+     *
      * @param reason   * 异常原因
      */
     public void setReason(java.lang.String reason) {
@@ -127,7 +127,7 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
 
     /**
      * Gets the additional1 value for this DT_HRI010_OUTRETURN.
-     * 
+     *
      * @return additional1   * 备用字段1
      */
     public java.lang.String getAdditional1() {
@@ -137,7 +137,7 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
 
     /**
      * Sets the additional1 value for this DT_HRI010_OUTRETURN.
-     * 
+     *
      * @param additional1   * 备用字段1
      */
     public void setAdditional1(java.lang.String additional1) {
@@ -147,7 +147,7 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
 
     /**
      * Gets the additional2 value for this DT_HRI010_OUTRETURN.
-     * 
+     *
      * @return additional2   * 备用字段2
      */
     public java.lang.String getAdditional2() {
@@ -157,7 +157,7 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
 
     /**
      * Sets the additional2 value for this DT_HRI010_OUTRETURN.
-     * 
+     *
      * @param additional2   * 备用字段2
      */
     public void setAdditional2(java.lang.String additional2) {
@@ -175,23 +175,23 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.PERNR==null && other.getPERNR()==null) || 
+        _equals = true &&
+            ((this.PERNR==null && other.getPERNR()==null) ||
              (this.PERNR!=null &&
               this.PERNR.equals(other.getPERNR()))) &&
-            ((this.inputDate==null && other.getInputDate()==null) || 
+            ((this.inputDate==null && other.getInputDate()==null) ||
              (this.inputDate!=null &&
               this.inputDate.equals(other.getInputDate()))) &&
-            ((this.inputResult==null && other.getInputResult()==null) || 
-             (this.inputResult!=null &&
-              this.inputResult.equals(other.getInputResult()))) &&
-            ((this.reason==null && other.getReason()==null) || 
+            ((this.MSG_TYPE==null && other.getMSG_TYPE()==null) ||
+             (this.MSG_TYPE!=null &&
+              this.MSG_TYPE.equals(other.getMSG_TYPE()))) &&
+            ((this.reason==null && other.getReason()==null) ||
              (this.reason!=null &&
               this.reason.equals(other.getReason()))) &&
-            ((this.additional1==null && other.getAdditional1()==null) || 
+            ((this.additional1==null && other.getAdditional1()==null) ||
              (this.additional1!=null &&
               this.additional1.equals(other.getAdditional1()))) &&
-            ((this.additional2==null && other.getAdditional2()==null) || 
+            ((this.additional2==null && other.getAdditional2()==null) ||
              (this.additional2!=null &&
               this.additional2.equals(other.getAdditional2())));
         __equalsCalc = null;
@@ -211,8 +211,8 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
         if (getInputDate() != null) {
             _hashCode += getInputDate().hashCode();
         }
-        if (getInputResult() != null) {
-            _hashCode += getInputResult().hashCode();
+        if (getMSG_TYPE() != null) {
+            _hashCode += getMSG_TYPE().hashCode();
         }
         if (getReason() != null) {
             _hashCode += getReason().hashCode();
@@ -248,8 +248,8 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("inputResult");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "InputResult"));
+        elemField.setFieldName("MSG_TYPE");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "MSG_TYPE"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setMinOccurs(0);
         elemField.setNillable(false);
@@ -288,10 +288,10 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
+           java.lang.String mechType,
+           java.lang.Class _javaType,
            javax.xml.namespace.QName _xmlType) {
-        return 
+        return
           new  org.apache.axis.encoding.ser.BeanSerializer(
             _javaType, _xmlType, typeDesc);
     }
@@ -300,8 +300,8 @@ public class DT_HRI010_OUTRETURN  implements java.io.Serializable {
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
+           java.lang.String mechType,
+           java.lang.Class _javaType,
            javax.xml.namespace.QName _xmlType) {
         return 
           new  org.apache.axis.encoding.ser.BeanDeserializer(
