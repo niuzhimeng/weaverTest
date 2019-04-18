@@ -1136,8 +1136,11 @@ public class MyTest {
 
     @Test
     public void test55() {
-        String returns = HTTPUtil.doGet("http://t.beisendata.tuanche.net/organization/getOrganizationResultList");
-        System.out.println(returns);
+        List<String> list = new ArrayList<String>();
+
+        String str = "1234567890";
+        String substring = str.substring(str.length() - 10);
+        System.out.println(substring);
     }
 
 }

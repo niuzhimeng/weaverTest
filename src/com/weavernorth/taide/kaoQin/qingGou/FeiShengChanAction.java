@@ -39,6 +39,10 @@ public class FeiShengChanAction extends BaseAction {
                 recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
                 recordSet.next();
                 lcbh = recordSet.getString("bh"); // 流程编号
+                String lcbh10 = ""; // 流程编号截取后十位
+                if (lcbh.length() >= 10) {
+                    lcbh10 = lcbh.substring(lcbh.length() - 10);
+                }
                 String BSART = recordSet.getString("BSART"); // 请购凭证类型
                 String workCode = recordSet.getString("sqgh"); // 申请人工号
                 String yfxmh = recordSet.getString("yfxmh"); // 研发项目号
@@ -78,7 +82,7 @@ public class FeiShengChanAction extends BaseAction {
                     dt_mmi001_ininput.setANLN1(zcbh); // 固定资产号
                     dt_mmi001_ininput.setTEXT01(""); //需求项目文本
                     dt_mmi001_ininput.setTEXT02(yfxmh); // 研发项目文本
-                    dt_mmi001_ininput.setBEDNR(requestId); // BEDNR
+                    dt_mmi001_ininput.setBEDNR(lcbh10); // BEDNR - 流程编号后十位
 
                     dt_mmi001_ininput.setLFDAT(changeDays(qgrq)); // 需求日期
                     dt_mmi001_ininput.setLIFNR(""); // 所需供应商
