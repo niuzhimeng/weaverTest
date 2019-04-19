@@ -208,6 +208,7 @@ public class TcConsumer extends BaseCronJob {
 
             List<TcHrmResource> insertHrmResourceList = new ArrayList<TcHrmResource>();
             List<TcHrmResource> updateHrmResourceList = new ArrayList<TcHrmResource>();
+            List<TcHrmResource> errHrmResourceList = new ArrayList<TcHrmResource>();
             for (TcHrmResource hrmResource : hrmResourceList) {
                 //人员编码
                 String workCode = Util.null2String(hrmResource.getWorkcode()).trim();
@@ -223,9 +224,15 @@ public class TcConsumer extends BaseCronJob {
                 //部门ID
                 int depId = Util.getIntValue(TcUtils.getIdByCode("hrmdepartment", depCode), 0);
 
+                if ("".equalsIgnoreCase(workCode)) {
+                    // 工号为空
+                    errHrmResourceList.add(hrmResource);
+                    continue;
+                }
                 if (depId <= 0) {
                     //所属部门不存在
                     baseBean.writeLog("人员所属部门不存在，部门code： " + depCode + " ,人员编码： " + workCode + ", 姓名： " + hrmResource.getLastname());
+                    errHrmResourceList.add(hrmResource);
                     continue;
                 }
 
@@ -234,6 +241,7 @@ public class TcConsumer extends BaseCronJob {
                 if (jobTitleId <= 0) {
                     //所属岗位不存在
                     baseBean.writeLog("人员所属岗位不存在，岗位code： " + jobTitleCode + " ,人员编码： " + workCode + ", 姓名： " + hrmResource.getLastname());
+                    errHrmResourceList.add(hrmResource);
                     continue;
                 }
 
@@ -241,7 +249,13 @@ public class TcConsumer extends BaseCronJob {
                 int managerIdReal = Util.getIntValue(TcUtils.getIdByCode("hrmresource", managerCode), 0);
 
                 //工作地点转换
-                hrmResource.setLocation(TcUtils.insertLocation(hrmResource.getLocation()));
+                String location = TcUtils.insertLocation(hrmResource.getLocation());
+                if ("".equalsIgnoreCase(location)) {
+                    hrmResource.setLocation("1");
+                } else {
+                    hrmResource.setLocation(location);
+                }
+
                 //默认密码
                 hrmResource.setPassWord(Util.getEncrypt("123456"));
                 //直接上级
@@ -250,7 +264,6 @@ public class TcConsumer extends BaseCronJob {
                 // 所有上级
                 String managerIdAndStr = hrmResource.getManagerIdAndStr(String.valueOf(managerIdReal));
 
-                baseBean.writeLog("所有上级: " + managerIdAndStr);
                 hrmResource.setManagerstr(managerIdAndStr);
 
                 hrmResource.setId(String.valueOf(id));
@@ -282,13 +295,19 @@ public class TcConsumer extends BaseCronJob {
             baseBean.writeLog("更新人员数量： " + updateHrmResourceList.size());
             TcConnUtil.updateHrmResource(updateHrmResourceList);
 
+            // 处理自定义字段
+            ArrayList<TcHrmResource> allList = new ArrayList<TcHrmResource>(insertHrmResourceList.size() + updateHrmResourceList.size());
+            allList.addAll(updateHrmResourceList);
+            allList.addAll(insertHrmResourceList);
+            TcConnUtil.fieldDataExecute(allList);
+
             //清除缓存
             new ResourceComInfo().removeResourceCache();
             // 结束时间戳
             long end = System.currentTimeMillis();
             long cha = (end - start) / 1000;
             String logStr = "人员信息同步完成，此次新增人员： " + insertHrmResourceList.size() + " 更新人员: "
-                    + updateHrmResourceList.size() + " ,耗时：" + cha + " 秒。";
+                    + updateHrmResourceList.size() + ", 信息缺失人员数量：" + errHrmResourceList.size() + " ,耗时：" + cha + " 秒。";
             // 插入日志
             TcConnUtil.insertTimedLog("hrmresource", logStr, stnCount);
         } catch (Exception e) {

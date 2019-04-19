@@ -1,5 +1,6 @@
 package com.weavernorth.tuanche.util;
 
+import com.google.gson.Gson;
 import com.weavernorth.tuanche.orgsyn.vo.TcHrmDepartment;
 import com.weavernorth.tuanche.orgsyn.vo.TcHrmJobTitles;
 import com.weavernorth.tuanche.orgsyn.vo.TcHrmResource;
@@ -9,12 +10,14 @@ import weaver.formmode.setup.ModeRightInfo;
 import weaver.general.BaseBean;
 import weaver.general.TimeUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TcConnUtil {
 
     private static ModeRightInfo moderightinfo = new ModeRightInfo();
     private static BaseBean baseBean = new BaseBean();
+    private static Gson gson = new Gson();
     /**
      * 日志模块id
      */
@@ -252,7 +255,7 @@ public class TcConnUtil {
             String sql = "update hrmresource set lastname = ?, status = ?, sex = ?, locationid = ?, mobile = ?,"
                     + " managerid = ?, joblevel = ?, departmentid = ?, subcompanyid1 = ?, jobtitle = ?,"
                     + " birthday = ?, startdate = ?, dsporder = ?, folk = ?, enddate = ?, "
-                    + "certificatenum = ? where workcode = ?";
+                    + "certificatenum = ?, mobile = ? where workcode = ?";
             statement.setStatementSql(sql);
             int stnCount = 0;
             for (TcHrmResource hrmResource : updateHrmResourceList) {
@@ -280,7 +283,8 @@ public class TcConnUtil {
 
                 statement.setString(15, hrmResource.getEnddate());
                 statement.setString(16, hrmResource.getCertificatenum());
-                statement.setString(17, hrmResource.getWorkcode());
+                statement.setString(17, hrmResource.getMobile());
+                statement.setString(18, hrmResource.getWorkcode());
                 statement.executeUpdate();
 
                 baseBean.writeLog("---------------------------");
@@ -299,4 +303,78 @@ public class TcConnUtil {
             statement.close();
         }
     }
+
+    /**
+     * 处理人员自定义表
+     */
+    public static void fieldDataExecute(List<TcHrmResource> resourceListAll) {
+        baseBean.writeLog("人员自定义字段处理开始： " + TimeUtil.getCurrentTimeString());
+        List<TcHrmResource> insertHrmResourceList = new ArrayList<TcHrmResource>();
+        List<TcHrmResource> updateHrmResourceList = new ArrayList<TcHrmResource>();
+        RecordSet recordSet = new RecordSet();
+        for (TcHrmResource resource : resourceListAll) {
+            recordSet.executeQuery("select 1 from cus_fielddata where id = " + resource.getId());
+            if (recordSet.next()) {
+                updateHrmResourceList.add(resource);
+            } else {
+                insertHrmResourceList.add(resource);
+            }
+        }
+        baseBean.writeLog("人员自定义字段插入： " + insertHrmResourceList.size());
+        insertCusFieldData(insertHrmResourceList);
+        baseBean.writeLog("人员自定义字段更新： " + updateHrmResourceList.size());
+        updateCusFieldData(updateHrmResourceList);
+    }
+
+    /**
+     * 插入自定义字段
+     */
+    private static void insertCusFieldData(List<TcHrmResource> insertHrmResourceList) {
+        ConnStatement statement = new ConnStatement();
+        TcHrmResource resource11 = new TcHrmResource();
+        try {
+            String sql = "insert into cus_fielddata (scope, scopeid, id, field0, field1) values (?,?,?,?,?)";
+            statement.setStatementSql(sql);
+            for (TcHrmResource resource : insertHrmResourceList) {
+                resource11 = resource;
+                statement.setString(1, "HrmCustomFieldByInfoType");
+                // 不一定是多少
+                statement.setString(2, "-1");
+                statement.setString(3, resource.getId());
+                //银行卡号
+                statement.setString(4, resource.getExttcBankCardNo());
+                // 银行卡开户行
+                statement.setString(5, resource.getExttcBankCardAddress());
+                statement.executeUpdate();
+            }
+        } catch (Exception e) {
+            baseBean.writeLog(TimeUtil.getCurrentTimeString() + " insert Cus_fielddata Exception :" + gson.toJson(resource11) + " ======= " + e);
+        } finally {
+            statement.close();
+        }
+    }
+
+    /**
+     * 更新自定义字段
+     */
+    private static void updateCusFieldData(List<TcHrmResource> updateHrmResourceList) {
+        ConnStatement statement = new ConnStatement();
+        try {
+            String sql = "update cus_fielddata set field0 = ?, field1 = ? where id = ?";
+            statement.setStatementSql(sql);
+            for (TcHrmResource resource : updateHrmResourceList) {
+                //银行卡号
+                statement.setString(1, resource.getExttcBankCardNo());
+                // 银行卡开户行
+                statement.setString(2, resource.getExttcBankCardAddress());
+                statement.setString(3, resource.getId());
+                statement.executeUpdate();
+            }
+        } catch (Exception e) {
+            baseBean.writeLog("update Cus_fielddata Exception :" + e);
+        } finally {
+            statement.close();
+        }
+    }
+
 }

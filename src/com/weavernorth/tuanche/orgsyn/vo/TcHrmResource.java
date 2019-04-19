@@ -1,7 +1,6 @@
 package com.weavernorth.tuanche.orgsyn.vo;
 
 import com.google.gson.annotations.SerializedName;
-import weaver.conn.ConnStatement;
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
 import weaver.general.Util;
@@ -70,44 +69,15 @@ public class TcHrmResource {
     private String systemlanguage;//语言
     private String passWord;//密码
 
+    //===========自定义表
     /**
-     * 插入自定义字段
+     * 银行卡号
      */
-    private void insertCus_fielddata(ConnStatement statement) {
-        try {
-            String sql = "insert into cus_fielddata (scope, scopeid, id, field0, field1, field9, field10) values (?,?,?,?,?,?,?)";
-            statement.setStatementSql(sql);
-            statement.setString(1, "HrmCustomFieldByInfoType");
-            statement.setString(2, "1");//不一定是多少
-            statement.setString(3, this.getId());
-
-            statement.setString(4, this.weixincode);//微信号
-            statement.setString(5, this.annualleave);//可用年假
-            statement.setString(6, this.speciality);//专长
-            statement.setString(7, this.hobby);//爱好
-            statement.executeUpdate();
-        } catch (Exception e) {
-            baseBean.writeLog("insert Cus_fielddata Exception :" + e);
-        }
-    }
-
+    private String exttcBankCardNo;
     /**
-     * 更新自定义字段
+     * 银行卡开户行
      */
-    public void updateCus_fielddata(ConnStatement statement) {
-        try {
-            String sql = "update cus_fielddata set field0 = ?, field1 = ?, field9 = ?, field10 = ? where id = ?";
-            statement.setStatementSql(sql);
-            statement.setString(1, this.weixincode);//微信号
-            statement.setString(2, this.annualleave);//可用年假
-            statement.setString(3, this.speciality);//专长
-            statement.setString(4, this.hobby);//爱好
-            statement.setString(5, this.id);
-            statement.executeUpdate();
-        } catch (Exception e) {
-            baseBean.writeLog("update Cus_fielddata Exception :" + e);
-        }
-    }
+    private String exttcBankCardAddress;
 
     public boolean deleteHrmResource5(String hrmid, String status) {
         if (null == hrmid || "".equals(hrmid)) {
@@ -511,4 +481,19 @@ public class TcHrmResource {
         this.createdate = createdate;
     }
 
+    public String getExttcBankCardNo() {
+        return exttcBankCardNo;
+    }
+
+    public void setExttcBankCardNo(String exttcBankCardNo) {
+        this.exttcBankCardNo = exttcBankCardNo;
+    }
+
+    public String getExttcBankCardAddress() {
+        return exttcBankCardAddress;
+    }
+
+    public void setExttcBankCardAddress(String exttcBankCardAddress) {
+        this.exttcBankCardAddress = exttcBankCardAddress;
+    }
 }
