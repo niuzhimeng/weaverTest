@@ -52,8 +52,10 @@ public class TimedSynHrm extends BaseCronJob {
                     int sqzrs = selectSet.getInt("sqzrs") < 0 ? 0 : selectSet.getInt("sqzrs");
                     // 招聘中人数
                     int zpzrs = selectSet.getInt("zpzrs") < 0 ? 0 : selectSet.getInt("zpzrs");
+                    // 在编人数
+                    int zbrs = selectSet.getInt("zbrs") < 0 ? 0 : selectSet.getInt("zbrs");
                     // 计算可申请人数
-                    modelVo.setKsqrs(kbzrszs - modelVo.getZbrs() - sqzrs - zpzrs);
+                    modelVo.setKsqrs(kbzrszs - zbrs - sqzrs - zpzrs);
                     updateVoList.add(modelVo);
                 } else {
                     //新增
