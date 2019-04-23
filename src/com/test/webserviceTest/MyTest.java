@@ -29,6 +29,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -1135,12 +1138,84 @@ public class MyTest {
     }
 
     @Test
-    public void test55() {
-        List<String> list = new ArrayList<String>();
+    public void test55() throws JSONException {
+        String jsonStr = "{\n" +
+                "\t\"formdetail\": [{\n" +
+                "\t\t\"bz\": \"\",\n" +
+                "\t\t\"xuh\": \"75116\",\n" +
+                "\t\t\"gysqrsj\": \"2019-04-22 17:22:34\",\n" +
+                "\t\t\"zt\": \"1855\",\n" +
+                "\t\t\"sfyh\": \"有货\",\n" +
+                "\t\t\"gngw\": \"国内\",\n" +
+                "\t\t\"dhzq\": \"5\"\n" +
+                "\t}, {\n" +
+                "\t\t\"bz\": \"\",\n" +
+                "\t\t\"xuh\": \"75117\",\n" +
+                "\t\t\"gysqrsj\": \"2019-04-22 17:22:34\",\n" +
+                "\t\t\"zt\": \"1855\",\n" +
+                "\t\t\"sfyh\": \"有货\",\n" +
+                "\t\t\"gngw\": \"国内\",\n" +
+                "\t\t\"dhzq\": \"5\"\n" +
+                "\t}, {\n" +
+                "\t\t\"bz\": \"\",\n" +
+                "\t\t\"xuh\": \"75118\",\n" +
+                "\t\t\"gysqrsj\": \"2019-04-22 17:22:34\",\n" +
+                "\t\t\"zt\": \"1855\",\n" +
+                "\t\t\"sfyh\": \"等生产\",\n" +
+                "\t\t\"gngw\": \"国内\",\n" +
+                "\t\t\"dhzq\": \"15\"\n" +
+                "\t}],\n" +
+                "\t\"sftj\": \"0\",\n" +
+                "\t\"requestid\": 701798\n" +
+                "}";
+        int requestid = 0;//流程ID
+        String sftj = "";     //是否提交流程   0 保存 1 提交
 
-        String str = "1234567890";
-        String substring = str.substring(str.length() - 10);
-        System.out.println(substring);
+        String xuh = "";      //序号
+        String gngw = "";     //国内/国外/国内或国外
+        String sfyh = "";     //有货/无货
+        String dhzq = "";     //到货周期(天)
+        String bz = "";       //备注
+        String zt = "";       //状态(0:供应商未操作，1:供应商回复，2供应商提交)
+        String gysqrsj = "";  //供应商确认日期（格式：2016-01-01）
+
+        String result = "";      //输出信息（suss：接收成功)/（error：接收失败)
+
+        String sqltemp = "";
+        ArrayList<String> sqlarray = new ArrayList();
+
+
+        JSONArray jsonArrayMain = new JSONArray("[" + jsonStr + "]");
+        JSONObject jsonObj = jsonArrayMain.getJSONObject(0);
+
+        requestid = Integer.parseInt(jsonObj.get("requestid").toString());
+        sftj = jsonObj.get("sftj").toString();
+
+        //获取明细信息
+        JSONArray jsonArrayDetail = new JSONArray(jsonObj.get("formdetail").toString());
+        JSONObject jsonObjdetail = null;
+        for (int i = 0; i < jsonArrayDetail.length(); i++) {
+            jsonObjdetail = jsonArrayDetail.getJSONObject(i);
+            xuh = jsonObjdetail.get("xuh").toString();
+            gngw = jsonObjdetail.get("gngw").toString();
+            sfyh = jsonObjdetail.get("sfyh").toString();
+            dhzq = jsonObjdetail.get("dhzq").toString();
+            bz = jsonObjdetail.get("bz").toString();
+            zt = jsonObjdetail.get("zt").toString();
+            gysqrsj = jsonObjdetail.get("gysqrsj").toString();
+
+            if (zt.equals("0")) {
+                zt = "供应商未操作";
+            } else if (zt.equals("1")) {
+                zt = "供应商回复";
+            } else if (zt.equals("2")) {
+                zt = "供应商提交";
+            }
+
+            sqltemp = "update formtable_main_39_dt1 set gngw='" + gngw + "',sfyh='" + sfyh + "',dhzq='" + dhzq + "',bz='" + bz + "',zt='" + zt + "',gysqrsj='" + gysqrsj + "' where id = " + xuh;
+            sqlarray.add(sqltemp);
+
+        }
     }
 
 }
