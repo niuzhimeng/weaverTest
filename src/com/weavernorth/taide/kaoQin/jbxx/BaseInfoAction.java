@@ -29,7 +29,7 @@ public class BaseInfoAction extends BaseAction {
 
         this.writeLog("总部新入职人员信息录入 start requestid --- " + requestId + "  operatetype --- " + operatetype + "   fromTable --- " + tableName);
         try {
-            if (operatetype.equals("submit")) {
+            if ("submit".equals(operatetype)) {
                 // 查询主表
                 recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
                 recordSet.next();

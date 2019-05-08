@@ -19,6 +19,7 @@ import com.weavernorth.taide.kaoQin.syjq04.myWeb.*;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.Base64;
+import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -29,9 +30,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Test;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -551,7 +549,6 @@ public class MyTest {
      */
 
     public void unZip(File srcFile, String destDirPath) throws RuntimeException {
-        long start = System.currentTimeMillis();
         // 判断源文件是否存在
         if (!srcFile.exists()) {
             throw new RuntimeException(srcFile.getPath() + "所指文件不存在");
@@ -563,7 +560,6 @@ public class MyTest {
             Enumeration<?> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
-                System.out.println("解压" + entry.getName());
                 // 如果是文件夹，就创建个文件夹
                 if (entry.isDirectory()) {
                     String dirPath = destDirPath + "/" + entry.getName() + ".jpg";
@@ -590,8 +586,6 @@ public class MyTest {
                     is.close();
                 }
             }
-            long end = System.currentTimeMillis();
-            System.out.println("解压完成，耗时：" + (end - start) + " ms");
         } catch (Exception e) {
             throw new RuntimeException("unzip error from ZipUtils", e);
         } finally {
@@ -1119,6 +1113,7 @@ public class MyTest {
      * 判断日期是否为节假日
      */
     @Test
+
     public void test53() {
         HrmScheduleDiffUtil hrmScheduleDiffUtil = new HrmScheduleDiffUtil();
         //hrmScheduleDiffUtil.getIsWorkday();
@@ -1138,85 +1133,12 @@ public class MyTest {
     }
 
     @Test
-    public void test55() throws JSONException {
-        String jsonStr = "{\n" +
-                "\t\"formdetail\": [{\n" +
-                "\t\t\"bz\": \"\",\n" +
-                "\t\t\"xuh\": \"75116\",\n" +
-                "\t\t\"gysqrsj\": \"2019-04-22 17:22:34\",\n" +
-                "\t\t\"zt\": \"1855\",\n" +
-                "\t\t\"sfyh\": \"有货\",\n" +
-                "\t\t\"gngw\": \"国内\",\n" +
-                "\t\t\"dhzq\": \"5\"\n" +
-                "\t}, {\n" +
-                "\t\t\"bz\": \"\",\n" +
-                "\t\t\"xuh\": \"75117\",\n" +
-                "\t\t\"gysqrsj\": \"2019-04-22 17:22:34\",\n" +
-                "\t\t\"zt\": \"1855\",\n" +
-                "\t\t\"sfyh\": \"有货\",\n" +
-                "\t\t\"gngw\": \"国内\",\n" +
-                "\t\t\"dhzq\": \"5\"\n" +
-                "\t}, {\n" +
-                "\t\t\"bz\": \"\",\n" +
-                "\t\t\"xuh\": \"75118\",\n" +
-                "\t\t\"gysqrsj\": \"2019-04-22 17:22:34\",\n" +
-                "\t\t\"zt\": \"1855\",\n" +
-                "\t\t\"sfyh\": \"等生产\",\n" +
-                "\t\t\"gngw\": \"国内\",\n" +
-                "\t\t\"dhzq\": \"15\"\n" +
-                "\t}],\n" +
-                "\t\"sftj\": \"0\",\n" +
-                "\t\"requestid\": 701798\n" +
-                "}";
-        int requestid = 0;//流程ID
-        String sftj = "";     //是否提交流程   0 保存 1 提交
+    public void test55() throws Exception {
+        File file = new File("E:\\WEAVER\\ecology\\filesystem\\batchClassify");
 
-        String xuh = "";      //序号
-        String gngw = "";     //国内/国外/国内或国外
-        String sfyh = "";     //有货/无货
-        String dhzq = "";     //到货周期(天)
-        String bz = "";       //备注
-        String zt = "";       //状态(0:供应商未操作，1:供应商回复，2供应商提交)
-        String gysqrsj = "";  //供应商确认日期（格式：2016-01-01）
-
-        String result = "";      //输出信息（suss：接收成功)/（error：接收失败)
-
-        String sqltemp = "";
-        ArrayList<String> sqlarray = new ArrayList();
-
-
-        JSONArray jsonArrayMain = new JSONArray("[" + jsonStr + "]");
-        JSONObject jsonObj = jsonArrayMain.getJSONObject(0);
-
-        requestid = Integer.parseInt(jsonObj.get("requestid").toString());
-        sftj = jsonObj.get("sftj").toString();
-
-        //获取明细信息
-        JSONArray jsonArrayDetail = new JSONArray(jsonObj.get("formdetail").toString());
-        JSONObject jsonObjdetail = null;
-        for (int i = 0; i < jsonArrayDetail.length(); i++) {
-            jsonObjdetail = jsonArrayDetail.getJSONObject(i);
-            xuh = jsonObjdetail.get("xuh").toString();
-            gngw = jsonObjdetail.get("gngw").toString();
-            sfyh = jsonObjdetail.get("sfyh").toString();
-            dhzq = jsonObjdetail.get("dhzq").toString();
-            bz = jsonObjdetail.get("bz").toString();
-            zt = jsonObjdetail.get("zt").toString();
-            gysqrsj = jsonObjdetail.get("gysqrsj").toString();
-
-            if (zt.equals("0")) {
-                zt = "供应商未操作";
-            } else if (zt.equals("1")) {
-                zt = "供应商回复";
-            } else if (zt.equals("2")) {
-                zt = "供应商提交";
-            }
-
-            sqltemp = "update formtable_main_39_dt1 set gngw='" + gngw + "',sfyh='" + sfyh + "',dhzq='" + dhzq + "',bz='" + bz + "',zt='" + zt + "',gysqrsj='" + gysqrsj + "' where id = " + xuh;
-            sqlarray.add(sqltemp);
-
-        }
+        FileUtils.deleteDirectory(file);
     }
+
 
 }
 
