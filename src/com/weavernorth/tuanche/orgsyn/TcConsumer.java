@@ -43,15 +43,15 @@ public class TcConsumer extends BaseCronJob {
     /**
      * HR 部门 调用地址
      */
-    private static final String ORG_HR_URL = "http://t.beisendata.tuanche.net/organization/getOrganizationResultList";
+    private static final String ORG_HR_URL = "http://beisendata.tuanche.net/organization/getOrganizationResultList";
     /**
-     * HR 部门 调用地址
+     * HR 岗位 调用地址
      */
-    private static final String JOB_HR_URL = "http://t.beisendata.tuanche.net/jobPosition/getJobPositionResultList";
+    private static final String JOB_HR_URL = "http://beisendata.tuanche.net/jobPosition/getJobPositionResultList";
     /**
      * HR 人员 调用地址
      */
-    private static final String PER_HR_URL = "http://t.beisendata.tuanche.net/employee/getEmployeeResultList";
+    private static final String PER_HR_URL = "http://beisendata.tuanche.net/employee/getEmployeeResultList";
 
 
     @Override
