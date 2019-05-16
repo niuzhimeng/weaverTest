@@ -74,4 +74,9 @@ public class MyTest2 {
             System.out.println("错误");
         }
     }
+
+    @Test
+    public void test5() {
+
+    }
 }

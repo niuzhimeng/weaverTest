@@ -1,14 +1,26 @@
 package com.test.webserviceTest.vo;
 
 public class Student {
-   // @SerializedName(value = "mz", alternate = {"mz1", "mz2"})
+    // @SerializedName(value = "mz", alternate = {"mz1", "mz2"})
     private String name;
     //@Expose(serialize = false)
     private String age;
     //@Expose(serialize = true, deserialize = false)
     private String identityCardNumber;
 
-    public Student(){}
+    public enum tt {
+        // 红色
+        red,
+        // 黄色
+        yellow
+    }
+
+    public void shiy(){
+        System.out.println(tt.red);
+    }
+
+    public Student() {
+    }
 
     public String getName() {
         return name;

@@ -10,6 +10,7 @@ import com.sap.conn.jco.*;
 import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
 import com.test.webserviceTest.vo.DaYin;
+import com.test.webserviceTest.vo.MyEnum;
 import com.test.webserviceTest.vo.Student;
 import com.weavernorth.B1.zyml.po.CatalogAll;
 import com.weavernorth.gaoji.vo.OrganizationVo;
@@ -19,7 +20,6 @@ import com.weavernorth.taide.kaoQin.syjq04.myWeb.*;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.Base64;
-import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -51,7 +51,6 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
@@ -911,50 +910,6 @@ public class MyTest {
     }
 
     @Test
-    public void test46() {
-        String s = hongXingSO();
-        System.out.println("接口返回： " + s);
-    }
-
-    private String hongXingSO() {
-        String host = "http://mail.redstarwine.com/cgi-bin/welfax/loginsm.cgi"; // 改成实际邮件服务器域名或 IP
-        String user = "ll@redstarwine.com";
-        String pass = "Redstar#0805";
-        try {
-            URL url = new URL(host);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
-            conn.setInstanceFollowRedirects(false); // 禁止自动重定向
-            String param = "safemailer=1"
-                    + "&user2=" + URLEncoder.encode(user, "utf-8")
-                    + "&pass2=" + URLEncoder.encode(pass, "utf-8");
-            OutputStream os = conn.getOutputStream();
-            os.write(param.getBytes());
-            os.flush();
-            os.close();
-
-            int responseCode = conn.getResponseCode();
-            System.out.println("responseCode: " + responseCode);
-
-            /* 用户名和密码是否匹配要根据 HTTP 头中的 X­Tmpdir 来判断 */
-            String tmpdir = conn.getHeaderField("X-Tmpdir");
-            System.out.println("tmpdir: " + tmpdir);
-            if (tmpdir == null) {
-                System.out.println("Login failed");
-                return null;
-            }
-            System.out.println("Login success, tmpdir = " + tmpdir);
-            return tmpdir;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed: " + e.getMessage());
-            return null;
-        }
-    }
-
-
-    @Test
     public void test48() throws Exception {
 
         String fileUrl = "http://47.94.241.183/041.doc";
@@ -1134,9 +1089,8 @@ public class MyTest {
 
     @Test
     public void test55() throws Exception {
-        File file = new File("E:\\WEAVER\\ecology\\filesystem\\batchClassify");
-
-        FileUtils.deleteDirectory(file);
+        System.out.println(MyEnum.STATUS_FORMAL_USE);
+        System.out.println(MyEnum.STATUS_FORMAL_USE.getStatus());
     }
 
 

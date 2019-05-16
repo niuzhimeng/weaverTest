@@ -24,22 +24,32 @@ public class CreateSonFlow extends BaseAction {
 
     @Override
     public String execute(RequestInfo request) {
-        this.writeLog("====================根据明细表创建子流程执行 " + TimeUtil.getCurrentTimeString());
-        String tableName = request.getRequestManager().getBillTableName();
+        int formid = request.getRequestManager().getFormid();
+        String tableName = "";
+        RecordSet recordSet = new RecordSet();
+        recordSet.executeQuery("SELECT tablename FROM workflow_bill WHERE id = '" + formid + "'");
+        if (recordSet.next()) {
+            tableName = recordSet.getString("tablename");
+        }
         String requestId = request.getRequestid();
         //当前操作类型 submit：提交  reject：退回
         String src = request.getRequestManager().getSrc();
         if ("reject".equals(src)) {
             return "1";
         }
-        String creatorId = "";//创建人id
-        String bm = "";//部门id
 
-        RecordSet recordSet = new RecordSet();
+        this.writeLog("====================根据明细表创建子流程执行 " + TimeUtil.getCurrentTimeString() + ", tableName: " + tableName);
+        String creatorId = ""; // 创建人id
+        String bm = ""; // 部门id
+        String nf = ""; // 年份
+        String yf = ""; // 月份
+
         recordSet.executeQuery("select * from " + tableName + " where requestId = '" + requestId + "'");
         if (recordSet.next()) {
             creatorId = recordSet.getString("tbr");
             bm = recordSet.getString("bm");
+            nf = recordSet.getString("nf");
+            yf = recordSet.getString("yf");
         }
 
         //本次创建子流程的 明细表id集合
@@ -115,6 +125,20 @@ public class CreateSonFlow extends BaseAction {
                 mainField[i] = new WorkflowRequestTableField();
                 mainField[i].setFieldName("tbsd");
                 mainField[i].setFieldValue(TimeUtil.getCurrentTimeString());
+                mainField[i].setView(true);
+                mainField[i].setEdit(true);
+
+                i++;
+                mainField[i] = new WorkflowRequestTableField();
+                mainField[i].setFieldName("nf");
+                mainField[i].setFieldValue(nf);
+                mainField[i].setView(true);
+                mainField[i].setEdit(true);
+
+                i++;
+                mainField[i] = new WorkflowRequestTableField();
+                mainField[i].setFieldName("yf");
+                mainField[i].setFieldValue(yf);
                 mainField[i].setView(true);
                 mainField[i].setEdit(true);
 
