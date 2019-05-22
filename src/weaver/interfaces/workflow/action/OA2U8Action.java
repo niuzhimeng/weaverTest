@@ -7,6 +7,7 @@ import weaver.general.BaseBean;
 import weaver.general.Util;
 import weaver.soa.workflow.request.*;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -324,6 +325,57 @@ public class OA2U8Action extends BaseBean implements Action {
             }
             if (allabstractstr.endsWith("、")) {
                 allabstractstr = allabstractstr.substring(0, allabstractstr.length() - 1);
+            }
+        }
+
+        // 新增交通费进项税
+        String jtgj; //交通工具
+        Map<String, BigDecimal> jtfMap = new HashMap<String, BigDecimal>();
+        if (tmplist != null && isclbx) {
+            rowsize++;
+            String entry_id = rowsize + "";
+            String account_code;
+            String abstractstr = "交通费进项税";
+            String natural_debit_currency;
+            String natural_credit_currency = "0";
+
+            String personnel_id = "";
+            String item_id = "null";
+            String item_class = "";
+            for (Object o : tmplist) {
+                Map onerow = (Map) o;
+                jtgj = (String) onerow.get("jtgj");
+                // 汽车
+                if ("2".equals(jtgj)) {
+                    if (jtfMap.containsKey("car")) {
+                        jtfMap.put("car", new BigDecimal((String) onerow.get("jtfjxs")).add(jtfMap.get("car")));
+                    } else {
+                        jtfMap.put("car", new BigDecimal((String) onerow.get("jtfjxs")));
+                    }
+
+                } else {
+                    if (jtfMap.containsKey("other")) {
+                        jtfMap.put("other", new BigDecimal(((String) onerow.get("jtfjxs"))).add(jtfMap.get("other")));
+                    } else {
+                        jtfMap.put("other", new BigDecimal(((String) onerow.get("jtfjxs"))));
+                    }
+                }
+            }
+
+            for (Map.Entry<String, BigDecimal> entry : jtfMap.entrySet()) {
+                if ("car".equals(entry.getKey())) {
+                    account_code = "222110010808";
+                } else {
+                    account_code = "222110011202";
+                }
+                natural_debit_currency = df2.format(entry.getValue().doubleValue());
+                String sqlJtfjxs = "Insert Into GL_accvouch(iperiod,csign,isignseq,coutno_id,ino_id,inid,dbill_date," +
+                        "cbill,cdigest,ccode,md,mc,bdelete,doutbilldate,idoc,citem_id,citem_class,cdept_id,cperson_id" +
+                        ", iyear, iYPeriod,tvouchtime, cn_id)" +
+                        "values(" + accounting_period + ",'" + voucher_type + "'," + isignseq + ",'" + coutno_id + "','" + ino_id + "'," + entry_id + ",'" + date + " 00:00:00.000'," +
+                        "'" + enter + "','" + abstractstr + "','" + account_code + "'," + natural_debit_currency + "," + natural_credit_currency + ",0,'" + date + " 00:00:00.000'," + attachment_number + "," + item_id + "," + item_class + "," + dept_id + "," + personnel_id + "" +
+                        ",'" + StringEscapeUtils.escapeSql(iyear) + "','" + StringEscapeUtils.escapeSql(iYPeriod) + "','" + StringEscapeUtils.escapeSql(tvouchtime) + "', '" + StringEscapeUtils.escapeSql(zph) + "')";
+                flag = rsds.executeSql(sqlJtfjxs);
             }
         }
 

@@ -1,5 +1,6 @@
 package com.test;
 
+import com.google.gson.Gson;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -8,9 +9,12 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MyTest2 {
 
@@ -77,6 +81,21 @@ public class MyTest2 {
 
     @Test
     public void test5() {
-
+        Map<String, BigDecimal> jtfMap = new HashMap<String, BigDecimal>();
+        jtfMap.put("car", new BigDecimal("3.25"));
+        jtfMap.put("car", new BigDecimal("4.91").add(jtfMap.get("car")));
+        System.out.println(new Gson().toJson(jtfMap));
     }
+
+    @Test
+    public void test6() {
+        double a = 2.0;
+        double b = 1.1;
+        Object c = 1;
+        String s = String.valueOf(c);
+        System.out.println(a - b);
+        System.out.println(s);
+    }
+
+
 }

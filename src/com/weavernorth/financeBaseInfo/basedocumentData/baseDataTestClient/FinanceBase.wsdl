@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="webservices.ofs.weaver.com.cn" xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding" xmlns:tns="webservices.ofs.weaver.com.cn" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
+  <wsdl:types>
+<xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="webservices.ofs.weaver.com.cn" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:element name="easReceiptsType">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easReceiptsTypeResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easAssistant">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easAssistantResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easProduct">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easProductResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easAccount">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easAccountResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easExpenseCategory">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easExpenseCategoryResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easOrg">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easOrgResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easUser">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easUserResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easCustomerAndBank">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easCustomerAndBankResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easSupplierAndBank">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easSupplierAndBankResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easPayType">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easPayTypeResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easExpenseType">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easExpenseTypeResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easTaxRate">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easTaxRateResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easTaxCount">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easTaxCountResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easPersonBank">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="easPersonBankResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+</xsd:schema>
+
+  </wsdl:types>
+  <wsdl:message name="easCustomerAndBankRequest">
+    <wsdl:part name="parameters" element="tns:easCustomerAndBank">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easExpenseTypeRequest">
+    <wsdl:part name="parameters" element="tns:easExpenseType">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easExpenseTypeResponse">
+    <wsdl:part name="parameters" element="tns:easExpenseTypeResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easAccountRequest">
+    <wsdl:part name="parameters" element="tns:easAccount">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easUserResponse">
+    <wsdl:part name="parameters" element="tns:easUserResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easSupplierAndBankResponse">
+    <wsdl:part name="parameters" element="tns:easSupplierAndBankResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easOrgRequest">
+    <wsdl:part name="parameters" element="tns:easOrg">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easPayTypeRequest">
+    <wsdl:part name="parameters" element="tns:easPayType">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easOrgResponse">
+    <wsdl:part name="parameters" element="tns:easOrgResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easExpenseCategoryResponse">
+    <wsdl:part name="parameters" element="tns:easExpenseCategoryResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easProductRequest">
+    <wsdl:part name="parameters" element="tns:easProduct">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easPersonBankRequest">
+    <wsdl:part name="parameters" element="tns:easPersonBank">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easCustomerAndBankResponse">
+    <wsdl:part name="parameters" element="tns:easCustomerAndBankResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easReceiptsTypeRequest">
+    <wsdl:part name="parameters" element="tns:easReceiptsType">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easProductResponse">
+    <wsdl:part name="parameters" element="tns:easProductResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easAssistantResponse">
+    <wsdl:part name="parameters" element="tns:easAssistantResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easSupplierAndBankRequest">
+    <wsdl:part name="parameters" element="tns:easSupplierAndBank">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easTaxRateRequest">
+    <wsdl:part name="parameters" element="tns:easTaxRate">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easTaxRateResponse">
+    <wsdl:part name="parameters" element="tns:easTaxRateResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easUserRequest">
+    <wsdl:part name="parameters" element="tns:easUser">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easPayTypeResponse">
+    <wsdl:part name="parameters" element="tns:easPayTypeResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easExpenseCategoryRequest">
+    <wsdl:part name="parameters" element="tns:easExpenseCategory">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easTaxCountRequest">
+    <wsdl:part name="parameters" element="tns:easTaxCount">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easReceiptsTypeResponse">
+    <wsdl:part name="parameters" element="tns:easReceiptsTypeResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easPersonBankResponse">
+    <wsdl:part name="parameters" element="tns:easPersonBankResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easAssistantRequest">
+    <wsdl:part name="parameters" element="tns:easAssistant">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easAccountResponse">
+    <wsdl:part name="parameters" element="tns:easAccountResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="easTaxCountResponse">
+    <wsdl:part name="parameters" element="tns:easTaxCountResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="FinanceBasePortType">
+    <wsdl:operation name="easReceiptsType">
+      <wsdl:input name="easReceiptsTypeRequest" message="tns:easReceiptsTypeRequest">
+    </wsdl:input>
+      <wsdl:output name="easReceiptsTypeResponse" message="tns:easReceiptsTypeResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easAssistant">
+      <wsdl:input name="easAssistantRequest" message="tns:easAssistantRequest">
+    </wsdl:input>
+      <wsdl:output name="easAssistantResponse" message="tns:easAssistantResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easProduct">
+      <wsdl:input name="easProductRequest" message="tns:easProductRequest">
+    </wsdl:input>
+      <wsdl:output name="easProductResponse" message="tns:easProductResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easAccount">
+      <wsdl:input name="easAccountRequest" message="tns:easAccountRequest">
+    </wsdl:input>
+      <wsdl:output name="easAccountResponse" message="tns:easAccountResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easExpenseCategory">
+      <wsdl:input name="easExpenseCategoryRequest" message="tns:easExpenseCategoryRequest">
+    </wsdl:input>
+      <wsdl:output name="easExpenseCategoryResponse" message="tns:easExpenseCategoryResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easOrg">
+      <wsdl:input name="easOrgRequest" message="tns:easOrgRequest">
+    </wsdl:input>
+      <wsdl:output name="easOrgResponse" message="tns:easOrgResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easUser">
+      <wsdl:input name="easUserRequest" message="tns:easUserRequest">
+    </wsdl:input>
+      <wsdl:output name="easUserResponse" message="tns:easUserResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easCustomerAndBank">
+      <wsdl:input name="easCustomerAndBankRequest" message="tns:easCustomerAndBankRequest">
+    </wsdl:input>
+      <wsdl:output name="easCustomerAndBankResponse" message="tns:easCustomerAndBankResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easSupplierAndBank">
+      <wsdl:input name="easSupplierAndBankRequest" message="tns:easSupplierAndBankRequest">
+    </wsdl:input>
+      <wsdl:output name="easSupplierAndBankResponse" message="tns:easSupplierAndBankResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easPayType">
+      <wsdl:input name="easPayTypeRequest" message="tns:easPayTypeRequest">
+    </wsdl:input>
+      <wsdl:output name="easPayTypeResponse" message="tns:easPayTypeResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easExpenseType">
+      <wsdl:input name="easExpenseTypeRequest" message="tns:easExpenseTypeRequest">
+    </wsdl:input>
+      <wsdl:output name="easExpenseTypeResponse" message="tns:easExpenseTypeResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easTaxRate">
+      <wsdl:input name="easTaxRateRequest" message="tns:easTaxRateRequest">
+    </wsdl:input>
+      <wsdl:output name="easTaxRateResponse" message="tns:easTaxRateResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easTaxCount">
+      <wsdl:input name="easTaxCountRequest" message="tns:easTaxCountRequest">
+    </wsdl:input>
+      <wsdl:output name="easTaxCountResponse" message="tns:easTaxCountResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easPersonBank">
+      <wsdl:input name="easPersonBankRequest" message="tns:easPersonBankRequest">
+    </wsdl:input>
+      <wsdl:output name="easPersonBankResponse" message="tns:easPersonBankResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="FinanceBaseHttpBinding" type="tns:FinanceBasePortType">
+    <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="easReceiptsType">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easReceiptsTypeRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easReceiptsTypeResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easAssistant">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easAssistantRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easAssistantResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easProduct">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easProductRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easProductResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easAccount">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easAccountRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easAccountResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easExpenseCategory">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easExpenseCategoryRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easExpenseCategoryResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easOrg">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easOrgRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easOrgResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easUser">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easUserRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easUserResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easCustomerAndBank">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easCustomerAndBankRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easCustomerAndBankResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easSupplierAndBank">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easSupplierAndBankRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easSupplierAndBankResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easPayType">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easPayTypeRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easPayTypeResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easExpenseType">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easExpenseTypeRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easExpenseTypeResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easTaxRate">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easTaxRateRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easTaxRateResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easTaxCount">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easTaxCountRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easTaxCountResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="easPersonBank">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="easPersonBankRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="easPersonBankResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="FinanceBase">
+    <wsdl:port name="FinanceBaseHttpPort" binding="tns:FinanceBaseHttpBinding">
+      <wsdlsoap:address location="http://119.10.114.9:18088/services/FinanceBase"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

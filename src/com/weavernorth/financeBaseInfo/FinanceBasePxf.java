@@ -4,7 +4,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 
 @WebService
-public interface FinanceBase {
+public interface FinanceBasePxf {
 
     /**
      * 组织表
@@ -89,11 +89,5 @@ public interface FinanceBase {
      */
     @WebMethod(action = "easTaxCount")
     String easTaxCount(String json);
-
-    /**
-     * 核算项目类别明细表
-     */
-    @WebMethod(action = "easAssistantDetail")
-    String easAssistantDetail(String json);
 
 }
