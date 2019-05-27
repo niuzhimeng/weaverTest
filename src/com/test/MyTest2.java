@@ -10,6 +10,8 @@ import sun.misc.BASE64Encoder;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -88,13 +90,18 @@ public class MyTest2 {
     }
 
     @Test
-    public void test6() {
-        double a = 2.0;
-        double b = 1.1;
-        Object c = 1;
-        String s = String.valueOf(c);
-        System.out.println(a - b);
-        System.out.println(s);
+    public void test6() throws UnsupportedEncodingException {
+        String receive = "workflow/request/tuanChe/OfsToDo.jsp?flowUrl=http://cloud.italent.cn/ItalentTransfer?iTalentFrame=Ly9hcHByb3ZhbC5pdGFsZW50LmNuI0RldGFpbFBhZ2U/bWV0YU9iak5hbWU9QXBwcm92YWxDZW50cmUuQXBwcm92YWxPYmplY3QmaWQ9ODAwMjc0NDUtODY0OS00ZWExLThlNjgtY2Q3MDRmZmRkYWFiJmZvcm1zdGF0ZT1zaG93JnRhc2tPYmplY3RJZD03MmY2ZGFmZS0xMDRjLTQ4M2UtYTJiZS04MTJhODAwZDczOTMmcHJvY2Vzc0luc3RhbmNlSWQ9ODAwMjc0NDUtODY0OS00ZWExLThlNjgtY2Q3MDRmZmRkYWFiJnM9QXR0ZW5kYW5jZS4xNQ**, 长度： 434";
+        String decode = URLEncoder.encode(receive, "gbk");
+        System.out.println(decode);
+
+    }
+
+    @Test
+    public void test7() {
+        DecimalFormat df2 = new DecimalFormat("##########################################0.00");
+        String format = df2.format(0.00);
+        System.out.println(format);
     }
 
 

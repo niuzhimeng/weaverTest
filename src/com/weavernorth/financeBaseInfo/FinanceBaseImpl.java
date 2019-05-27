@@ -46,7 +46,7 @@ public class FinanceBaseImpl implements FinanceBase {
 
         try {
             String insertSql = "INSERT INTO uf_zzb (MY_ID, eas_id, NAME, corp, parent_id,code, deleted, gsid, level, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) VALUES (?,?,?,?,?,?,?,?, ?,?,?,?,?,?)";
-            String updateSql = "UPDATE uf_zzb SET NAME = ?, corp = ?, parent_id = ?, deleted = ? ,code= ? , gsid= ? , level= ? WHERE MY_ID = ?";
+            String updateSql = "UPDATE uf_zzb SET NAME = ?, corp = ?, parent_id = ?, deleted = ? ,code= ? , gsid= ? , level= ? WHERE eas_id collate Chinese_PRC_CS_AS = ?";
             RecordSet recordSet = new RecordSet();
             recordSet.execute("select * from uf_zzb where eas_id collate Chinese_PRC_CS_AS = '" + eas_id + "'");
             if (!recordSet.next()) {
@@ -78,7 +78,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(5, codeOrg);
                 statement.setString(6, gsid);
                 statement.setString(7, level);
-                statement.setString(8, id);
+                statement.setString(8, eas_id);
                 statement.executeUpdate();
                 returnObject.addProperty("success", "true");
                 returnObject.addProperty("code", "200");
@@ -125,7 +125,7 @@ public class FinanceBaseImpl implements FinanceBase {
 
         try {
             String insertSql = "INSERT INTO uf_zyb (MY_ID, eas_id, NAME, EMAIL, dept_id, code,deleted,formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) VALUES (?,?,?,?,?,?, ?,?,?,?,?,?)";
-            String updateSql = "UPDATE uf_zyb SET NAME = ?, EMAIL = ?, dept_id = ?, code= ?,deleted = ? WHERE MY_ID = ?";
+            String updateSql = "UPDATE uf_zyb SET NAME = ?, EMAIL = ?, dept_id = ?, code= ?,deleted = ? WHERE eas_id collate Chinese_PRC_CS_AS = ?";
             RecordSet recordSet = new RecordSet();
             recordSet.execute("select * from uf_zyb where eas_id collate Chinese_PRC_CS_AS = '" + eas_id + "'");
             if (!recordSet.next()) {
@@ -153,7 +153,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(3, deptId);
                 statement.setString(4, codeUser);
                 statement.setString(5, deleted);
-                statement.setString(6, id);
+                statement.setString(6, eas_id);
                 statement.executeUpdate();
                 returnObject.addProperty("success", "true");
                 returnObject.addProperty("code", "200");
@@ -215,7 +215,7 @@ public class FinanceBaseImpl implements FinanceBase {
 
         try {
             String insertSql = "INSERT INTO uf_zyyh (MY_ID, account, bank, deleted, name, user_id, code,eas_id, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) VALUES (?,?,?,?,?,?,?, ?,?,?,?,?,?)";
-            String updateSql = "UPDATE uf_zyyh SET name = ?, account = ?, bank = ?, code= ?,user_id = ? , deleted = ?,eas_id=? WHERE my_id = ?";
+            String updateSql = "UPDATE uf_zyyh SET name = ?, account = ?, bank = ?, code= ?,user_id = ? , deleted = ?,eas_id=? WHERE eas_id collate Chinese_PRC_CS_AS = ?";
             RecordSet existSet = new RecordSet();
             existSet.execute("select * from uf_zyyh where eas_id collate Chinese_PRC_CS_AS = '" + eas_id + "'");
             if (!existSet.next()) {
@@ -256,7 +256,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(5, userId);
                 statement.setString(6, deleted);
                 statement.setString(7, eas_id);
-                statement.setString(8, id);
+                statement.setString(8, eas_id);
                 statement.executeUpdate();
                 returnObject.addProperty("success", "true");
                 returnObject.addProperty("code", "200");
@@ -575,7 +575,7 @@ public class FinanceBaseImpl implements FinanceBase {
 
         try {
             String insertSql = "INSERT INTO uf_kmb (my_id, name, assistant_id,deleted, code, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime ) VALUES (?,?,?,?, ?,?,?,?,?,?)";
-            String updateSql = "UPDATE uf_kmb SET name = ?, assistant_id = ?, deleted = ?, code = ? WHERE MY_ID = ?";
+            String updateSql = "UPDATE uf_kmb SET name = ?, assistant_id = ?, deleted = ?, code = ? WHERE code = ?";
             RecordSet existSet = new RecordSet();
             existSet.execute("select * from uf_kmb where code collate Chinese_PRC_CS_AS = '" + codeAccount + "'");
             if (!existSet.next()) {
@@ -611,7 +611,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(2, assistant_id);
                 statement.setString(3, deleted);
                 statement.setString(4, codeAccount);
-                statement.setString(5, id);
+                statement.setString(5, codeAccount);
                 statement.executeUpdate();
                 returnObject.addProperty("success", "true");
                 returnObject.addProperty("code", "200");
@@ -643,7 +643,7 @@ public class FinanceBaseImpl implements FinanceBase {
 
         try {
             String insertSql = "INSERT INTO uf_ywlbb (my_id, eas_id, name, deleted, code ,formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) VALUES (?,?,?,?, ?,?,?,?,?,?)";
-            String updateSql = "UPDATE uf_ywlbb SET name = ?, deleted = ? , code= ? WHERE my_id = ?";
+            String updateSql = "UPDATE uf_ywlbb SET name = ?, deleted = ? , code= ? WHERE eas_id collate Chinese_PRC_CS_AS = ?";
             RecordSet existSet = new RecordSet();
             existSet.execute("select * from uf_ywlbb where eas_id collate Chinese_PRC_CS_AS = '" + eas_id + "'");
             if (!existSet.next()) {
@@ -677,7 +677,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(1, name);
                 statement.setString(2, deleted);
                 statement.setString(3, codeExpenseCategory);
-                statement.setString(4, id);
+                statement.setString(4, eas_id);
                 statement.executeUpdate();
                 returnObject.addProperty("success", "true");
                 returnObject.addProperty("code", "200");
@@ -788,7 +788,7 @@ public class FinanceBaseImpl implements FinanceBase {
 
         try {
             String insertSql = "INSERT INTO uf_zffsb (my_id, name, code, deleted, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) VALUES (?,?,?, ?,?,?,?,?,?)";
-            String updateSql = "UPDATE uf_zffsb SET name = ?, deleted = ? ,code = ? WHERE my_id = ?";
+            String updateSql = "UPDATE uf_zffsb SET name = ?, deleted = ? ,code = ? WHERE code = ?";
             RecordSet existSet = new RecordSet();
             existSet.execute("select * from uf_zffsb where code = '" + codePayType + "'");
             if (!existSet.next()) {
@@ -821,7 +821,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(1, name);
                 statement.setString(2, deleted);
                 statement.setString(3, codePayType);
-                statement.setString(4, id);
+                statement.setString(4, codePayType);
                 statement.executeUpdate();
                 returnObject.addProperty("success", "true");
                 returnObject.addProperty("code", "200");
@@ -853,7 +853,7 @@ public class FinanceBaseImpl implements FinanceBase {
 
         try {
             String insertSql = "INSERT INTO uf_hsxmlb (my_id, name, type, deleted, code, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) VALUES (?,?,?,?, ?,?,?,?,?,?)";
-            String updateSql = "UPDATE uf_hsxmlb SET name = ?, type = ?, deleted = ? ,code = ? WHERE my_id = ?";
+            String updateSql = "UPDATE uf_hsxmlb SET name = ?, type = ?, deleted = ? ,code = ? WHERE code = ?";
             RecordSet existSet = new RecordSet();
             existSet.execute("select * from uf_hsxmlb where code = '" + codeAssistant + "'");
             if (!existSet.next()) {
@@ -888,7 +888,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(2, type);
                 statement.setString(3, deleted);
                 statement.setString(4, codeAssistant);
-                statement.setString(5, id);
+                statement.setString(5, codeAssistant);
                 statement.executeUpdate();
                 returnObject.addProperty("success", "true");
                 returnObject.addProperty("code", "200");
@@ -919,7 +919,7 @@ public class FinanceBaseImpl implements FinanceBase {
 
         try {
             String insertSql = "INSERT INTO uf_cpda (my_id, name, deleted, code ,formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) VALUES (?,?,?, ?,?,?,?,?,?)";
-            String updateSql = "UPDATE uf_cpda SET name = ?, deleted = ? ,code= ? WHERE my_id = ?";
+            String updateSql = "UPDATE uf_cpda SET name = ?, deleted = ? ,code= ? WHERE code = ?";
             RecordSet existSet = new RecordSet();
             existSet.execute("select * from uf_cpda where code = '" + codeProduct + "'");
             if (!existSet.next()) {
@@ -952,7 +952,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(1, name);
                 statement.setString(2, deleted);
                 statement.setString(3, codeProduct);
-                statement.setString(4, id);
+                statement.setString(4, codeProduct);
                 statement.executeUpdate();
                 returnObject.addProperty("success", "true");
                 returnObject.addProperty("code", "200");
@@ -983,7 +983,7 @@ public class FinanceBaseImpl implements FinanceBase {
 
         try {
             String insertSql = "INSERT INTO uf_sflb (my_id, name, deleted, code, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) VALUES (?,?,?, ?,?,?,?,?,?)";
-            String updateSql = "UPDATE uf_sflb SET name = ?, deleted = ? ,code = ? WHERE my_id = ?";
+            String updateSql = "UPDATE uf_sflb SET name = ?, deleted = ? ,code = ? WHERE code = ?";
             RecordSet existSet = new RecordSet();
             existSet.execute("select * from uf_sflb where code = '" + codeReceiptsType + "'");
             if (!existSet.next()) {
@@ -1016,7 +1016,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(1, name);
                 statement.setString(2, deleted);
                 statement.setString(3, codeReceiptsType);
-                statement.setString(4, id);
+                statement.setString(4, codeReceiptsType);
                 statement.executeUpdate();
                 returnObject.addProperty("success", "true");
                 returnObject.addProperty("code", "200");
@@ -1047,7 +1047,7 @@ public class FinanceBaseImpl implements FinanceBase {
 
         try {
             String insertSql = "INSERT INTO uf_smslb (my_id, name, deleted, code, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) VALUES (?,?,?, ?,?,?,?,?,?)";
-            String updateSql = "UPDATE uf_smslb SET name = ?, deleted = ? ,code = ? WHERE my_id = ?";
+            String updateSql = "UPDATE uf_smslb SET name = ?, deleted = ? ,code = ? WHERE code = ?";
             RecordSet existSet = new RecordSet();
             existSet.execute("select * from uf_smslb where code = '" + codeTaxRate + "'");
             if (!existSet.next()) {
@@ -1080,7 +1080,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(1, name);
                 statement.setString(2, deleted);
                 statement.setString(3, codeTaxRate);
-                statement.setString(4, id);
+                statement.setString(4, codeTaxRate);
                 statement.executeUpdate();
                 returnObject.addProperty("success", "true");
                 returnObject.addProperty("code", "200");
@@ -1111,7 +1111,7 @@ public class FinanceBaseImpl implements FinanceBase {
 
         try {
             String insertSql = "INSERT INTO uf_jsffb (my_id, name, deleted,code, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) VALUES (?,?,?, ?,?,?,?,?,?)";
-            String updateSql = "UPDATE uf_jsffb SET name = ?, deleted = ? ,code = ? WHERE my_id = ?";
+            String updateSql = "UPDATE uf_jsffb SET name = ?, deleted = ? ,code = ? WHERE code = ?";
             RecordSet existSet = new RecordSet();
             existSet.execute("select * from uf_jsffb where code = '" + codeTaxCount + "'");
             if (!existSet.next()) {
@@ -1144,7 +1144,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(1, name);
                 statement.setString(2, deleted);
                 statement.setString(3, codeTaxCount);
-                statement.setString(4, id);
+                statement.setString(4, codeTaxCount);
                 statement.executeUpdate();
                 returnObject.addProperty("success", "true");
                 returnObject.addProperty("code", "200");

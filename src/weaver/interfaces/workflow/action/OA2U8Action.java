@@ -1,9 +1,11 @@
 package weaver.interfaces.workflow.action;
 
+
 import org.apache.commons.lang.StringEscapeUtils;
 import weaver.conn.RecordSet;
 import weaver.conn.RecordSetDataSource;
 import weaver.general.BaseBean;
+import weaver.general.TimeUtil;
 import weaver.general.Util;
 import weaver.soa.workflow.request.*;
 
@@ -303,7 +305,7 @@ public class OA2U8Action extends BaseBean implements Action {
                         if (zsfjxsn.equals("2")) {
                             account_code = "222110010801";
                         }
-                        abstractstr = "差旅费进项税";
+                        abstractstr = "住宿费进项税";
                         natural_debit_currency = df2.format(clfjxs);
                         natural_credit_currency = "0";
 
@@ -327,7 +329,7 @@ public class OA2U8Action extends BaseBean implements Action {
                 allabstractstr = allabstractstr.substring(0, allabstractstr.length() - 1);
             }
         }
-
+        this.writeLog("nzm 代码开始 ================== " + TimeUtil.getCurrentTimeString());
         // 新增交通费进项税
         String jtgj; //交通工具
         Map<String, BigDecimal> jtfMap = new HashMap<String, BigDecimal>();
@@ -339,9 +341,10 @@ public class OA2U8Action extends BaseBean implements Action {
             String natural_debit_currency;
             String natural_credit_currency = "0";
 
-            String personnel_id = "";
+            String personnel_id = "null";
             String item_id = "null";
-            String item_class = "";
+            String item_class = "null";
+            this.writeLog("347 =========== ");
             for (Object o : tmplist) {
                 Map onerow = (Map) o;
                 jtgj = (String) onerow.get("jtgj");
@@ -361,14 +364,20 @@ public class OA2U8Action extends BaseBean implements Action {
                     }
                 }
             }
+            for (Map.Entry<String, BigDecimal> entry : jtfMap.entrySet()) {
+                this.writeLog("key: " + entry.getKey() + ", value: " + entry.getValue());
+            }
 
+            this.writeLog("371 =========== ");
             for (Map.Entry<String, BigDecimal> entry : jtfMap.entrySet()) {
                 if ("car".equals(entry.getKey())) {
                     account_code = "222110010808";
                 } else {
                     account_code = "222110011202";
                 }
+
                 natural_debit_currency = df2.format(entry.getValue().doubleValue());
+
                 String sqlJtfjxs = "Insert Into GL_accvouch(iperiod,csign,isignseq,coutno_id,ino_id,inid,dbill_date," +
                         "cbill,cdigest,ccode,md,mc,bdelete,doutbilldate,idoc,citem_id,citem_class,cdept_id,cperson_id" +
                         ", iyear, iYPeriod,tvouchtime, cn_id)" +
@@ -378,6 +387,7 @@ public class OA2U8Action extends BaseBean implements Action {
                 flag = rsds.executeSql(sqlJtfjxs);
             }
         }
+        this.writeLog("nzm 代码结束==================  " + TimeUtil.getCurrentTimeString());
 
         double blje = Util.getDoubleValue((String) mainTableDataMap.get("blje"), 0);//补领金额
         double thje = Util.getDoubleValue((String) mainTableDataMap.get("thje"), 0);//退还金额
