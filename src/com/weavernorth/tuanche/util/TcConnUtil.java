@@ -255,7 +255,7 @@ public class TcConnUtil {
             String sql = "update hrmresource set lastname = ?, status = ?, sex = ?, locationid = ?, mobile = ?,"
                     + " managerid = ?, joblevel = ?, departmentid = ?, subcompanyid1 = ?, jobtitle = ?,"
                     + " birthday = ?, startdate = ?, dsporder = ?, folk = ?, enddate = ?, "
-                    + "certificatenum = ?, mobile = ? where workcode = ?";
+                    + "certificatenum = ?, email = ? where workcode = ?";
             statement.setStatementSql(sql);
             int stnCount = 0;
             for (TcHrmResource hrmResource : updateHrmResourceList) {
@@ -283,7 +283,7 @@ public class TcConnUtil {
 
                 statement.setString(15, hrmResource.getEnddate());
                 statement.setString(16, hrmResource.getCertificatenum());
-                statement.setString(17, hrmResource.getMobile());
+                statement.setString(17, hrmResource.getEmail());
                 statement.setString(18, hrmResource.getWorkcode());
                 statement.executeUpdate();
 
