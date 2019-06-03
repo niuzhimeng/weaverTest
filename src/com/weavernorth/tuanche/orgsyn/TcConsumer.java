@@ -200,6 +200,7 @@ public class TcConsumer extends BaseCronJob {
         long start = System.currentTimeMillis();
         try {
             String returns = TcOkHttpUtils.get(PER_HR_URL);
+            baseBean.writeLog("hr人员数据返回： " + returns);
             List<TcHrmResource> hrmResourceList = gson.fromJson(returns, new TypeToken<List<TcHrmResource>>() {
             }.getType());
             // 同步总数
