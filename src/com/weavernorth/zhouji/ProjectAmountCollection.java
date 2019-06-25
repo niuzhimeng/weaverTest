@@ -42,7 +42,7 @@ public class ProjectAmountCollection extends BaseAction {
                 // 核算主体（项目编码）
                 String hszt = recordSet.getString("hszt").substring(2);
                 // 根据编码查询全部信息
-                ProjectVo projectVo = getInfoByNo(hszt);
+                ProjectVo projectVo = ZjCommUtil.getInfoByNo(hszt);
 
                 // 归集科目编码
                 String xmkm = recordSet.getString("xmkm");
@@ -60,16 +60,13 @@ public class ProjectAmountCollection extends BaseAction {
                 int xmcj = projectVo.getXmcj();
                 if (xmcj == 1) {
                     projectVo.setModeId(String.valueOf(ONE_MODE_ID));
-                    projectVo.setTableName("uf_xm_one");
                     ZjCommUtil.oneProject(projectVo);
                 } else if (xmcj == 2) {
                     projectVo.setModeId(String.valueOf(TWO_MODE_ID));
-                    projectVo.setTableName("uf_xm_two");
-                    ZjCommUtil.twoProject();
+                    ZjCommUtil.twoProject(projectVo);
                 } else if (xmcj == 3) {
                     projectVo.setModeId(String.valueOf(THREE_MODE_ID));
-                    projectVo.setTableName("uf_xm_three");
-                    ZjCommUtil.threeProject();
+                    ZjCommUtil.threeProject(projectVo);
                 }
             }
             this.writeLog("三张表授权===========");
@@ -86,21 +83,6 @@ public class ProjectAmountCollection extends BaseAction {
         return "1";
     }
 
-    /**
-     * 根据项目编码获取项目全部信息
-     */
-    private ProjectVo getInfoByNo(String code) {
-        RecordSet recordSet = new RecordSet();
-        recordSet.executeQuery("select * from uf_project where xmbh = '" + code + "'");
-        recordSet.next();
-
-        ProjectVo projectVo = new ProjectVo();
-        projectVo.setXmbm(code);
-        projectVo.setXmmc(recordSet.getString("xmmc"));
-        projectVo.setHth(recordSet.getString("cwhsdy"));
-        projectVo.setXmcj(recordSet.getInt("xmcj"));
-        return projectVo;
-    }
 
     /**
      * 根据编码获取科目名称

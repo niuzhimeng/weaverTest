@@ -29,15 +29,42 @@ public class ProjectVo {
      * 模块id
      */
     private String modeId;
-
-    /**
-     * 表名
-     */
-    private String tableName;
     /**
      * 项目层级
      */
     private Integer xmcj;
+    /**
+     * 主表更新sql
+     */
+    private String mainUpdateSql;
+
+    /**
+     * 主表插入sql
+     */
+    private String mainInsertSql;
+
+    /**
+     * 所属一级项目名称
+     */
+    private String ssyjxmmc;
+    /**
+     * 所属一级项目编码
+     */
+    private String ssyjxmbm;
+
+    /**
+     * 所属二级项目名称
+     */
+    private String ssejxmmc;
+    /**
+     * 所属二级项目编码
+     */
+    private String ssejxmbm;
+
+    /**
+     * 参数数组
+     */
+    private Object[] args;
 
     @Override
     public String toString() {
@@ -49,8 +76,55 @@ public class ProjectVo {
                 ", hth='" + hth + '\'' +
                 ", je='" + je + '\'' +
                 ", modeId='" + modeId + '\'' +
-                ", tableName='" + tableName + '\'' +
                 '}';
+    }
+
+    public String getSsejxmmc() {
+        return ssejxmmc;
+    }
+
+    public void setSsejxmmc(String ssejxmmc) {
+        this.ssejxmmc = ssejxmmc;
+    }
+
+    public String getSsejxmbm() {
+        return ssejxmbm;
+    }
+
+    public void setSsejxmbm(String ssejxmbm) {
+        this.ssejxmbm = ssejxmbm;
+    }
+
+    public String getSsyjxmmc() {
+        return ssyjxmmc;
+    }
+
+    public void setSsyjxmmc(String ssyjxmmc) {
+        this.ssyjxmmc = ssyjxmmc;
+    }
+
+    public String getSsyjxmbm() {
+        return ssyjxmbm;
+    }
+
+    public void setSsyjxmbm(String ssyjxmbm) {
+        this.ssyjxmbm = ssyjxmbm;
+    }
+
+    public String getMainUpdateSql() {
+        return mainUpdateSql;
+    }
+
+    public void setMainUpdateSql(String mainUpdateSql) {
+        this.mainUpdateSql = mainUpdateSql;
+    }
+
+    public String getMainInsertSql() {
+        return mainInsertSql;
+    }
+
+    public void setMainInsertSql(String mainInsertSql) {
+        this.mainInsertSql = mainInsertSql;
     }
 
     public Integer getXmcj() {
@@ -59,14 +133,6 @@ public class ProjectVo {
 
     public void setXmcj(Integer xmcj) {
         this.xmcj = xmcj;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
     }
 
     public String getModeId() {
