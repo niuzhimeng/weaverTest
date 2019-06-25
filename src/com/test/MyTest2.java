@@ -1,6 +1,8 @@
 package com.test;
 
 import com.google.gson.Gson;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.usermodel.Range;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -100,9 +102,87 @@ public class MyTest2 {
     }
 
     @Test
-    public void test7() {
+    public void test7() throws Exception {
+        FileInputStream inputStream = new FileInputStream("E:\\11.doc");
+        OutputStream outputStream = new FileOutputStream("E:\\12.doc");
+
+
+        HWPFDocument document = new HWPFDocument(inputStream);
+        Range bodyRange = document.getRange();
+        System.out.println(bodyRange.toString());
+        System.out.println(bodyRange.text());
+
+        HashMap<String, String> contentMap = new HashMap<String, String>();
+        contentMap.put("name", "牛智萌");
+
+
+        // 替换内容
+        for (Map.Entry<String, String> entry : contentMap.entrySet()) {
+            bodyRange.replaceText("${" + entry.getKey() + "}", entry.getValue());
+        }
+
+        //导出到文件
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            document.write(byteArrayOutputStream);
+
+            outputStream.write(byteArrayOutputStream.toByteArray());
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
+    @Test
+    public void test8() {
+        for (int i = 1; i <= 5; i++) {
+            //将空格和*分开看，看" "的变化i=1时，它是4，2的时候是3，找规律
+            for (int j = 1; j <= 5 - i; j++) {
+                System.out.print(" ");
+            }
+            //找规律，i是 1 3 5 7 9基数
+            for (int k = 1; k <= 2 * i - 1; k++) {
+                System.out.print('*');
+            }
+            //换一行
+            System.out.println();
+        }
+        for (int i = 1; i <= 4; i++) {
+            for (int j = 1; j <= i; j++) {//空格 1 2 3 4 so
+                System.out.print(" ");
+            }
+            for (int k = 1; k <= 2 * (4 - i + 1) - 1; k++) {//* 7 5 3 1 倒着来的基数
+                System.out.print('*');
+            }
+            System.out.println();
+        }
+    }
+
+    @Test
+    public void test9() {
+        String chop = "1_3123123";
+        System.out.println(chop.substring(2));
+    }
+
+
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
