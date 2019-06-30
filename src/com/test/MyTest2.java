@@ -1,6 +1,8 @@
 package com.test;
 
 import com.google.gson.Gson;
+import com.weavernorth.OA2archives.util.ConvertToPdf;
+import com.weavernorth.workflow.waterpdf.WaterPDF;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.dom4j.Document;
@@ -161,11 +163,18 @@ public class MyTest2 {
     }
 
     @Test
-    public void test9() {
-        String chop = "1_3123123";
-        System.out.println(chop.substring(2));
+    public void test9() throws Exception {
+//        ConvertToPdf conpdf = new ConvertToPdf();
+//        boolean isOk = conpdf.convert2PDF("D:/WEAVER/ecology/contactReal/327123.docx","D:/WEAVER/ecology/contactReal/327123.pdf");
+        WaterPDF.addPdfMark("C:\\Users\\29529\\Desktop\\test.pdf","C:\\Users\\29529\\Desktop/327123.pdf", "", 0);
     }
 
+
+    @Test
+    public void test10(){
+        ConvertToPdf conpdf = new ConvertToPdf();
+        boolean isOk = conpdf.convert2PDF("C:\\Users\\29529\\Desktop\\PDF加水印Action-配置手册.doc", "C:\\Users\\29529\\Desktop\\test.pdf");
+    }
 
 
 }

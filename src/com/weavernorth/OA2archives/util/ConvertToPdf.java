@@ -5,7 +5,7 @@ import com.jacob.com.ComFailException;
 import com.jacob.com.ComThread;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
-import com.weavernorth.util.LogUtil;
+import weaver.general.BaseBean;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -18,6 +18,7 @@ import java.io.StringWriter;
  */
 public class ConvertToPdf {
 
+    BaseBean baseBean = new BaseBean();
     /* 转PDF格式值 */
     private static final int wdFormatPDF = 17;
     private static final int xlFormatPDF = 0;
@@ -34,30 +35,29 @@ public class ConvertToPdf {
     private static final int wdFormatTXT = 2;
 
     public boolean convert2PDF(String inputFile, String pdfFile) {
-        LogUtil.debugLog("===转为pdf开始==================");
-        LogUtil.debugLog("===pdf转换前文件=======" + inputFile);
-        LogUtil.debugLog("===pdf转换pdf后文件========" + pdfFile);
+       baseBean.writeLog("===转为pdf开始==================");
+        baseBean.writeLog("===pdf转换前文件=======" + inputFile);
+        baseBean.writeLog("===pdf转换pdf后文件========" + pdfFile);
         inputFile = inputFile.replaceAll("/", "\\\\");
         pdfFile = pdfFile.replaceAll("/", "\\\\");
         String suffix = getFileSufix(inputFile);
         File file = new File(inputFile);
         if (!file.exists()) {
-            LogUtil.debugLog("文件不存在！");
+           baseBean.writeLog("文件不存在！");
             return false;
         }
         if (suffix.equals("pdf")) {
-            LogUtil.releaseLog("PDF not need to convert!");
+
             return false;
         }
-        if (suffix.equals("doc") || suffix.equals("docx")
-                || suffix.equals("txt")) {
+        if (suffix.equals("doc") || suffix.equals("docx") || suffix.equals("txt")) {
             return word2PDF(inputFile, pdfFile, true);
         } else if (suffix.equals("ppt") || suffix.equals("pptx")) {
             return ppt2PDF(inputFile, pdfFile);
         } else if (suffix.equals("xls") || suffix.equals("xlsx")) {
             return excel2PDF(inputFile, pdfFile);
         } else {
-            LogUtil.debugLog("文件格式不支持转换!");
+           baseBean.writeLog("文件格式不支持转换!");
             return false;
         }
 
@@ -98,9 +98,9 @@ public class ConvertToPdf {
      * @author SHANHY
      */
     private boolean word2PDF(String inputFile, String pdfFile, boolean isShowRevisions) {
-        LogUtil.debugLog("===========进入word2PDF方法");
+        baseBean.writeLog("===========进入word2PDF方法");
         ComThread.InitSTA(true);
-        LogUtil.debugLog("===========看看是否卡在进程");
+        baseBean.writeLog("===========看看是否卡在进程");
         long start = System.currentTimeMillis();
         ActiveXComponent app = null;
         Dispatch doc = null;
@@ -114,13 +114,13 @@ public class ConvertToPdf {
                 app.setProperty("AutomationSecurity", new Variant(3)); // 禁用宏
                 if (doc == null || doc.m_pDispatch == 0) {
                     Dispatch docs = app.getProperty("Documents").toDispatch();// 获取word所有文档对象
-                    LogUtil.debugLog("打开文档 =====>>> " + inputFile);
+                   baseBean.writeLog("打开文档 =====>>> " + inputFile);
                     // Object[]第三个参数是表示“是否只读方式打开”
                     // 调用Documents对象中Open方法打开文档，并返回打开的文档对象Document
                     doc = Dispatch.call(docs, "Open", inputFile, false, true)
                             .toDispatch();
                     // 调用Document对象的SaveAs方法，将文档保存为pdf格式
-                    LogUtil.debugLog("转换文档 [" + inputFile + "] 为 [" + pdfFile
+                   baseBean.writeLog("转换文档 [" + inputFile + "] 为 [" + pdfFile
                             + "]");
                     //lq 2018-9-2 清除批注和修订
                     if (isShowRevisions) {
@@ -134,45 +134,45 @@ public class ConvertToPdf {
                     // Dispatch.call(doc, "ExportAsFixedFormat", pdfFile,
                     // wdFormatPDF); // word保存为pdf格式宏，值为17
                     long end = System.currentTimeMillis();
-                    LogUtil.debugLog("用时：" + (end - start) + "ms.");
+                   baseBean.writeLog("用时：" + (end - start) + "ms.");
                 }
                 return isNull(doc);
             } catch (Exception e) {
                 e.printStackTrace();
                 exception = e;
-                LogUtil.debugLog("===========Error:文档转换失败：" + getExceptionMsg(e));
+               baseBean.writeLog("===========Error:文档转换失败：" + getExceptionMsg(e));
             } finally {
-                LogUtil.debugLog("ConvertToPdf======finally");
+               baseBean.writeLog("ConvertToPdf======finally");
 
 
                 try {
                     Dispatch.call(doc, "Close", false);
-                    LogUtil.debugLog("关闭文档");
+                   baseBean.writeLog("关闭文档");
                     if (app != null) {
                         app.invoke("Quit", new Variant[]{});
                     }
                     // 如果没有这句话,winword.exe进程将不会关闭
                     ComThread.Release();
                     ComThread.quitMainSTA();
-                    LogUtil.debugLog("ConvertToPdf======释放完成");
+                   baseBean.writeLog("ConvertToPdf======释放完成");
                     //如果有异常 重新执行一次
                     if (exception != null && exception.getMessage().contains("方法或属性无效因为 该文档是已被保护的文档")) {
-                         LogUtil.debugLog("文档转换异常，重新转换");
+                        baseBean.writeLog("文档转换异常，重新转换");
                          word2PDF(inputFile, pdfFile, false);
                      }
                      else if (exception != null && exception.getMessage().contains("Can't co-create object")) {
                          // 如果没有这句话,winword.exe进程将不会关闭
-                         LogUtil.debugLog("Can't co-create object======异常重新开始");
+                        baseBean.writeLog("Can't co-create object======异常重新开始");
                          word2PDF(inputFile, pdfFile, true);
                      }
                      else if (exception != null && exception.getMessage().contains("Invoke of: SaveAs")) {
                          // 如果没有这句话,winword.exe进程将不会关闭
-                         LogUtil.debugLog("Invoke of: SaveAs======异常重新开始");
+                        baseBean.writeLog("Invoke of: SaveAs======异常重新开始");
                          word2PDF(inputFile, pdfFile, true);
                      }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    LogUtil.debugLog("关闭文档后的try"+getExceptionMsg(e));
+                   baseBean.writeLog("关闭文档后的try"+getExceptionMsg(e));
                 }
             }
         }
@@ -201,25 +201,25 @@ public class ConvertToPdf {
 //				app.setProperty("AutomationSecurity", new Variant(3)); // 禁用宏
                 if (ppt == null || ppt.m_pDispatch == 0) {
                     Dispatch ppts = app.getProperty("Presentations").toDispatch();// 获取文挡属性
-                    LogUtil.debugLog("打开文档 >>> " + inputFile);
+                   baseBean.writeLog("打开文档 >>> " + inputFile);
                     // 调用Documents对象中Open方法打开文档，并返回打开的文档对象Document
                     ppt = Dispatch.call(ppts, "Open", inputFile, true,// ReadOnly
                             true,// Untitled指定文件是否有标题
                             false// WithWindow指定文件是否可见
                     ).toDispatch();
-                    LogUtil.debugLog("转换文档 [" + inputFile + "] 为 [" + pdfFile + "]");
+                   baseBean.writeLog("转换文档 [" + inputFile + "] 为 [" + pdfFile + "]");
                     Dispatch.call(ppt, "SaveAs", pdfFile, ppFormatPDF);
 //					Dispatch.call(ppt, "Close");
                     long end = System.currentTimeMillis();
-                    LogUtil.debugLog("用时：" + (end - start) + "ms.");
+                   baseBean.writeLog("用时：" + (end - start) + "ms.");
                 }
                 return isNull(ppt);
             } catch (Exception e) {
                 e.printStackTrace();
-                LogUtil.debugLog("========文档转换失败：" + getExceptionMsg(e));
+               baseBean.writeLog("========文档转换失败：" + getExceptionMsg(e));
             } finally {
                 Dispatch.call(ppt, "Close");
-                LogUtil.debugLog("关闭文档");
+               baseBean.writeLog("关闭文档");
                 if (app != null) {
                     app.invoke("Quit", new Variant[]{});
                 }
@@ -250,24 +250,24 @@ public class ConvertToPdf {
                 app.setProperty("AutomationSecurity", new Variant(3)); // 禁用宏
                 if (excel == null || excel.m_pDispatch == 0) {
                     Dispatch excels = app.getProperty("Workbooks").toDispatch();// 获取文挡属性
-                    LogUtil.debugLog("打开文档 >>> " + inputFile);
+                   baseBean.writeLog("打开文档 >>> " + inputFile);
                     // 调用Documents对象中Open方法打开文档，并返回打开的文档对象Document
                     excel = Dispatch.call(excels, "Open", inputFile, false, true)
                             .toDispatch();
                     // 调用Document对象方法，将文档保存为pdf格式
-                    LogUtil.debugLog("转换文档 [" + inputFile + "] >>> [" + pdfFile + "]");
+                   baseBean.writeLog("转换文档 [" + inputFile + "] >>> [" + pdfFile + "]");
                     // Excel 不能调用SaveAs方法
                     Dispatch.call(excel, "ExportAsFixedFormat", xlFormatPDF, pdfFile);
                     long end = System.currentTimeMillis();
-                    LogUtil.debugLog("用时：" + (end - start) + "ms.");
+                   baseBean.writeLog("用时：" + (end - start) + "ms.");
                 }
                 return isNull(excel);
             } catch (Exception e) {
                 e.printStackTrace();
-                LogUtil.debugLog("========Error:文档转换失败：" + getExceptionMsg(e));
+               baseBean.writeLog("========Error:文档转换失败：" + getExceptionMsg(e));
             } finally {
                 Dispatch.call(excel, "Close", false);
-                LogUtil.debugLog("关闭文档");
+               baseBean.writeLog("关闭文档");
                 if (app != null) {
                     app.invoke("Quit", new Variant[]{});
                 }
