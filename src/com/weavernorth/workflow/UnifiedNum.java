@@ -132,7 +132,7 @@ public class UnifiedNum extends BaseAction {
         }
 
         // DBN合同签订流程
-        else if ("359".equals(workflowid)) {
+        else if ("364".equals(workflowid)) {
             LogUtil.doWriteLog("DBN合同签订流程统一流水操作==== START");
             String strUnifiedNum = "";
 
@@ -144,11 +144,11 @@ public class UnifiedNum extends BaseAction {
                 strUnifiedNum = getCurrentYear() +
                         getCurrentMonth() +
                         "-" +
-                        getShortName("13795", rs.getString("zjlx")) +
+                        getShortName("14130", rs.getString("zjlx")) +
                         "-" +
-                        getShortName("13878", rs.getString("htlb")) +
+                        getShortName("14212", rs.getString("htlb")) +
                         "-" +
-                        getShortName("13791", rs.getString("cbbm"), workflowid) +
+                        getShortName("14126", rs.getString("cbbm"), workflowid) +
                         "-" + AddContNum(strMaxNum_Old) + "-0";
                 LogUtil.doWriteLog(strUnifiedNum_Old + "==合同编号==" +
                         strUnifiedNum);
@@ -176,7 +176,7 @@ public class UnifiedNum extends BaseAction {
                 "' union all " +
                 "select lsh_kf from formtable_main_52 fm2 where substring(htbh,0,3)='" + getCurrentYear() +
                 "' union all " +
-                "select lsh_kf from formtable_main_199 fm2 where substring(htbh,0,3)='" + getCurrentYear() + "' ) fm";
+                "select lsh_kf from formtable_main_205 fm2 where substring(htbh,0,3)='" + getCurrentYear() + "' ) fm";
         LogUtil.doWriteLog("查询最大流水号的sql： " + sql);
         rs.execute(sql);
         if (rs.first()) {

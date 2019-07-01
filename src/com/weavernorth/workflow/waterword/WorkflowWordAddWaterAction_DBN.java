@@ -45,7 +45,7 @@ public class WorkflowWordAddWaterAction_DBN extends BaseAction {
         this.writeLog("==DBN合同签订流程Action Start==> requestid: " + requestId + " tableName: " + tableName + " formId: " + formId);
 
         // DBN合同签订流程
-        if ("359".equals(workFlowId)) {
+        if ("364".equals(workFlowId)) {
             String selSql = "select * from " + tableName + " where requestid=" + requestId;
             rs.executeSql(selSql);
             this.writeLog("==DBN合同签订流程Action查询文档附件==>" + selSql);
@@ -74,22 +74,6 @@ public class WorkflowWordAddWaterAction_DBN extends BaseAction {
                         String docids1 = DocUtil.getImageFileId(Integer.parseInt(htzwwd1)) + "";
                         JSONObject object = new JSONObject();
                         object.put("fieldName", "htfj");
-                        object.put("fieldValue", docids1);
-                        object.put("creater", DocUtil.getDocCreaterLoginId(htzwwd1));
-                        object.put("fileName", DocUtil.getFileName(htzwwd1));
-                        object.put("directory", DocUtil.getDocDirectory(htzwwd1));
-                        array.add(object);
-                    }
-                }
-
-                // 相关附件
-                String xgfj = Util.null2String(rs.getString("xgfj"));
-                if (!"".equals(xgfj)) {
-                    String[] htzwwds = xgfj.split(",");
-                    for (String htzwwd1 : htzwwds) {
-                        String docids1 = DocUtil.getImageFileId(Integer.parseInt(htzwwd1)) + "";
-                        JSONObject object = new JSONObject();
-                        object.put("fieldName", "xgfj");
                         object.put("fieldValue", docids1);
                         object.put("creater", DocUtil.getDocCreaterLoginId(htzwwd1));
                         object.put("fileName", DocUtil.getFileName(htzwwd1));
