@@ -22,14 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 类名:OAPDF2archivesActionbak
+ * 类名:OAPDF2archivesAction
  * 类描述:流程归档后将表单和附件正文合并为一个pdf文件推送至ftp
  * Company:weavernorth
  *
  * @author:刘立华
  * @date: 2017-11-1下午1:36:42
  */
-public class OAPDF2archivesAction extends BaseBean {
+public class TestOAPDF2archivesAction extends BaseBean {
     private BaseBean base = new BaseBean();
 
 
@@ -52,7 +52,7 @@ public class OAPDF2archivesAction extends BaseBean {
      * @param workflowid
      * @return String ftp上传路径
      */
-    private String getftppath(String workflowid, String requestid, String creatertid) {
+    public String getftppath(String workflowid, String requestid, String creatertid) {
         //ftp上传路径
         String ftppath = "";
         String[] strs = getWorkflowEndDate(requestid).split("-");
@@ -176,7 +176,7 @@ public class OAPDF2archivesAction extends BaseBean {
      * @param typeid
      * @return
      */
-    private Map<String,String> getFwlxWithTypeid(String typeid){
+    public Map<String,String> getFwlxWithTypeid(String typeid){
         Map<String,String>  fwlx = new HashMap<String,String>();
         RecordSet recordSet = new RecordSet();
         recordSet.execute("select fwlx,bm from uf_fwlx where typeid = "+typeid);
@@ -190,12 +190,12 @@ public class OAPDF2archivesAction extends BaseBean {
 
     /**
      * 获取自定义表中的字段名称
-     *workflow_currentoperator
+     *
      * @param typeid    类型id
      * @param columName 列名
      * @return 设置的列名
      */
-    private static String getSettingColName(String typeid, String columName) {
+    public static String getSettingColName(String typeid, String columName) {
         String colName = "";
         RecordSet rs = new RecordSet();
         rs.executeSql("select " + columName + " from wn_workflowexceltype where type=" + typeid);
@@ -212,7 +212,7 @@ public class OAPDF2archivesAction extends BaseBean {
      * @param requestid
      * @return
      */
-    private static String getTypeNameByRequest(String requestid, String strFWTypeColumName) {
+    public static String getTypeNameByRequest(String requestid, String strFWTypeColumName) {
         String fwlxValue = "";
         RecordSet rs = new RecordSet();
         //公文表单名称
@@ -234,7 +234,7 @@ public class OAPDF2archivesAction extends BaseBean {
      * @param workflowId
      * @return String typeid
      */
-    private static String getExcelFileType(String workflowId) {
+    public static String getExcelFileType(String workflowId) {
         RecordSet rs = new RecordSet();
         String type = "";
         rs.execute("select type from wn_workflowexceltype where workflowid='" + workflowId + "'");
@@ -258,7 +258,7 @@ public class OAPDF2archivesAction extends BaseBean {
         if (rs.next()) {
             receivedate = rs.getString("receivedate");
         }
-        LogUtil.debugLog("=======OAPDF2archivesAction=====>receivedate:" + receivedate + "---requestid--:" + requestid);
+        LogUtil.debugLog("=======TestOAPDF2archivesAction=====>receivedate:" + receivedate + "---requestid--:" + requestid);
         return receivedate;
     }
 
@@ -268,12 +268,13 @@ public class OAPDF2archivesAction extends BaseBean {
      * @param request
      * @return
      */
-    private Integer start(RequestInfo request) {
+    public Integer start(RequestInfo request) {
         int result = 0;
         List list = DocUtil.getDocFieldIds(request);
         //1.解压文档到压缩的目录下
         //2.将解压后的文件转换为pdf文件
         List<Map> dataList = getDoc(request, list);
+        String isOpenSaveWorkflowInfo = base.getPropValue("docpreview", "isOpenSaveWorkflowInfo");
         this.writeLog("需要合并的list长度:" + dataList.size());
         //如果没有附件就报错
         if (dataList.size() == 0) {
@@ -282,9 +283,9 @@ public class OAPDF2archivesAction extends BaseBean {
 
             try {
                 // 服务器上的原始路径
-                String strAllPdfPath = base.getPropValue("archives", "pdfpath");
+                String strAllPdfPath = base.getPropValue("archives", "testpdfpath");
                 //服务器上的备份路径
-                String strAllPdfPathBak = base.getPropValue("archives", "pdfpathbak");
+                String strAllPdfPathBak = base.getPropValue("archives", "testpdfpathbak");
                 //本地文件上传ftp的路径
                 String uploadpath = strAllPdfPath + "/" + TimeUtil.getCurrentDateString().substring(0, 4);
                 LogUtil.debugLog("==上传ftp的路径==>" + uploadpath);
@@ -330,19 +331,31 @@ public class OAPDF2archivesAction extends BaseBean {
                 String docdcsconverturl = weaver.general.Util.null2String(new BaseBean().getPropValue("docpreview", "docdcsconverturl"));
                 pagenum = ConvertPDFTools.sendPost(docdcsconverturl, map, savePath, savePathBak);
                 //保存到备份目录下
+//            ArchivesUtil.mergePdfFiles(request,paths, savePathBak);
                 LogUtil.debugLog("======合并后的pdf文件共【" + pagenum + "】页");
-                WorkflowInfoSave save = new WorkflowInfoSave();
+                TestWorkflowInfoSave save = new TestWorkflowInfoSave();
                 //如果合并pdf成功
                 if (pagenum > 0) {
                     LogUtil.doWriteLog("==上传ftp保存excel信息开始" + TimeUtil.getCurrentTimeString() + "====");
                     //此处做bean数据的插入或更新，注意此处的是保存状态是成功   uploadStatus 0 成功  1失败 2未上传
                     //TODO 文件信息的保存需要修改
-                    save.SaveWorkflowInfo(request, createPath, "0", "2", pagenum);
+                    if ("Y".equals(isOpenSaveWorkflowInfo))
+                        save.SaveWorkflowInfo(request, createPath, "0", "2", pagenum,true);
                     //上传ftp
-                    String addr = base.getPropValue("archivesftp", "addr");
-                    int port = Util.getIntValue(base.getPropValue("archivesftp", "port"));
-                    String username = base.getPropValue("archivesftp", "username");
-                    String password = base.getPropValue("archivesftp", "password");
+                    String addr = base.getPropValue("testarchivesftp", "addr");
+                    int port = Util.getIntValue(base.getPropValue("testarchivesftp", "port"));
+                    String username = base.getPropValue("testarchivesftp", "username");
+                    String password = base.getPropValue("testarchivesftp", "password");
+                    //连接ftp
+                    try {
+//                        ftpUtil.connect("", addr, port, username, password);
+
+                    } catch (Exception e) {
+                        LogUtil.doWriteLog("==连接ftp异常==" + e);
+                        //保存成功 上传失败
+                        if ("Y".equals(isOpenSaveWorkflowInfo))
+                            save.SaveWorkflowInfo(request, createPath, "0", "1", pagenum,true);
+                    }
                     FtpUtil_zz f = new FtpUtil_zz(true);
                     //上传文件到ftp
                     try {
@@ -356,13 +369,16 @@ public class OAPDF2archivesAction extends BaseBean {
 
                         String fptstatus = f.uploadOneFile(fo, createPath, new File(savePath), ArchivesUtil.getFileNameByWorkflow(request.getRequestid()) + ".pdf");
                         LogUtil.doWriteLog("==FTP==" + fptstatus);
+//                        ftpUtil.uploadForArchives(new File(savePath), strAllPdfPath + createPath);
                         //更新上传成功状态
-                        save.SaveWorkflowInfo(request, createPath, "0", "0", pagenum);
+                        if ("Y".equals(isOpenSaveWorkflowInfo))
+                            save.SaveWorkflowInfo(request, createPath, "0", "0", pagenum,true);
                     } catch (Exception e) {
                         LogUtil.doWriteLog("==上传ftp异常==" + e);
                         //保存成功  上传失败状态
-                        save.SaveWorkflowInfo(request, createPath, "0", "1", pagenum);
-                    }finally {
+                        if ("Y".equals(isOpenSaveWorkflowInfo))
+                            save.SaveWorkflowInfo(request, createPath, "0", "1", pagenum,true);
+                    } finally {
                         try {
                             f.disConnection();
                         } catch (IOException e) {
@@ -374,7 +390,8 @@ public class OAPDF2archivesAction extends BaseBean {
                     LogUtil.debugLog("===合并pdf失败==>");
                     //此处做bean数据的插入或更新，注意此处的是保存状态是失败
                     //保存失败 ，上传失败
-                    save.SaveWorkflowInfo(request, createPath, "1", "1", pagenum);
+                    if ("Y".equals(isOpenSaveWorkflowInfo))
+                        save.SaveWorkflowInfo(request, createPath, "1", "1", pagenum,true);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -389,16 +406,16 @@ public class OAPDF2archivesAction extends BaseBean {
      *
      * @return pdf文件的路径
      */
-    private static List<Map> getDoc(RequestInfo request, List listDocids) {
+    public static List<Map> getDoc(RequestInfo request, List listDocids) {
         int docid = 0;
         int result = -1;
         String strPath = "";
-        List<Map> listpath = new ArrayList<Map>();
+        List listpath = new ArrayList();
         try {
             //1.需要在此添加表单pdf的路径信息，
-            for (Object listDocid : listDocids) {
+            for (int i = 0; i < listDocids.size(); i++) {
                 Map mapoldAndNew = new HashMap();
-                docid = weaver.general.Util.getIntValue((String) listDocid, 0);
+                docid = weaver.general.Util.getIntValue((String) listDocids.get(i), 0);
                 //将文档解压到原始目录下,得到解压的真实路径
                 strPath = DocUtil.getRealDoc(DocUtil.getImageFileId(docid));
                 if (!"".equals(strPath)) {
@@ -425,7 +442,7 @@ public class OAPDF2archivesAction extends BaseBean {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LogUtil.debugLog("OAPDF2archivesAction.java转异常:" + e);
+            LogUtil.debugLog("异常:" + e.getMessage());
             ArchivesUtil.insertPdfLog(request.getRequestid(), request.getWorkflowid(), ArchivesUtil.getExceptionMsg(e));
         }
 

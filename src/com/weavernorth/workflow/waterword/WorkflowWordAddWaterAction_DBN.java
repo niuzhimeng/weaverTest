@@ -51,13 +51,13 @@ public class WorkflowWordAddWaterAction_DBN extends BaseAction {
             this.writeLog("==DBN合同签订流程Action查询文档附件==>" + selSql);
             if (rs.next()) {
                 // 合同正文
-                String htzwfj = Util.null2String(rs.getString("htzwfj"));
+                String htzwfj = Util.null2String(rs.getString("bdsczw"));
                 if (!"".equals(htzwfj)) {
                     String[] htzwfjs = htzwfj.split(",");
                     for (String bdsczw1 : htzwfjs) {
                         String docids1 = DocUtil.getImageFileId(Integer.parseInt(bdsczw1)) + "";
                         JSONObject object = new JSONObject();
-                        object.put("fieldName", "htzwfj");
+                        object.put("fieldName", "bdsczw");
                         object.put("fieldValue", docids1);
                         object.put("creater", DocUtil.getDocCreaterLoginId(bdsczw1));
                         object.put("fileName", DocUtil.getFileName(bdsczw1));
