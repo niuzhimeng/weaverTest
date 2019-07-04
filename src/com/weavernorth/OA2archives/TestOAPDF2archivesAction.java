@@ -309,7 +309,7 @@ public class TestOAPDF2archivesAction extends BaseBean {
                 //合并pdf到指定目录
                 //每个pdf文件的路径
                 String inputDir = "";
-                List<String> list1 = new ArrayList<>();
+                List<String> list1 = new ArrayList<String>();
                 for (int i = 0; i < dataList.size(); i++) {
                     Map dataMap = dataList.get(i);
                     this.writeLog("dataMap:" + dataMap.toString());
