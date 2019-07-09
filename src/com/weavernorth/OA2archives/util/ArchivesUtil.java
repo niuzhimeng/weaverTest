@@ -438,6 +438,8 @@ public class ArchivesUtil extends BaseBean {
             ColumName = getSettingColName(typeid, "gw_wh");
         }else if ("41".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
+        }else if ("42".equals(typeid)) {
+            ColumName = getSettingColName(typeid, "ht_hth");
         }
 
 
