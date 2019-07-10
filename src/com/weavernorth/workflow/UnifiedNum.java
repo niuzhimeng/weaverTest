@@ -231,7 +231,7 @@ public class UnifiedNum extends BaseAction {
         int intCode = 0;
 
         String sql = "select max(sequenceId ) sequenceId from workflow_codeSeq where yearid='" +
-                year + "' and (workflowid=137 or workflowid=255)";
+                year + "' and (workflowid=137 or workflowid=255 or workflowid=364)";
         rs.execute(sql);
         if (rs.first()) {
             intCode = rs.getInt("sequenceId");

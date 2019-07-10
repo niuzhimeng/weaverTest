@@ -1,9 +1,7 @@
 package com.test;
 
 import com.google.gson.Gson;
-import com.sap.conn.jco.JCoDestination;
 import com.weavernorth.OA2archives.util.ConvertToPdf;
-import com.weavernorth.caibai.sap.CaiBaiPoolThree;
 import com.weavernorth.workflow.waterpdf.WaterPDF;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -168,28 +166,25 @@ public class MyTest2 {
     public void test9() throws Exception {
 //        ConvertToPdf conpdf = new ConvertToPdf();
 //        boolean isOk = conpdf.convert2PDF("D:/WEAVER/ecology/contactReal/327123.docx","D:/WEAVER/ecology/contactReal/327123.pdf");
-        WaterPDF.addPdfMark("C:\\Users\\29529\\Desktop\\test.pdf","C:\\Users\\29529\\Desktop/327123.pdf", "", 0);
+        WaterPDF.addPdfMark("C:\\Users\\29529\\Desktop\\test.pdf", "C:\\Users\\29529\\Desktop/327123.pdf", "", 0);
     }
 
 
     @Test
-    public void test10(){
+    public void test10() {
         ConvertToPdf conpdf = new ConvertToPdf();
         boolean isOk = conpdf.convert2PDF("C:\\Users\\29529\\Desktop\\PDF加水印Action-配置手册.doc", "C:\\Users\\29529\\Desktop\\test.pdf");
     }
 
     @Test
     public void test11() throws Exception {
-        JCoDestination jCoDestination = CaiBaiPoolThree.getJCoDestination();
-        jCoDestination.ping();
-//        JCoFunction function = jCoDestination.getRepository().getFunctionTemplate("ZMMEX0010_JJJB_IF").getFunction();
-//
-//        JCoParameterList tableParameterList = function.getTableParameterList();
-//
-//        System.out.println(1);
-//        function.getImportParameterList().getTable("IE_TAB");
+        SimpleDateFormat sdf = new SimpleDateFormat("yy");
+        Date date = new Date();
+        System.out.println(sdf.format(date));
 
     }
+
+
 
 
 }

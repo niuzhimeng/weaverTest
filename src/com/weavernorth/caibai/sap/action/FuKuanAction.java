@@ -3,7 +3,6 @@ package com.weavernorth.caibai.sap.action;
 import com.sap.conn.jco.JCoDestination;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoTable;
-import com.weaver.general.TimeUtil;
 import com.weavernorth.caibai.sap.CaiBaiPoolThree;
 import weaver.conn.RecordSet;
 import weaver.hrm.User;
@@ -15,11 +14,16 @@ import weaver.workflow.action.BaseAction;
  */
 public class FuKuanAction extends BaseAction {
 
+    private RecordSet selectSet = new RecordSet();
+    /**
+     * 下拉框字段id
+     */
+    private static final String FILE_ID = "7178";
+
     @Override
     public String execute(RequestInfo requestInfo) {
         User user = requestInfo.getRequestManager().getUser();
         String requestId = requestInfo.getRequestid();
-        String operateType = requestInfo.getRequestManager().getSrc();
         int formId = requestInfo.getRequestManager().getFormid();
         String tableName = "";
 
@@ -30,19 +34,9 @@ public class FuKuanAction extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        recordSet.executeQuery("select workcode form hrmresource where id = " + user.getUID());
-        recordSet.next();
-        String workCode = recordSet.getString("workcode");
-
-        this.writeLog("付款申请流程 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
-
-
-        this.writeLog("商厦结算流程 Start requestid --- " + requestId + "  user --- " + user.getUID() + "   fromTable --- " + tableName);
+        this.writeLog("付款申请流程 Start requestid --- " + requestId + "  user --- " + user.getUID() + "   fromTable --- " + tableName);
         try {
-            this.writeLog("当前操作人工号： " + workCode);
 
-            // 当前日期 yyyyMMdd
-            String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
@@ -54,12 +48,16 @@ public class FuKuanAction extends BaseAction {
             String gsdm = recordSet.getString("gsdm");
             // 发票张数
             String fpzs = recordSet.getString("fpzs");
-            // 贷方科目
-            String jd = recordSet.getString("jd");
             // 成本中心
-            String cbzx = recordSet.getString("cbzx");
+            String cbzx = recordSet.getString("cbzx2");
             // 利润中心
             String lrzx = recordSet.getString("lrzx");
+            // 财务节点，提交时间
+            String tjsj = recordSet.getString("tjsj");
+            // 审核发票信息，操作人工号
+            String yzr = recordSet.getString("yzr");
+            // 付款事项描述
+            String fksxms = recordSet.getString("fksxms");
 
             JCoDestination jCoDestination = CaiBaiPoolThree.getJCoDestination();
             JCoFunction function = jCoDestination.getRepository().getFunction("ZOAIF0010_RFC");
@@ -81,31 +79,30 @@ public class FuKuanAction extends BaseAction {
                 // 公司代码
                 table.setValue("ZGSDM", gsdm);
                 // 凭证中的凭证日期
-                table.setValue("ZFKJDRQ", currentDate);
+                table.setValue("ZFKJDRQ", replaceDate(tjsj));
 
                 // 凭证类型
-                table.setValue("ZPZLX", "SA");
+                table.setValue("ZPZLX", recordSetDetail.getString("pzlx"));
                 // 货币码
                 table.setValue("ZBZ", "CNY");
                 // 发票的页数
                 table.setValue("ZFPZS", fpzs);
                 // 借方/贷方标识
-                table.setValue("ZKMFX", jd);
+                table.setValue("ZDFKM", recordSetDetail.getString("dfkm"));
                 // 总账科目
-                table.setValue("ZKMLB", recordSetDetail.getString("kmlb"));
+                table.setValue("ZKMLB", getKmCode(recordSetDetail.getString("kmlb")));
 
                 // 合作伙伴编码
-                table.setValue("ZHZDWBM", recordSetDetail.getString("hzdwbm"));
+                table.setValue("ZHZDWBM", getJmName(recordSetDetail.getString("hzdwbm")));
                 // 特殊总帐标识
                 table.setValue("ZTSZZBS", recordSetDetail.getString("tszzbs"));
                 // 原币金额
-                String ybje = recordSetDetail.getString("ybje");
+                String ybje;
                 if (recordSetDetail.getInt("ybje") == 0) {
                     // 增值税专用发票”则使用“不含税金额”
                     ybje = recordSetDetail.getString("bhsje");
-                } else if (recordSetDetail.getInt("ybje") == 1) {
-                    // 如果为“增值税普通发票”则使用“发票金额字段”
-                    ybje = recordSetDetail.getString("fkje");
+                } else {
+                    ybje = recordSetDetail.getString("fpjshjje");
                 }
                 table.setValue("ZYBJE", ybje);
                 // 成本中心
@@ -116,22 +113,24 @@ public class FuKuanAction extends BaseAction {
                 // 现金流量
                 table.setValue("ZXJLL", recordSetDetail.getString("xjll"));
                 // 用于到期日计算的基准日期
-                table.setValue("ZFKJZRQ", replaceDate(recordSetDetail.getString("fkjzrq")));
+                table.setValue("ZFKJZRQ", replaceDate(tjsj));
                 // 付款条件代码
                 table.setValue("ZFKTJ", recordSetDetail.getString("fktj"));
                 // 分配编号
                 table.setValue("ZFP", recordSetDetail.getString("fp"));
 
                 // 商品名称
-                table.setValue("zspmc", recordSetDetail.getString("spmc"));
+                table.setValue("ZSPMC", recordSetDetail.getString("spmc"));
                 // 凭证抬头文本
-                table.setValue("ZFKSXMS", recordSetDetail.getString("fksxms"));
+                table.setValue("ZFKSXMS", fksxms);
                 // 支付方式
                 table.setValue("ZZFFS", recordSetDetail.getString("sjzffs"));
                 // 往来单位
-                table.setValue("ZSKGSMC", recordSetDetail.getString("skgsmc"));
+                table.setValue("ZSKGSMC", getKmName(recordSetDetail.getString("skgsmc")));
                 // OA审核发票节点操作人
-                table.setValue("ZYZR", workCode);
+                table.setValue("ZYZR", yzr);
+                // 发票类型
+                table.setValue("ZFPLX", getSelectName(FILE_ID, recordSetDetail.getString("fplx")));
 
                 i++;
             }
@@ -155,7 +154,6 @@ public class FuKuanAction extends BaseAction {
                 }
             }
 
-
             this.writeLog("付款申请流程 End ===============");
         } catch (Exception e) {
             this.writeLog("付款申请流程 Error： " + e);
@@ -174,6 +172,52 @@ public class FuKuanAction extends BaseAction {
         String returnStr = "99999999";
         if (dateStr != null) {
             returnStr = dateStr.replace("-", "");
+        }
+        return returnStr;
+    }
+
+    /**
+     * 获取下拉框的显示值
+     */
+    private String getSelectName(String fileId, String id) {
+        String returnStr = "空";
+        selectSet.executeQuery("SELECT selectname FROM workflow_SelectItem where fieldid = " + fileId + " and selectvalue = " + id);
+        if (selectSet.next()) {
+            returnStr = selectSet.getString("selectname");
+        }
+        return returnStr;
+    }
+
+    /**
+     * 取系统表科目编码
+     */
+    private String getKmCode(String id) {
+        String returnStr = "0000";
+        selectSet.executeQuery("SELECT codeName from FnaBudgetfeeType where id = " + id);
+        if (selectSet.next()) {
+            returnStr = selectSet.getString("codeName");
+        }
+        return returnStr;
+    }
+
+    /**
+     * 取科目名称中文名
+     */
+    private String getKmName(String code) {
+        String returnStr = "0000";
+        selectSet.executeQuery("SELECT zcmc from uf_hzdwjbxx where bh = " + code);
+        if (selectSet.next()) {
+            returnStr = selectSet.getString("zcmc");
+        }
+        return returnStr;
+    }
+
+
+    private String getJmName(String code) {
+        String returnStr = "0000";
+        selectSet.executeQuery("SELECT sapdybh from uf_hzdwjbxx where bh = " + code);
+        if (selectSet.next()) {
+            returnStr = selectSet.getString("sapdybh");
         }
         return returnStr;
     }

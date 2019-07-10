@@ -86,6 +86,48 @@ public class WorkflowWordAddWaterAction_DBN extends BaseAction {
             this.writeLog("==DBN合同签订流程array=>" + array.toString());
 
         }
+        // DBN合同变更流程
+        else if ("362".equals(workFlowId)) {
+            String selSql = "select * from " + tableName + " where requestid=" + requestId;
+            rs.executeSql(selSql);
+            this.writeLog("==DBN合同变更流程Action查询文档附件==>" + selSql);
+            if (rs.next()) {
+                // 合同正文
+                String htzwfj = Util.null2String(rs.getString("htfj"));
+                if (!"".equals(htzwfj)) {
+                    String[] htzwfjs = htzwfj.split(",");
+                    for (String bdsczw1 : htzwfjs) {
+                        String docids1 = DocUtil.getImageFileId(Integer.parseInt(bdsczw1)) + "";
+                        JSONObject object = new JSONObject();
+                        object.put("fieldName", "htfj");
+                        object.put("fieldValue", docids1);
+                        object.put("creater", DocUtil.getDocCreaterLoginId(bdsczw1));
+                        object.put("fileName", DocUtil.getFileName(bdsczw1));
+                        object.put("directory", DocUtil.getDocDirectory(bdsczw1));
+                        array.add(object);
+                    }
+                }
+
+                // 合同附件
+                String htfj = Util.null2String(rs.getString("htzwfj"));
+                if (!"".equals(htfj)) {
+                    String[] htzwwds = htfj.split(",");
+                    for (String htzwwd1 : htzwwds) {
+                        String docids1 = DocUtil.getImageFileId(Integer.parseInt(htzwwd1)) + "";
+                        JSONObject object = new JSONObject();
+                        object.put("fieldName", "htzwfj");
+                        object.put("fieldValue", docids1);
+                        object.put("creater", DocUtil.getDocCreaterLoginId(htzwwd1));
+                        object.put("fileName", DocUtil.getFileName(htzwwd1));
+                        object.put("directory", DocUtil.getDocDirectory(htzwwd1));
+                        array.add(object);
+                    }
+                }
+
+            }
+            this.writeLog("==DBN合同变更流程array=>" + array.toString());
+
+        }
 
         // 循环解压图片
         if (array.size() > 0) {
