@@ -58,6 +58,8 @@ public class FuKuanAction extends BaseAction {
             String yzr = recordSet.getString("yzr");
             // 付款事项描述
             String fksxms = recordSet.getString("fksxms");
+            // 收款公司名称
+            String skgsmc = recordSet.getString("skgsmc");
 
             JCoDestination jCoDestination = CaiBaiPoolThree.getJCoDestination();
             JCoFunction function = jCoDestination.getRepository().getFunction("ZOAIF0010_RFC");
@@ -65,7 +67,7 @@ public class FuKuanAction extends BaseAction {
 
             JCoTable table = function.getTableParameterList().getTable("IT_TAB");
 
-            recordSetDetail.executeQuery("select * from " + tableName + "_dt1 where mainid = " + mainId);
+            recordSetDetail.executeQuery("select * from " + tableName + "_dt1 where mainid = " + mainId + " order by id");
 
             int i = 0;
             while (recordSetDetail.next()) {
@@ -75,34 +77,38 @@ public class FuKuanAction extends BaseAction {
                 // 会计凭证编号
                 table.setValue("ZPZH", lcbh);
                 // 会计凭证中的行项目数
-                table.setValue("ZHH", recordSetDetail.getString("id"));
+                table.setValue("ZHH", i + 1);
                 // 公司代码
                 table.setValue("ZGSDM", gsdm);
                 // 凭证中的凭证日期
                 table.setValue("ZFKJDRQ", replaceDate(tjsj));
 
                 // 凭证类型
-                table.setValue("ZPZLX", recordSetDetail.getString("pzlx"));
+                table.setValue("ZPZLX", getZdz(recordSetDetail.getString("pzlx")));
                 // 货币码
                 table.setValue("ZBZ", "CNY");
                 // 发票的页数
                 table.setValue("ZFPZS", fpzs);
                 // 借方/贷方标识
-                table.setValue("ZDFKM", recordSetDetail.getString("dfkm"));
+                table.setValue("ZDFKM", getKmCode(recordSetDetail.getString("dfkm")));
                 // 总账科目
                 table.setValue("ZKMLB", getKmCode(recordSetDetail.getString("kmlb")));
 
                 // 合作伙伴编码
-                table.setValue("ZHZDWBM", getJmName(recordSetDetail.getString("hzdwbm")));
+                table.setValue("ZHZDWBM", getJmName(skgsmc));
                 // 特殊总帐标识
-                table.setValue("ZTSZZBS", recordSetDetail.getString("tszzbs"));
+                table.setValue("ZTSZZBS", getZdz(recordSetDetail.getString("tszzbs")));
                 // 原币金额
                 String ybje;
                 if (recordSetDetail.getInt("ybje") == 0) {
                     // 增值税专用发票”则使用“不含税金额”
                     ybje = recordSetDetail.getString("bhsje");
-                } else {
+                } else if (recordSetDetail.getInt("ybje") == 1) {
+                    // 增值税普通发票”则使用“发票金额字段”
                     ybje = recordSetDetail.getString("fpjshjje");
+                } else {
+                    // 取付款金额字段
+                    ybje = recordSetDetail.getString("fkje");
                 }
                 table.setValue("ZYBJE", ybje);
                 // 成本中心
@@ -111,11 +117,11 @@ public class FuKuanAction extends BaseAction {
                 // 利润中心
                 table.setValue("ZLRZX", lrzx);
                 // 现金流量
-                table.setValue("ZXJLL", recordSetDetail.getString("xjll"));
+                table.setValue("ZXJLL", getZdz(recordSetDetail.getString("xjll")));
                 // 用于到期日计算的基准日期
                 table.setValue("ZFKJZRQ", replaceDate(tjsj));
                 // 付款条件代码
-                table.setValue("ZFKTJ", recordSetDetail.getString("fktj"));
+                table.setValue("ZFKTJ", getZdz(recordSetDetail.getString("fktj")));
                 // 分配编号
                 table.setValue("ZFP", recordSetDetail.getString("fp"));
 
@@ -124,9 +130,9 @@ public class FuKuanAction extends BaseAction {
                 // 凭证抬头文本
                 table.setValue("ZFKSXMS", fksxms);
                 // 支付方式
-                table.setValue("ZZFFS", recordSetDetail.getString("sjzffs"));
+                table.setValue("ZZFFS", getZdz(recordSetDetail.getString("sjzffs")));
                 // 往来单位
-                table.setValue("ZSKGSMC", getKmName(recordSetDetail.getString("skgsmc")));
+                table.setValue("ZSKGSMC", getKmName(skgsmc));
                 // OA审核发票节点操作人
                 table.setValue("ZYZR", yzr);
                 // 发票类型
@@ -205,7 +211,7 @@ public class FuKuanAction extends BaseAction {
      */
     private String getKmName(String code) {
         String returnStr = "0000";
-        selectSet.executeQuery("SELECT zcmc from uf_hzdwjbxx where bh = " + code);
+        selectSet.executeQuery("SELECT zcmc from uf_hzdwjbxx where id = " + code);
         if (selectSet.next()) {
             returnStr = selectSet.getString("zcmc");
         }
@@ -215,9 +221,18 @@ public class FuKuanAction extends BaseAction {
 
     private String getJmName(String code) {
         String returnStr = "0000";
-        selectSet.executeQuery("SELECT sapdybh from uf_hzdwjbxx where bh = " + code);
+        selectSet.executeQuery("SELECT sapdybh from uf_hzdwjbxx where id = " + code);
         if (selectSet.next()) {
             returnStr = selectSet.getString("sapdybh");
+        }
+        return returnStr;
+    }
+
+    private String getZdz(String id) {
+        String returnStr = "0000";
+        selectSet.executeQuery("SELECT zdz from uf_pzb where id = " + id);
+        if (selectSet.next()) {
+            returnStr = selectSet.getString("zdz");
         }
         return returnStr;
     }
