@@ -64,9 +64,9 @@ public class WorkflowInfoSave {
         //当前操作人
         String Lastoperator = "";
 
-        if(typeid.equals("9")||typeid.equals("18")||typeid.equals("22")||typeid.equals("23")||typeid.equals("24")){
-            Lastoperator = getTypeOperator("type_"+typeid);
-        }else {
+        if (typeid.equals("9") || typeid.equals("18") || typeid.equals("22") || typeid.equals("23") || typeid.equals("24")) {
+            Lastoperator = getTypeOperator("type_" + typeid);
+        } else {
             Lastoperator = getCurrentOperator(request);
         }
         LogUtil.debugLog("===Lastoperator===" + Lastoperator);
@@ -1117,9 +1117,7 @@ public class WorkflowInfoSave {
                 bean.setUploadStatus(uploadStatus);
                 bean.setExcelmode_path(excelmode_path);
                 bean.setNewexcel_path(newexcel_path);
-            }
-
-            else if (typeid.equals("36")) {
+            } else if (typeid.equals("36")) {
                 bean.setRequestid(requestid);
                 //合并后pdf的名称
                 bean.setObject_name(rs.getString("wh"));
@@ -1335,6 +1333,31 @@ public class WorkflowInfoSave {
                 bean.setExcelmode_path(excelmode_path);
                 bean.setNewexcel_path(newexcel_path);
             }
+            // DBN合同签订流程
+            else if ("42".equals(typeid)) {
+                bean.setRequestid(requestid);
+                //合并后pdf的名称
+                bean.setObject_name(rs.getString("htbh"));
+                bean.setFile_path(file_path);
+                bean.setFile_format(file_format);
+                bean.setC_english_title("");
+                bean.setC_chinese_title(c_chinese_title);
+                bean.setC_doc_code(rs.getString("htbh"));
+                bean.setC_contract_type("");
+                bean.setC_year("");
+                bean.setC_party_a(c_party_a);
+                bean.setC_party_b(rs.getString("httf"));
+                bean.setC_resp_dept(deptid);
+                bean.setC_page_counts(c_page_counts);
+                bean.setC_archive_date(c_archive_date);
+                bean.setC_archive_owne(createridReal);
+                bean.setC_inner_sequence(c_inner_sequence);
+                bean.setTypeid(typeid);
+                bean.setSaveStatus(saveStatus);
+                bean.setUploadStatus(uploadStatus);
+                bean.setExcelmode_path(excelmode_path);
+                bean.setNewexcel_path(newexcel_path);
+            }
             //TODO 增加获取流程的相关信息
 
 
@@ -1372,8 +1395,8 @@ public class WorkflowInfoSave {
                         || "25".equals(exceltype) || "26".equals(exceltype) || "27".equals(exceltype) || "28".equals(exceltype)
                         || "31".equals(exceltype) || "32".equals(exceltype) || "33".equals(exceltype) || "34".equals(exceltype)
                         || "35".equals(exceltype) || "36".equals(exceltype) || "37".equals(exceltype) || "38".equals(exceltype)
-                        || "39".equals(exceltype) || "40".equals(exceltype) || "41".equals(exceltype)
-                ) {
+                        || "39".equals(exceltype) || "40".equals(exceltype) || "41".equals(exceltype) || "42".equals(exceltype)
+        ) {
             String sql = "select id from wn_oa2emc_document where requestid=" + requestid + "";
             rs.execute(sql);
             if (rs.next()) {
@@ -1457,8 +1480,8 @@ public class WorkflowInfoSave {
                 || "25".equals(typeid) || "26".equals(typeid) || "27".equals(typeid) || "28".equals(typeid)
                 || "31".equals(typeid) || "32".equals(typeid) || "33".equals(typeid) || "34".equals(typeid)
                 || "35".equals(typeid) || "36".equals(typeid) || "37".equals(typeid) || "38".equals(typeid)
-                || "39".equals(typeid) || "40".equals(typeid) || "41".equals(typeid)
-                ) {
+                || "39".equals(typeid) || "40".equals(typeid) || "41".equals(typeid) || "42".equals(typeid)
+        ) {
             subinsert.append("insert into wn_oa2emc_document ");
             subinsert.append("(requestid,");
             subinsert.append("object_name,");
@@ -1586,8 +1609,8 @@ public class WorkflowInfoSave {
                 || "25".equals(typeid) || "26".equals(typeid) || "27".equals(typeid) || "28".equals(typeid)
                 || "31".equals(typeid) || "32".equals(typeid) || "33".equals(typeid) || "34".equals(typeid)
                 || "35".equals(typeid) || "36".equals(typeid) || "37".equals(typeid) || "38".equals(typeid)
-                || "39".equals(typeid) || "40".equals(typeid) || "41".equals(typeid)
-                ) {
+                || "39".equals(typeid) || "40".equals(typeid) || "41".equals(typeid) || "42".equals(typeid)
+        ) {
             subUpdate.append("update wn_oa2emc_document set ");
             subUpdate.append(" c_archive_owner='" + bean.getC_archive_owne() + "',");
             subUpdate.append(" c_archive_org='" + bean.getC_archive_org() + "',");
@@ -1626,9 +1649,9 @@ public class WorkflowInfoSave {
                 || "7".equals(type) || "8".equals(type) || "9".equals(type) || "10".equals(type)
                 || "18".equals(type) || "19".equals(type) || "22".equals(type) || "23".equals(type)
                 || "24".equals(type) || "25".equals(type) || "26".equals(type) || "27".equals(type)
-                || "31".equals(type)|| "32".equals(type)|| "33".equals(type)|| "34".equals(type)
-                || "35".equals(type)|| "36".equals(type)|| "37".equals(type)|| "38".equals(type)
-                || "39".equals(type)|| "40".equals(type)|| "41".equals(type)) {
+                || "31".equals(type) || "32".equals(type) || "33".equals(type) || "34".equals(type)
+                || "35".equals(type) || "36".equals(type) || "37".equals(type) || "38".equals(type)
+                || "39".equals(type) || "40".equals(type) || "41".equals(type) || "42".equals(type)) {
             sql = "select max(c_inner_sequence) maxid from wn_oa2emc_document where typeid ='" + type + "'";
 
         } else if ("11".equals(type) || "12".equals(type) || "13".equals(type) || "14".equals(type)) {
@@ -1651,24 +1674,25 @@ public class WorkflowInfoSave {
         return maxid + 1;
     }
 
-    private String getWorkflowEndDate(String requestid){
+    private String getWorkflowEndDate(String requestid) {
 
-        String receivedate="";
+        String receivedate = "";
         RecordSet rs = new RecordSet();
-        rs.executeQuery("select receivedate from workflow_currentoperator where isremark = '4' and requestid = "+requestid);
-        if(rs.next()){
+        rs.executeQuery("select receivedate from workflow_currentoperator where isremark = '4' and requestid = " + requestid);
+        if (rs.next()) {
             receivedate = rs.getString("receivedate");
         }
-        LogUtil.debugLog("=======WorkflowInfoSave=====>receivedate:" + receivedate+"---requestid--:"+requestid);
+        LogUtil.debugLog("=======WorkflowInfoSave=====>receivedate:" + receivedate + "---requestid--:" + requestid);
         return receivedate;
     }
 
-    private String changChinese(String title){
+    private String changChinese(String title) {
         String chineseTitle = "";
         String nextTitle = "";
-        if(weaver.common.StringUtil.isNull(title))
+        if (weaver.common.StringUtil.isNull(title)) {
             return title;
-        if(title.indexOf("`~`~")!=-1 &&title.indexOf("`~`~")!=-1) {
+        }
+        if (title.indexOf("`~`~") != -1 && title.indexOf("`~`~") != -1) {
             int twoIndex = title.indexOf("`~`~");
             nextTitle = title.substring(twoIndex + "`~`~".length(), title.length());
             RecordSet rs = new RecordSet();
@@ -1676,8 +1700,8 @@ public class WorkflowInfoSave {
             rs.next();
             chineseTitle = rs.getString("chineseTitle");
             LogUtil.doWriteLog("chineseTitle" + chineseTitle + nextTitle);
-            return chineseTitle+nextTitle;
-        }else {
+            return chineseTitle + nextTitle;
+        } else {
             return title;
         }
 
@@ -1685,37 +1709,38 @@ public class WorkflowInfoSave {
 
 
     /**
-     *获取角色人员
+     * 获取角色人员
+     *
      * @param typeid
      * @return
      */
-    public static String  getTypeOperator(String typeid){
+    public static String getTypeOperator(String typeid) {
         String lastoperator = "";
-        if(!"".equals(typeid)){
-            RecordSet rs  = new RecordSet();
-            String roleid = new BaseBean().getPropValue("TypeOperator",typeid);
-            String sql  = "select resourceid from HrmRoleMembers where roleid="+roleid;
+        if (!"".equals(typeid)) {
+            RecordSet rs = new RecordSet();
+            String roleid = new BaseBean().getPropValue("TypeOperator", typeid);
+            String sql = "select resourceid from HrmRoleMembers where roleid=" + roleid;
             rs.executeSql(sql);
-            if(rs.next()){
+            if (rs.next()) {
                 lastoperator = weaver.general.Util.null2String(rs.getString("resourceid"));
             }
         }
         return lastoperator;
     }
 
-    private static String getCurrentOperator(RequestInfo request){
+    private static String getCurrentOperator(RequestInfo request) {
         String currentoperator = "";
         String nodeid = "";
-        if(request!=null){
-            RecordSet rs  = new RecordSet();
-            String sql  = "select nodeid from uf_lcjdgxb where wfid = '"+request.getWorkflowid()+"'";
+        if (request != null) {
+            RecordSet rs = new RecordSet();
+            String sql = "select nodeid from uf_lcjdgxb where wfid = '" + request.getWorkflowid() + "'";
             rs.executeSql(sql);
-            if(rs.next()){
+            if (rs.next()) {
                 nodeid = weaver.general.Util.null2String(rs.getString("nodeid"));
             }
-            String sql1  = "select userid from workflow_currentoperator where requestid = "+request.getRequestid()+" and nodeid = "+nodeid+" and isremark ='2'";
+            String sql1 = "select userid from workflow_currentoperator where requestid = " + request.getRequestid() + " and nodeid = " + nodeid + " and isremark ='2'";
             rs.executeSql(sql1);
-            if(rs.next()){
+            if (rs.next()) {
                 currentoperator = weaver.general.Util.null2String(rs.getString("userid"));
             }
         }

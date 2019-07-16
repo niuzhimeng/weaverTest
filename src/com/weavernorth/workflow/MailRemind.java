@@ -177,8 +177,8 @@ public class MailRemind extends BaseAction {
 			if (rs.first()) {
 				strReceiveMail = getEmails(Util.null2String(rs.getString("sqffr")));
 				strMailTheme = ReqInfo.getRequestname(requestid);
-				//int num = getNumDocIds(Util.null2String(rs.getString("fj")));
-				strMailContent = getHrefDocHtmlNames(Util.null2String(rs.getString("sqwts")),"授权委托书",-1);
+				int num = getNumDocIds(Util.null2String(rs.getString("fj")));
+				strMailContent = getHrefDocHtmlNames(Util.null2String(rs.getString("scsqs")), "授权委托书", -1) + getHrefDocHtmlNames(Util.null2String(rs.getString("fj")), "附件", 0) + getHrefDocHtmlNames(Util.null2String(rs.getString("xgfj")), "附件", num);
 			}
 		}
 		// ----------规章制度流程

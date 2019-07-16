@@ -1,6 +1,7 @@
 package com.test;
 
 import com.google.gson.Gson;
+import com.weaver.general.TimeUtil;
 import com.weavernorth.OA2archives.util.ConvertToPdf;
 import com.weavernorth.workflow.waterpdf.WaterPDF;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -178,9 +179,8 @@ public class MyTest2 {
 
     @Test
     public void test11() throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("yy");
-        Date date = new Date();
-        System.out.println(sdf.format(date));
+        String replaceDate = TimeUtil.getCurrentDateString().replace("-", "");
+        System.out.println(replaceDate);
 
     }
 

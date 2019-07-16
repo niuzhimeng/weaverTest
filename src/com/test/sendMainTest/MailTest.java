@@ -16,7 +16,7 @@ public class MailTest {
     public void test47() {
         {
             // 收件人电子邮箱
-            String to = "ccy0625@foxmail.com";
+            java.lang.String to = "ccy0625@foxmail.com";
            // String to = "zhimeng.niu@weaver.com.cn";
             // 发件人电子邮箱
             String from = "295290968@qq.com";
