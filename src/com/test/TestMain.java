@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.weaver.general.TimeUtil;
 import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
-import com.weavernorth.zgzt.ProcessRequest;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.dom4j.Document;
@@ -15,11 +14,9 @@ import org.dom4j.Element;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import weaver.conn.RecordSet;
-import weaver.workflow.webservices.WorkflowServiceImplXml;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class TestMain {
@@ -197,7 +194,28 @@ public class TestMain {
 
     }
 
+    @Test
+    public void test9() {
+        String str = "";
+        int numDocIds = getNumDocIds(str);
+        System.out.println(numDocIds);
 
+        System.out.println(str.split(",").length);
+
+        String[] ss = {};
+        System.out.println(ss.length);
+    }
+
+
+    private static int getNumDocIds(String docids) {
+        int num = 0;
+        // 用英文版逗号分隔docid
+        String[] strarray = docids.split(",");
+        for (int i = 0; i < strarray.length; i++) {
+            num += 1;
+        }
+        return num;
+    }
 }
 
 

@@ -1,20 +1,16 @@
 package com.weavernorth;
 
 import com.weaver.general.BaseBean;
-import km.org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.exolab.castor.xml.schema.FinalList;
-import vba.word.Row;
 import weaver.conn.RecordSet;
 import weaver.file.ExcelParse;
 import weaver.file.FileUploadToPath;
 import weaver.formmode.interfaces.ImportPreInterfaceAction;
 import weaver.hrm.User;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -115,24 +111,26 @@ public class ImportAction extends BaseBean implements ImportPreInterfaceAction {
     private static String getCellStringValue(HSSFCell cell) {
         String strCell;
         switch (cell.getCellType()) {
-            case HSSFCell.CELL_TYPE_STRING:
-                strCell = cell.getStringCellValue();
-                break;
-            case HSSFCell.CELL_TYPE_NUMERIC:
-                Double value = cell.getNumericCellValue();
-                BigDecimal bd1 = new BigDecimal(Double.toString(value));
-                strCell = bd1.toPlainString();
-                break;
-            case HSSFCell.CELL_TYPE_BOOLEAN:
-                strCell = String.valueOf(cell.getBooleanCellValue());
-                break;
-            case HSSFCell.CELL_TYPE_BLANK:
-                strCell = "";
-                break;
-            default:
-                strCell = "";
-                break;
+//            case HSSFCell.CELL_TYPE_STRING:
+//                strCell = cell.getStringCellValue();
+//                break;
+//            case HSSFCell.CELL_TYPE_NUMERIC:
+//                Double value = cell.getNumericCellValue();
+//                BigDecimal bd1 = new BigDecimal(Double.toString(value));
+//                strCell = bd1.toPlainString();
+//                break;
+//            case HSSFCell.CELL_TYPE_BOOLEAN:
+//                strCell = String.valueOf(cell.getBooleanCellValue());
+//                break;
+//            case HSSFCell.CELL_TYPE_BLANK:
+//                strCell = "";
+//                break;
+//            default:
+//                strCell = "";
+//                break;
         }
-        return strCell;
+      //  return strCell;
+
+        return null;
     }
 }
