@@ -17,27 +17,6 @@ import weaver.workflow.request.RequestComInfo;
  */
 public class DBN_MailRemind extends BaseAction {
 
-    /**
-     * DBN项目部发文申请
-     */
-    private static final String FA_WEN = "366";
-    /**
-     * DBN项目部发函申请
-     */
-    private static final String FA_HAN = "2";
-    /**
-     * DBN项目部会议纪要申请
-     */
-    private static final String HUI_YI_JI_YAO = "3";
-    /**
-     * DBN项目部部门会议纪要
-     */
-    private static final String DEP_HUI_YI_JI_YAO = "4";
-    /**
-     * DBN项目部签报单申请
-     */
-    private static final String QIAN_BAO_DAN = "5";
-
     @Override
     public String execute(RequestInfo request) {
         this.writeLog("====节点后附加操作，发送邮件====");
@@ -69,68 +48,20 @@ public class DBN_MailRemind extends BaseAction {
             strTablename = Util.null2String(recordSet.getString("tablename"));
         }
 
-        // DBN项目部发文申请
-        if (workflowid.equals(FA_WEN)) {
-            // 查询sql
-            String selectSql = "select * from " + strTablename + " where requestid=" + requestid;
-            rs.execute(selectSql);
-            if (rs.first()) {
-                strReceiveMail = getEmails(Util.null2String(rs.getString("sjr")));
-                strMailTheme = reqInfo.getRequestname(requestid);
+        // 查询sql
+        String selectSql = "select * from " + strTablename + " where requestid=" + requestid;
+        rs.execute(selectSql);
+        if (rs.first()) {
+            strReceiveMail = getEmails(Util.null2String(rs.getString("sjr")));
+            strMailTheme = reqInfo.getRequestname(requestid);
+            if (null == rs.getString("zw") || "".equals(rs.getString("zw"))) {
+                // 没有正文字段
+                strMailContent = getHrefDocHtmlNames(Util.null2String(rs.getString("fj")), "附件", 0);
+            } else {
                 strMailContent = getHrefDocHtmlNames(Util.null2String(rs.getString("zw")), "套红版正文", -1)
                         + getHrefDocHtmlNames(Util.null2String(rs.getString("fj")), "附件", 0);
             }
-        }
 
-        // ----------公司发函
-        else if (workflowid.equals(FA_HAN)) {
-            // 查询sql
-            String selectSql = "select * from " + strTablename + " where requestid=" + requestid;
-            rs.execute(selectSql);
-            if (rs.first()) {
-                strReceiveMail = getEmails(Util.null2String(rs.getString("sjr")));
-                strMailTheme = reqInfo.getRequestname(requestid);
-                strMailContent = getHrefDocHtmlNames(Util.null2String(rs.getString("zw")), "套红版正文", -1)
-                        + getHrefDocHtmlNames(Util.null2String(rs.getString("fj")), "附件", 0);
-            }
-        }
-
-        // ----------公司会议纪要
-        else if (workflowid.equals(HUI_YI_JI_YAO)) {
-            // 查询sql
-            String selectSql = "select * from " + strTablename + " where requestid=" + requestid;
-            rs.execute(selectSql);
-            if (rs.first()) {
-                strReceiveMail = getEmails(Util.null2String(rs.getString("sjr")));
-                strMailTheme = reqInfo.getRequestname(requestid);
-                strMailContent = getHrefDocHtmlNames(Util.null2String(rs.getString("zw")), "套红版正文", -1)
-                        + getHrefDocHtmlNames(Util.null2String(rs.getString("fj")), "附件", 0);
-            }
-        }
-
-        // ----------部门发文
-        else if (workflowid.equals(DEP_HUI_YI_JI_YAO)) {
-            // 查询sql
-            String selectSql = "select * from " + strTablename + " where requestid=" + requestid;
-            rs.execute(selectSql);
-            if (rs.first()) {
-                strReceiveMail = getEmails(Util.null2String(rs.getString("sjr")));
-                strMailTheme = reqInfo.getRequestname(requestid);
-                strMailContent = getHrefDocHtmlNames(Util.null2String(rs.getString("zw")), "套红版正文", -1)
-                        + getHrefDocHtmlNames(Util.null2String(rs.getString("fj")), "附件", 0);
-            }
-        }
-        // ----------部门发函
-        else if (workflowid.equals(QIAN_BAO_DAN)) {
-            // 查询sql
-            String selectSql = "select * from " + strTablename + " where requestid=" + requestid;
-            rs.execute(selectSql);
-            if (rs.first()) {
-                strReceiveMail = getEmails(Util.null2String(rs.getString("sjr")));
-                strMailTheme = reqInfo.getRequestname(requestid);
-                strMailContent = getHrefDocHtmlNames(Util.null2String(rs.getString("zw")), "套红版正文", -1)
-                        + getHrefDocHtmlNames(Util.null2String(rs.getString("fj")), "附件", 0);
-            }
         }
 
         this.writeLog("==邮件提醒人==strReceiveMail（默认）==" + strReceiveMail);
@@ -243,13 +174,5 @@ public class DBN_MailRemind extends BaseAction {
         }
 
         return hrefDocHtmlNames;
-    }
-
-    private static int getNumDocIds(String docids) {
-        int num = 0;
-        if (docids != null) {
-            num = docids.split(",").length;
-        }
-        return num;
     }
 }
