@@ -130,7 +130,7 @@ public class ArchivesUtil extends BaseBean {
             retValue = true;
         } catch (Exception e) {
             LogUtil.doWriteLog("===合并pdf文档时异常==>" + e);
-            insertPdfLog(requestInfo.getRequestid(),requestInfo.getWorkflowid(),e.getMessage());
+            insertPdfLog(requestInfo.getRequestid(), requestInfo.getWorkflowid(), e.getMessage());
             retValue = false;
         } finally {
             document.close();
@@ -143,19 +143,20 @@ public class ArchivesUtil extends BaseBean {
         }
 
     }
+
     /**
      * 插入归档异常的数据到日志表中
+     *
      * @param requestid
      * @param workflowid
-     * @param exception
-     * uf_gdcwrz
-     * lcid   流程id
-     * wfid  流程类别
-     * bcrq  报错日期
-     * bcsj  报错时间
-     * bcnr  报错内容
+     * @param exception  uf_gdcwrz
+     *                   lcid   流程id
+     *                   wfid  流程类别
+     *                   bcrq  报错日期
+     *                   bcsj  报错时间
+     *                   bcnr  报错内容
      */
-    public static void insertPdfLog(String requestid , String workflowid, String exception){
+    public static void insertPdfLog(String requestid, String workflowid, String exception) {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String dateNowStr = sdf.format(date);
@@ -163,7 +164,7 @@ public class ArchivesUtil extends BaseBean {
         String dateNowStrtime = sdftime.format(date);
 
         RecordSet rs = new RecordSet();
-        String sql = "insert into uf_gdcwrz (lcid,wfid,bcrq,bcsj,bcnr) values('"+requestid+"','"+workflowid+"','"+dateNowStr+"','"+dateNowStrtime+"','"+exception+"')";
+        String sql = "insert into uf_gdcwrz (lcid,wfid,bcrq,bcsj,bcnr) values('" + requestid + "','" + workflowid + "','" + dateNowStr + "','" + dateNowStrtime + "','" + exception + "')";
         rs.execute(sql);
 
 
@@ -171,6 +172,7 @@ public class ArchivesUtil extends BaseBean {
 
     /**
      * 从异常对象中获取信息，转为String输出
+     *
      * @param e
      * @return
      */
@@ -179,7 +181,7 @@ public class ArchivesUtil extends BaseBean {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
-            String strMsg=sw.toString();
+            String strMsg = sw.toString();
             sw.close();
             pw.close();
             return "\r\n" + strMsg + "\r\n";
@@ -187,8 +189,9 @@ public class ArchivesUtil extends BaseBean {
             return "ErrorInfoFromException";
         }
     }
+
     /**
-     *TODO 根据流程id生成不同的ftp上传路径
+     * TODO 根据流程id生成不同的ftp上传路径
      *
      * @param workflowid
      * @return String ftp上传路径
@@ -220,7 +223,7 @@ public class ArchivesUtil extends BaseBean {
                 ftppath = "/" + year + "/" + month + "/" + "公文管理类/用印申请/";
             } else if ("32".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "PC/公文管理类/用印申请/";
-            }else if ("5".equals(type)) {
+            } else if ("5".equals(type)) {
                 //String fwlxColumName =getSettingColName(type,"gw_fwlx");
                 //String fwlx_ZH = getTypeNameByRequest(requestid,fwlxColumName);
                 //if("刻制".equals(fwlx_ZH)){
@@ -245,9 +248,9 @@ public class ArchivesUtil extends BaseBean {
                 }
             } else if ("9".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "公文管理类/收文/";
-            }else if ("40".equals(type)) {
+            } else if ("40".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "PC/公文管理类/收文/";
-            }else if ("10".equals(type)) {
+            } else if ("10".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "公文管理类/签报单/";
             } else if ("41".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "PC/公文管理类/签报单/";
@@ -271,9 +274,9 @@ public class ArchivesUtil extends BaseBean {
                 ftppath = "/" + year + "/" + month + "/" + "MOC/";
             } else if ("19".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "授权管理/";
-            }else if ("31".equals(type)) {
+            } else if ("31".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "PC/授权管理/";
-            }else if ("20".equals(type)) {
+            } else if ("20".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "付款/";
             } else if ("21".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "退款/";
@@ -289,7 +292,7 @@ public class ArchivesUtil extends BaseBean {
                     ftppath = "/" + year + "/" + month + "/" + "公文管理类/" + fwlx_ZH + "/";
                 }
 
-            }else if ("34".equals(type) || "35".equals(type) || "36".equals(type)
+            } else if ("34".equals(type) || "35".equals(type) || "36".equals(type)
                     || "37".equals(type) || "38".equals(type) || "39".equals(type)) {
                 //只有公司发文流程和部门发文两个流程有该字段
                 String fwlxColumName = getSettingColName(type, "gw_fwlx");
@@ -304,7 +307,7 @@ public class ArchivesUtil extends BaseBean {
             }
             //pc合同签订/变更流程
             else if ("29".equals(type) || "30".equals(type)) {
-                ftppath = "/" + year + "/" + month  + "/PC/合同管理/";
+                ftppath = "/" + year + "/" + month + "/PC/合同管理/";
             }
 
         }
@@ -350,7 +353,7 @@ public class ArchivesUtil extends BaseBean {
     }
 
     /**
-     * 获取合并后pdf需要的名称 
+     * 获取合并后pdf需要的名称
      *
      * @param requestid
      * @return
@@ -412,43 +415,49 @@ public class ArchivesUtil extends BaseBean {
             ColumName = getSettingColName(typeid, "gw_wh");
         } else if ("28".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("29".equals(typeid)) {
+        } else if ("29".equals(typeid)) {
             ColumName = getSettingColName(typeid, "ht_hth");
-        }else if ("30".equals(typeid)) {
+        } else if ("30".equals(typeid)) {
             ColumName = getSettingColName(typeid, "ht_hth");
-        }else if ("31".equals(typeid)) {
+        } else if ("31".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("32".equals(typeid)) {
+        } else if ("32".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("33".equals(typeid)) {
+        } else if ("33".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("34".equals(typeid)) {
+        } else if ("34".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("35".equals(typeid)) {
+        } else if ("35".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("36".equals(typeid)) {
+        } else if ("36".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("37".equals(typeid)) {
+        } else if ("37".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("38".equals(typeid)) {
+        } else if ("38".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("39".equals(typeid)) {
+        } else if ("39".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("40".equals(typeid)) {
+        } else if ("40".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("41".equals(typeid)) {
+        } else if ("41".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("42".equals(typeid)) {
+        } else if ("42".equals(typeid)) {
             ColumName = getSettingColName(typeid, "ht_hth");
-        }else if ("43".equals(typeid)) {
+        } else if ("43".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("44".equals(typeid)) {
+        } else if ("44".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("45".equals(typeid)) {
+        } else if ("45".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("46".equals(typeid)) {
+        } else if ("46".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
-        }else if ("47".equals(typeid)) {
+        } else if ("47".equals(typeid)) {
+            ColumName = getSettingColName(typeid, "gw_wh");
+        } else if ("48".equals(typeid)) {
+            ColumName = getSettingColName(typeid, "gw_wh");
+        } else if ("49".equals(typeid)) {
+            ColumName = getSettingColName(typeid, "ht_hth");
+        } else if ("50".equals(typeid)) {
             ColumName = getSettingColName(typeid, "gw_wh");
         }
 
@@ -550,7 +559,6 @@ public class ArchivesUtil extends BaseBean {
     }
 
 
-
     public static String getLinkByGensuiteId(String gensuiteId) {
         String content = "";
         String URL = "";
@@ -564,7 +572,8 @@ public class ArchivesUtil extends BaseBean {
         String returnString = "<a href='" + URL + "' target='_blank'>" + content + "</a>";
         return returnString;
     }
+
     public static void main(String[] args) {
 
-	}
+    }
 }

@@ -47,7 +47,7 @@ public class OAPDF2archivesAction extends BaseBean {
 
 
     /**
-     *TODO 根据流程id生成不同的ftp上传路径
+     * TODO 根据流程id生成不同的ftp上传路径
      *
      * @param workflowid
      * @return String ftp上传路径
@@ -66,15 +66,15 @@ public class OAPDF2archivesAction extends BaseBean {
         String deptid = re.getDepartmentID(creatertid);
         String deptname = de.getDepartmentname(deptid);
         deptname = WorkflowUtil.getChineseName("departmentname", "HrmDepartment", deptname);
-        LogUtil.doWriteLog("---getftppath中获取发文类型部门---id="+creatertid+"----deptname="+deptname);
+        LogUtil.doWriteLog("---getftppath中获取发文类型部门---id=" + creatertid + "----deptname=" + deptname);
         String year = strs[0];
         String month = strs[1];
         if (!"".equals(workflowid)) {
             String type = getExcelFileType(workflowid);
-            Map<String,String> fwlx = getFwlxWithTypeid(type);
-            String fwlx_ZH = fwlx.containsKey("fwlx")?fwlx.get("fwlx"):"";
-            String isAddDept = fwlx.containsKey("bm")?fwlx.get("bm"):"";
-            LogUtil.doWriteLog("============getftppath查看是否有=fwlx_ZH="+fwlx_ZH+"----是否添加部门isAddDept:"+isAddDept);
+            Map<String, String> fwlx = getFwlxWithTypeid(type);
+            String fwlx_ZH = fwlx.containsKey("fwlx") ? fwlx.get("fwlx") : "";
+            String isAddDept = fwlx.containsKey("bm") ? fwlx.get("bm") : "";
+            LogUtil.doWriteLog("============getftppath查看是否有=fwlx_ZH=" + fwlx_ZH + "----是否添加部门isAddDept:" + isAddDept);
             //合同类  1 合同创建  2 合同变更
             if ("1".equals(type) || "2".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "合同管理/";
@@ -84,7 +84,7 @@ public class OAPDF2archivesAction extends BaseBean {
                 ftppath = "/" + year + "/" + month + "/" + "公文管理类/用印申请/";
             } else if ("32".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "PC/公文管理类/用印申请/";
-            }else if ("5".equals(type)) {
+            } else if ("5".equals(type)) {
                 //String fwlxColumName =getSettingColName(type,"gw_fwlx");
                 //String fwlx_ZH = getTypeNameByRequest(requestid,fwlxColumName);
                 //if("刻制".equals(fwlx_ZH)){
@@ -108,9 +108,9 @@ public class OAPDF2archivesAction extends BaseBean {
                 }
             } else if ("9".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "公文管理类/收文/";
-            }else if ("40".equals(type)) {
+            } else if ("40".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "PC/公文管理类/收文/";
-            }else if ("10".equals(type)) {
+            } else if ("10".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "公文管理类/签报单/";
             } else if ("41".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "PC/公文管理类/签报单/";
@@ -134,9 +134,9 @@ public class OAPDF2archivesAction extends BaseBean {
                 ftppath = "/" + year + "/" + month + "/" + "MOC/";
             } else if ("19".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "授权管理/";
-            }else if ("31".equals(type)) {
+            } else if ("31".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "PC/授权管理/";
-            }else if ("20".equals(type)) {
+            } else if ("20".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "付款/";
             } else if ("21".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/" + "退款/";
@@ -150,7 +150,7 @@ public class OAPDF2archivesAction extends BaseBean {
                     ftppath = "/" + year + "/" + month + "/" + "公文管理类/" + fwlx_ZH + "/";
                 }
 
-            }else if ("34".equals(type) || "35".equals(type) || "36".equals(type)
+            } else if ("34".equals(type) || "35".equals(type) || "36".equals(type)
                     || "37".equals(type) || "38".equals(type) || "39".equals(type)) {
                 //只有公司发文流程和部门发文两个流程有该字段
                 //base.getPropValue("archives","gw_fwlx");
@@ -163,33 +163,45 @@ public class OAPDF2archivesAction extends BaseBean {
             }
             //pc合同签订/变更流程
             else if ("29".equals(type) || "30".equals(type)) {
-                ftppath = "/" + year + "/" + month  + "/PC/合同管理/";
+                ftppath = "/" + year + "/" + month + "/PC/合同管理/";
             }
             // DBN合同签订流程
             else if ("42".equals(type)) {
-                ftppath = "/" + year + "/" + month  + "/DBN/合同管理/";
+                ftppath = "/" + year + "/" + month + "/DBN/合同管理/";
             }
 
             // 2019-07-20 新增dbn系列五条流程
             // DBN项目部发文申请
             else if ("43".equals(type)) {
-                ftppath = "/" + year + "/" + month  + "/DBN/公文管理类/项目部发文";
+                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部发文";
             }
             // DBN项目部发函申请
             else if ("44".equals(type)) {
-                ftppath = "/" + year + "/" + month  + "/DBN/公文管理类/项目部发函";
+                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部发函";
             }
             // DBN项目部会议纪要申请
             else if ("45".equals(type)) {
-                ftppath = "/" + year + "/" + month  + "/DBN/公文管理类/项目部会议纪要";
+                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部会议纪要";
             }
             // DBN项目部部门会议纪要申请
             else if ("46".equals(type)) {
-                ftppath = "/" + year + "/" + month  + "/DBN/公文管理类/项目部部门会议纪要";
+                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部部门会议纪要";
             }
             // DBN项目部签报单申请
             else if ("47".equals(type)) {
-                ftppath = "/" + year + "/" + month  + "/DBN/公文管理类/签报单";
+                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/签报单";
+            }
+            // 项目部邮箱发文申请
+            else if ("48".equals(type)) {
+                ftppath = "/" + year + "/" + month + "/PC/公文管理类/邮箱发文";
+            }
+            // DBN 合同变更审批流程
+            else if ("49".equals(type)) {
+                ftppath = "/" + year + "/" + month + "/DBN/合同管理";
+            }
+            // DBN 授权委托申请
+            else if ("50".equals(type)) {
+                ftppath = "/" + year + "/" + month + "/DBN/授权管理";
             }
 
         }
@@ -199,16 +211,17 @@ public class OAPDF2archivesAction extends BaseBean {
 
     /**
      * 通过typeid获取发文类型
+     *
      * @param typeid
      * @return
      */
-    private Map<String,String> getFwlxWithTypeid(String typeid){
-        Map<String,String>  fwlx = new HashMap<String,String>();
+    private Map<String, String> getFwlxWithTypeid(String typeid) {
+        Map<String, String> fwlx = new HashMap<String, String>();
         RecordSet recordSet = new RecordSet();
-        recordSet.execute("select fwlx,bm from uf_fwlx where typeid = "+typeid);
-        while (recordSet.next()){
-            fwlx.put("fwlx",recordSet.getString("fwlx"));
-            fwlx.put("bm",recordSet.getString("bm"));
+        recordSet.execute("select fwlx,bm from uf_fwlx where typeid = " + typeid);
+        while (recordSet.next()) {
+            fwlx.put("fwlx", recordSet.getString("fwlx"));
+            fwlx.put("bm", recordSet.getString("bm"));
         }
         return fwlx;
     }
@@ -216,7 +229,8 @@ public class OAPDF2archivesAction extends BaseBean {
 
     /**
      * 获取自定义表中的字段名称
-     *workflow_currentoperator
+     * workflow_currentoperator
+     *
      * @param typeid    类型id
      * @param columName 列名
      * @return 设置的列名
@@ -377,7 +391,7 @@ public class OAPDF2archivesAction extends BaseBean {
                         fo.setUserName(username);
                         fo.setPassWord(password);
                         fo.setPort(port);
-                        LogUtil.doWriteLog("==FTP==addr：" + addr+"--username:"+username+"--password:"+password+"==port:"+port);
+                        LogUtil.doWriteLog("==FTP==addr：" + addr + "--username:" + username + "--password:" + password + "==port:" + port);
 //                        File file = new File("E:\\imageTest\\unzipFile\\2019-03-14\\54986\\test.doc");
 
                         String fptstatus = f.uploadOneFile(fo, createPath, new File(savePath), ArchivesUtil.getFileNameByWorkflow(request.getRequestid()) + ".pdf");
@@ -388,7 +402,7 @@ public class OAPDF2archivesAction extends BaseBean {
                         LogUtil.doWriteLog("==上传ftp异常==" + e);
                         //保存成功  上传失败状态
                         save.SaveWorkflowInfo(request, createPath, "0", "1", pagenum);
-                    }finally {
+                    } finally {
                         try {
                             f.disConnection();
                         } catch (IOException e) {
