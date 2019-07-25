@@ -1489,37 +1489,9 @@ public class WorkflowInfoSave {
                 bean.setC_target_dept(deptid);
                 bean.setC_page_counts(c_page_counts);
                 bean.setC_archive_date(c_archive_date);
-                bean.setC_archive_org(c_archive_org);
+                bean.setC_archive_org(deptid);
                 bean.setC_inner_sequence(c_inner_sequence);
-                bean.setC_archive_owne(Lastoperator);
-                bean.setTypeid(typeid);
-                bean.setSaveStatus(saveStatus);
-                bean.setUploadStatus(uploadStatus);
-                bean.setExcelmode_path(excelmode_path);
-                bean.setNewexcel_path(newexcel_path);
-            }
-            // 项目部邮箱发文申请
-            else if ("48".equals(typeid)) {
-                bean.setRequestid(requestid);
-                //合并后pdf的名称
-                bean.setObject_name(rs.getString("bh"));
-                bean.setFile_path(file_path);
-                bean.setFile_format(file_format);
-                bean.setC_english_title("");
-                bean.setC_chinese_title(c_chinese_title);
-                bean.setC_doc_type(rs.getString("fwlx"));
-                bean.setC_compile_dept(deptid);
-                bean.setC_compile_date(WorkflowUtil.getCreateDate(request.getRequestid()));
-                bean.setC_compiler(createridReal);
-                bean.setC_issue_date(c_archive_date);
-                bean.setC_issue_num(rs.getString("bh"));
-                bean.setC_issue_dept(deptid);
-                bean.setC_target_dept(deptid);
-                bean.setC_page_counts(c_page_counts);
-                bean.setC_archive_date(c_archive_date);
-                bean.setC_archive_org(c_archive_org);
-                bean.setC_inner_sequence(c_inner_sequence);
-                bean.setC_archive_owne(Lastoperator);
+                bean.setC_archive_owne(createridReal);
                 bean.setTypeid(typeid);
                 bean.setSaveStatus(saveStatus);
                 bean.setUploadStatus(uploadStatus);
@@ -1620,7 +1592,7 @@ public class WorkflowInfoSave {
                         || "35".equals(exceltype) || "36".equals(exceltype) || "37".equals(exceltype) || "38".equals(exceltype)
                         || "39".equals(exceltype) || "40".equals(exceltype) || "41".equals(exceltype)
                         || "43".equals(exceltype) || "44".equals(exceltype) || "45".equals(exceltype) || "46".equals(exceltype)
-                        || "47".equals(exceltype) || "48".equals(exceltype) || "50".equals(exceltype)
+                        || "47".equals(exceltype) || "50".equals(exceltype)
         ) {
             String sql = "select id from wn_oa2emc_document where requestid=" + requestid + "";
             rs.execute(sql);
@@ -1709,7 +1681,7 @@ public class WorkflowInfoSave {
                 || "35".equals(typeid) || "36".equals(typeid) || "37".equals(typeid) || "38".equals(typeid)
                 || "39".equals(typeid) || "40".equals(typeid) || "41".equals(typeid)
                 || "43".equals(typeid) || "44".equals(typeid) || "45".equals(typeid) || "46".equals(typeid)
-                || "47".equals(typeid) || "48".equals(typeid) || "50".equals(typeid)
+                || "47".equals(typeid) || "50".equals(typeid)
         ) {
             subinsert.append("insert into wn_oa2emc_document ");
             subinsert.append("(requestid,");
@@ -1842,7 +1814,7 @@ public class WorkflowInfoSave {
                 || "35".equals(typeid) || "36".equals(typeid) || "37".equals(typeid) || "38".equals(typeid)
                 || "39".equals(typeid) || "40".equals(typeid) || "41".equals(typeid)
                 || "43".equals(typeid) || "44".equals(typeid) || "45".equals(typeid) || "46".equals(typeid)
-                || "47".equals(typeid) || "48".equals(typeid) || "50".equals(typeid)
+                || "47".equals(typeid) || "50".equals(typeid)
         ) {
             subUpdate.append("update wn_oa2emc_document set ");
             subUpdate.append(" c_archive_owner='" + bean.getC_archive_owne() + "',");
@@ -1886,7 +1858,7 @@ public class WorkflowInfoSave {
                 || "35".equals(type) || "36".equals(type) || "37".equals(type) || "38".equals(type)
                 || "39".equals(type) || "40".equals(type) || "41".equals(type)
                 || "43".equals(type) || "44".equals(type) || "45".equals(type) || "46".equals(type)
-                || "47".equals(type) || "48".equals(type) || "50".equals(type)
+                || "47".equals(type) || "50".equals(type)
         ) {
             sql = "select max(c_inner_sequence) maxid from wn_oa2emc_document where typeid ='" + type + "'";
 

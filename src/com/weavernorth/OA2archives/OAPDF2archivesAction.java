@@ -191,10 +191,6 @@ public class OAPDF2archivesAction extends BaseBean {
             else if ("47".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/DBN/公文管理类/签报单";
             }
-            // 项目部邮箱发文申请
-            else if ("48".equals(type)) {
-                ftppath = "/" + year + "/" + month + "/PC/公文管理类/邮箱发文";
-            }
             // DBN 合同变更审批流程
             else if ("49".equals(type)) {
                 ftppath = "/" + year + "/" + month + "/DBN/合同管理";

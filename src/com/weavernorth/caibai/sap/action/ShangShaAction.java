@@ -35,6 +35,10 @@ public class ShangShaAction extends BaseAction {
 
     @Override
     public String execute(RequestInfo requestInfo) {
+        String operatetype = requestInfo.getRequestManager().getSrc();
+        if (!"submit".equals(operatetype)) {
+            return "1";
+        }
         User user = requestInfo.getRequestManager().getUser();
         requestId = requestInfo.getRequestid();
         int formId = requestInfo.getRequestManager().getFormid();
@@ -246,7 +250,7 @@ public class ShangShaAction extends BaseAction {
         table.setValue("ZFP", recordSetDetail.getString("fp"));
 
         // 商品名称
-        table.setValue("ZSPMC", depName + recordSetDetail.getString("spmc"));
+        table.setValue("ZSPMC", recordSetDetail.getString("spmc") + "可抵扣进项税");
         // 付款事项描述
         table.setValue("ZFKSXMS", fksxms + "可抵扣进项税");
         // 实际支付方式
