@@ -216,6 +216,15 @@ public class TestMain {
         }
         return num;
     }
+
+    @Test
+    public void test10() {
+        StringBuffer sb = new StringBuffer("1,2,3,4,");
+        sb.deleteCharAt(sb.length()-1);
+        System.out.println(sb);
+    }
+
+
 }
 
 

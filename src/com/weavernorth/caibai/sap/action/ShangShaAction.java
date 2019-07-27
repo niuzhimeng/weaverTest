@@ -250,9 +250,9 @@ public class ShangShaAction extends BaseAction {
         table.setValue("ZFP", recordSetDetail.getString("fp"));
 
         // 商品名称
-        table.setValue("ZSPMC", recordSetDetail.getString("spmc") + "可抵扣进项税");
+        table.setValue("ZSPMC", depName + recordSetDetail.getString("spmc") + "可抵扣进项税");
         // 付款事项描述
-        table.setValue("ZFKSXMS", fksxms + "可抵扣进项税");
+        table.setValue("ZFKSXMS", fksxms);
         // 实际支付方式
         table.setValue("ZZFFS", getZdz(recordSetDetail.getString("sjzffs")));
         // 收款公司名称
