@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import weaver.conn.RecordSet;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -219,9 +220,38 @@ public class TestMain {
 
     @Test
     public void test10() {
-        StringBuffer sb = new StringBuffer("1,2,3,4,");
-        sb.deleteCharAt(sb.length()-1);
-        System.out.println(sb);
+        String str = "D:\\WEAVER\\ecology\\filesystem\\201907\\N\\1564280579323";
+        fileCopy(str, str + ".html");
+
+    }
+
+    private void fileCopy(String srcPath, String outPath) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            inputStream = new FileInputStream(srcPath);
+            outputStream = new FileOutputStream(outPath);
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = inputStream.read(bytes)) > -1) {
+                outputStream.write(bytes, 0, length);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
     }
 
 

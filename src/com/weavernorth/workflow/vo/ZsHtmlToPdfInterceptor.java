@@ -1,14 +1,14 @@
-package com.test;
+package com.weavernorth.workflow.vo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class HtmlToPdfInterceptor extends Thread {
+public class ZsHtmlToPdfInterceptor extends Thread {
     private InputStream is;
 
-    public HtmlToPdfInterceptor(InputStream is){
+    public ZsHtmlToPdfInterceptor(InputStream is){
         this.is = is;
     }
 
@@ -19,7 +19,8 @@ public class HtmlToPdfInterceptor extends Thread {
             BufferedReader br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null) {
-                System.out.println(line); //输出内容
+                //输出内容
+                System.out.println(line);
             }
         }catch (IOException e){
             e.printStackTrace();

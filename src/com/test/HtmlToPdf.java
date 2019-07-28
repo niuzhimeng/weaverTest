@@ -57,7 +57,7 @@ public class HtmlToPdf {
 
     public static void main(String[] args) {
 
-        HtmlToPdf.convert("C:\\Users\\29529\\Desktop\\123.html",
+        HtmlToPdf.convert("C:\\Users\\29529\\Desktop\\123",
                 "C:\\Users\\29529\\Desktop\\123.pdf");
 
         //setWatermark("C:\\Users\\29529\\Desktop\\123.pdf","C:\\Users\\29529\\Desktop\\123bak.pdf");
