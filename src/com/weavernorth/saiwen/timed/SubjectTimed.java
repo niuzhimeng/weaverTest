@@ -43,11 +43,19 @@ public class SubjectTimed extends BaseCronJob {
             List resultList = rootElt.element("AccountQueryResultList").elements();
             baseBean.writeLog("科目信息返回共计：" + resultList.size() + " 条");
 
+            // 此次新增数据id集合
             List<String> addIdList = new ArrayList<String>();
 
             RecordSet recordSet = new RecordSet();
             RecordSet insertSet = new RecordSet();
             RecordSet updateSet = new RecordSet();
+            recordSet.executeQuery("select kmid from uf_subject");
+            // 已有数据的id集合
+            List<String> idList = new ArrayList<String>(recordSet.getCounts());
+            while (recordSet.next()) {
+                idList.add(recordSet.getString("kmid"));
+            }
+
             Element myElement;
             Object[] parameter = new Object[15];
             for (Object tableObj : resultList) {
@@ -62,8 +70,8 @@ public class SubjectTimed extends BaseCronJob {
                 parameter[6] = myElement.elementTextTrim("AccountProperty_AccountBasic_name");
                 parameter[7] = myElement.elementTextTrim("AccountProperty_Name");
                 parameter[8] = myElement.elementTextTrim("AccountProperty_Code");
-                String id = myElement.elementTextTrim("Id");
-                parameter[9] = id;
+                String kmId = myElement.elementTextTrim("Id");
+                parameter[9] = kmId;
 
                 parameter[10] = MODE_ID;
                 parameter[11] = "1";
@@ -71,16 +79,16 @@ public class SubjectTimed extends BaseCronJob {
                 parameter[13] = TimeUtil.getCurrentTimeString().substring(0, 10);
                 parameter[14] = TimeUtil.getCurrentTimeString().substring(11);
 
-                recordSet.executeQuery("select id from uf_subject where kmid = " + id);
-                if (recordSet.next()) {
+                if (idList.contains(kmId)) {
                     updateSet.executeUpdate("update uf_subject set sob = ?, org_name = ?, org_code = ?, code = ?, name = ?," +
                                     "account_basic_code = ?, account_basic_name = ?, account_property_name = ?, account_property_code = ?," +
                                     "modedatacreatedate = ?, modedatacreatetime = ? where kmid = ?",
                             parameter[0], parameter[1], parameter[2], parameter[3], parameter[4],
-                            parameter[5], parameter[6], parameter[7], parameter[8], parameter[13], parameter[14], id);
+                            parameter[5], parameter[6], parameter[7], parameter[8], parameter[13], parameter[14], kmId);
                     updateCount++;
                 } else {
-                    addIdList.add(id);
+                    idList.add(kmId);
+                    addIdList.add(kmId);
                     insertSet.executeUpdate("insert into uf_subject(sob, org_name, org_code, code, name, " +
                             "account_basic_code, account_basic_name, account_property_name, account_property_code, kmid, " +
                             "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) " +

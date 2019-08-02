@@ -42,11 +42,19 @@ public class CustomerTimed extends BaseCronJob {
             List resultList = rootElt.element("BankAccountList").elements();
             baseBean.writeLog("客户信息返回共计：" + resultList.size() + " 条");
 
+            // 此次新增数据id集合
             List<String> addIdList = new ArrayList<String>();
 
             RecordSet recordSet = new RecordSet();
             RecordSet insertSet = new RecordSet();
             RecordSet updateSet = new RecordSet();
+            recordSet.executeQuery("select supplier_id from uf_customer");
+            // 已有数据的id集合
+            List<String> idList = new ArrayList<String>(recordSet.getCounts());
+            while (recordSet.next()) {
+                idList.add(recordSet.getString("supplier_id"));
+            }
+
             Element myElement;
             Object[] parameter = new Object[14];
             for (Object tableObj : resultList) {
@@ -69,8 +77,7 @@ public class CustomerTimed extends BaseCronJob {
                 parameter[12] = TimeUtil.getCurrentTimeString().substring(0, 10);
                 parameter[13] = TimeUtil.getCurrentTimeString().substring(11);
 
-                recordSet.executeQuery("select id from uf_customer where supplier_id = " + supplierId);
-                if (recordSet.next()) {
+                if (idList.contains(supplierId)) {
                     updateSet.executeUpdate("update uf_customer set org_name = ?, org_code = ?, supplier_name = ?, supplier_code = ?," +
                                     "bank_code = ?, bank_name = ?, supplier_bank_account = ?, org_id = ?, modedatacreatedate = ?," +
                                     "modedatacreatetime = ? where supplier_id = ?",
@@ -78,6 +85,7 @@ public class CustomerTimed extends BaseCronJob {
                             parameter[4], parameter[5], parameter[6], parameter[7], parameter[12], parameter[13], supplierId);
                     updateCount++;
                 } else {
+                    idList.add(supplierId);
                     addIdList.add(supplierId);
                     insertSet.executeUpdate("insert into uf_customer(org_name, org_code, supplier_name, supplier_code, bank_code, " +
                             "bank_name, supplier_bank_account, org_id, supplier_id," +
