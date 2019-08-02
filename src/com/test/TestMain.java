@@ -3,7 +3,9 @@ package com.test;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.lowagie.text.pdf.*;
 import com.weaver.general.TimeUtil;
+import com.weavernorth.saiwen.myWeb.WebUtil;
 import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -15,10 +17,11 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import weaver.conn.RecordSet;
 
+import java.awt.*;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.*;
 
 public class TestMain {
 
@@ -196,29 +199,6 @@ public class TestMain {
     }
 
     @Test
-    public void test9() {
-        String str = "";
-        int numDocIds = getNumDocIds(str);
-        System.out.println(numDocIds);
-
-        System.out.println(str.split(",").length);
-
-        String[] ss = {};
-        System.out.println(ss.length);
-    }
-
-
-    private static int getNumDocIds(String docids) {
-        int num = 0;
-        // 用英文版逗号分隔docid
-        String[] strarray = docids.split(",");
-        for (int i = 0; i < strarray.length; i++) {
-            num += 1;
-        }
-        return num;
-    }
-
-    @Test
     public void test10() {
         String str = "D:\\WEAVER\\ecology\\filesystem\\201907\\N\\1564280579323";
         fileCopy(str, str + ".html");
@@ -254,6 +234,111 @@ public class TestMain {
 
     }
 
+    public static void main(String[] args) throws Exception {
+        // 要输出的pdf文件
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File("C:\\Users\\29529\\Desktop\\123Back.pdf")));
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        // 将pdf文件先加水印然后输出
+        setWatermark(bos, "C:\\Users\\29529\\Desktop\\123.pdf", format.format(cal.getTime())
+                + "  下载使用人：" + "测试user");
+    }
+
+    public static void setWatermark(BufferedOutputStream bos, String input, String waterMarkName) throws Exception {
+
+        PdfReader reader = new PdfReader(input);
+        PdfStamper stamper = new PdfStamper(reader, bos);
+        int total = reader.getNumberOfPages() + 1;
+        PdfContentByte content;
+        BaseFont base = BaseFont.createFont("C:\\Windows\\Fonts\\STCAIYUN.TTF", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        PdfGState gs = new PdfGState();
+        for (int i = 1; i < total; i++) {
+            content = stamper.getOverContent(i);// 在内容上方加水印
+            //content = stamper.getUnderContent(i);//在内容下方加水印
+            gs.setFillOpacity(0.2f);
+            // content.setGState(gs);
+            content.beginText();
+            content.setColorFill(Color.LIGHT_GRAY);
+            content.setFontAndSize(base, 80);
+            content.setTextMatrix(70, 200);
+            // x y 倾斜角度
+            content.showTextAligned(1, "牛智萌加的水印", 260, 350, 30);
+            content.showTextAligned(1, "2019-07-30", 260, 280, 30);
+            content.setColorFill(Color.BLACK);
+            content.setFontAndSize(base, 8);
+            content.showTextAligned(1, "下载时间：" + waterMarkName + "", 300, 10, 0);
+            content.endText();
+
+        }
+        stamper.close();
+        reader.close();
+    }
+
+    @Test
+    public void test12() throws Exception {
+        String returnXml = "<?xml version=\"1.0\" encoding=\"utf‐8\"?>\n" +
+                "<Cbo_Account_QueryResult_List>   \n" +
+                "    <AccountQueryResultList>   \n" +
+                "     <Cbo_Account_QueryResult_Model>   \n" +
+                "       <Sob>1001009140200035</Sob>    \n" +
+                "       <OrgName>赛闻天津</OrgName>   \n" +
+                "       <OrgCode>101</OrgCode>   \n" +
+                "       <Code>66020507|0|0|015|0|0|0|0|0</Code>  \n" +
+                "       <Name>慰问费|0|0|工会|0|0|0|0|0</Name>   \n" +
+                "       <AccountProperty_AccountBasic_code>06</AccountProperty_AccountBasic_code> \n" +
+                "       <AccountProperty_AccountBasic_name>损益</AccountProperty_AccountBasic_name>\n" +
+                "       <AccountProperty_Name>管理费用</AccountProperty_Name>\n" +
+                "       <AccountProperty_Code>120103</AccountProperty_Code>\n" +
+                "       <Id>1001102019130145</Id>\n" +
+                "     </Cbo_Account_QueryResult_Model>   \n" +
+                "    </AccountQueryResultList>   \n" +
+                "</Cbo_Account_QueryResult_List>";
+        Document doc = DocumentHelper.parseText(returnXml);
+        Element rootElt = doc.getRootElement();
+        List resultList = rootElt.element("AccountQueryResultList").elements();
+        System.out.println(resultList.size());
+        Element myElement;
+        for (Object tableObj : resultList) {
+            myElement = (Element) tableObj;
+            String orgName = myElement.elementTextTrim("Sob");
+            String orgCode = myElement.elementTextTrim("OrgName");
+            String supplierName = myElement.elementTextTrim("OrgCode");
+            String supplierCode = myElement.elementTextTrim("Code");
+            String bankCode = myElement.elementTextTrim("Name");
+
+            String bankName = myElement.elementTextTrim("AccountProperty_AccountBasic_code");
+            String supplierBankAccountCode = myElement.elementTextTrim("AccountProperty_AccountBasic_name");
+            String orgID = myElement.elementTextTrim("AccountProperty_Name");
+            String supplierId = myElement.elementTextTrim("AccountProperty_Code");
+            String u9Id = myElement.elementTextTrim("Id");
+
+            System.out.println(orgName);
+            System.out.println(orgCode);
+            System.out.println(supplierName);
+            System.out.println(supplierCode);
+            System.out.println(bankCode);
+
+            System.out.println(bankName);
+            System.out.println(supplierBankAccountCode);
+            System.out.println(orgID);
+            System.out.println(supplierId);
+            System.out.println(u9Id);
+            System.out.println("=========");
+        }
+
+    }
+
+    @Test
+    public void test13() throws Exception {
+        String myXml = "<?xml version=\"1.0\" encoding=\"utf‐16\"?>\n" +
+                "<Cbo_SupplierBankAccount_Query_Model>\n" +
+                "</Cbo_SupplierBankAccount_Query_Model>";
+
+        // 获取客户信息
+        String returnXml = WebUtil.getCustomer(myXml);
+        System.out.println(returnXml);
+
+    }
 
 }
 

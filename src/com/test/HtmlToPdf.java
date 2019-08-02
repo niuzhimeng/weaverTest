@@ -34,6 +34,7 @@ public class HtmlToPdf {
 //        cmd.append("  --header-center 这里是页眉这里是页眉这里是页眉这里是页眉 ");//页眉中间内容
 //        //cmd.append("  --margin-top 30mm ");//设置页面上边距 (default 10mm)
 //        cmd.append(" --header-spacing 10 ");//    (设置页眉和内容的距离,默认0)
+        cmd.append(" --margin-left 21mm ");
         cmd.append(srcPath);
         cmd.append(" ");
         cmd.append(destPath);
@@ -57,7 +58,7 @@ public class HtmlToPdf {
 
     public static void main(String[] args) {
 
-        HtmlToPdf.convert("C:\\Users\\29529\\Desktop\\123",
+        HtmlToPdf.convert("C:\\Users\\29529\\Desktop\\123.html",
                 "C:\\Users\\29529\\Desktop\\123.pdf");
 
         //setWatermark("C:\\Users\\29529\\Desktop\\123.pdf","C:\\Users\\29529\\Desktop\\123bak.pdf");

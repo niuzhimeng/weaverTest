@@ -1,9 +1,12 @@
 package com.weavernorth.workflow.vo;
 
-import java.io.*;
+import java.io.File;
 
 public class ZsHtmlToPdf {
 
+    private static final String PDF_TOOL_PATH = "D:\\wkhtmltopdf\\bin\\wkhtmltopdf.exe";
+
+    //private static final String PDF_TOOL_PATH = "D:\\WEAVER\\wk2pdf\\wkhtmltopdf.exe";
 
     /**
      * html转pdf
@@ -20,12 +23,9 @@ public class ZsHtmlToPdf {
             parent.mkdirs();
         }
         StringBuilder cmd = new StringBuilder();
-        cmd.append("D:\\wkhtmltopdf\\bin\\wkhtmltopdf.exe");
+        cmd.append(PDF_TOOL_PATH);
         cmd.append(" ");
-//        cmd.append("  --header-line");//页眉下面的线
-//        cmd.append("  --header-center 这里是页眉这里是页眉这里是页眉这里是页眉 ");//页眉中间内容
-//        //cmd.append("  --margin-top 30mm ");//设置页面上边距 (default 10mm)
-//        cmd.append(" --header-spacing 10 ");//    (设置页眉和内容的距离,默认0)
+        cmd.append(" --margin-left 21mm ");
         cmd.append(srcPath);
         cmd.append(" ");
         cmd.append(destPath);
@@ -46,7 +46,6 @@ public class ZsHtmlToPdf {
 
         return result;
     }
-
 
 
 }

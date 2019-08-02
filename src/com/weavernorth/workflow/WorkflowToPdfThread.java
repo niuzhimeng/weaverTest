@@ -16,6 +16,10 @@ public class WorkflowToPdfThread implements Runnable {
      * 子目录id
      */
     private static final String MU_LU_ID = "122";
+    /**
+     * 附件字段名
+     */
+    private static final String FU_JIAN_ID = "fj";
 
     @Override
     public void run() {
@@ -55,7 +59,7 @@ public class WorkflowToPdfThread implements Runnable {
             baseBean.writeLog("生成文档id： " + strDocId);
 
             // 更新到表单附件字段中
-            String updateSql = "update " + tableName + " set fj = '" + strDocId + "' where requestid=" + requestId;
+            String updateSql = "update " + tableName + " set " + FU_JIAN_ID + " = '" + strDocId + "' where requestid=" + requestId;
             updateSet.executeUpdate(updateSql);
             baseBean.writeLog("流程表单转pdf End ===============");
         } else {
