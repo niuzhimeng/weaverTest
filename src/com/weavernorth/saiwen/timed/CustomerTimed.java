@@ -50,7 +50,7 @@ public class CustomerTimed extends BaseCronJob {
             RecordSet updateSet = new RecordSet();
             recordSet.executeQuery("select supplier_id from uf_customer");
             // 已有数据的id集合
-            List<String> idList = new ArrayList<String>(recordSet.getCounts());
+            List<String> idList = new ArrayList<String>(recordSet.getCounts() + 100);
             while (recordSet.next()) {
                 idList.add(recordSet.getString("supplier_id"));
             }

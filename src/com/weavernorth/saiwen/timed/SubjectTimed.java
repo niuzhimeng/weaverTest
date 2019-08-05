@@ -51,7 +51,7 @@ public class SubjectTimed extends BaseCronJob {
             RecordSet updateSet = new RecordSet();
             recordSet.executeQuery("select kmid from uf_subject");
             // 已有数据的id集合
-            List<String> idList = new ArrayList<String>(recordSet.getCounts());
+            List<String> idList = new ArrayList<String>(recordSet.getCounts() + 1000);
             while (recordSet.next()) {
                 idList.add(recordSet.getString("kmid"));
             }
