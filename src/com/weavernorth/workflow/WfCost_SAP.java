@@ -209,7 +209,7 @@ public class WfCost_SAP extends BaseAction {
                 } else {
                     // 13 成本中心 是项目报销或者是pc项目报销时  不传成本中心  传wbs
                     tablein_T_KJPZ.setValue(Util.null2String(RsTable_main.getString("fykmm")), "HKONT_Z");
-                    if (bxlx.equals("1") || bxlx.equals("2")) {
+                    if (bxlx.equals("1") || bxlx.equals("2")|| bxlx.equals("3")) {
                         tablein_T_KJPZ.setValue(Util.null2String(RsTable_main.getString("wbs")), "PSRNR_Z");
                     } else {
                         tablein_T_KJPZ.setValue(Util.null2String(RsTable_main.getString("cbzxm")), "KOSTL_Z");
@@ -377,7 +377,7 @@ public class WfCost_SAP extends BaseAction {
 //                        tablein_T_KJPZ.setValue("2171010700", "HKONT_G");
                         // 13 成本中心 是项目报销或者是pc项目报销时  不传成本中心  传wbs
                         tablein_T_KJPZ.setValue(Util.null2String(RsTable_main.getString("fykmm")), "HKONT_Z");
-                        if (bxlx.equals("1") || bxlx.equals("2")) {
+                        if (bxlx.equals("1") || bxlx.equals("2") || bxlx.equals("3")) {
                             tablein_T_KJPZ.setValue(Util.null2String(RsTable_main.getString("wbs")), "PSRNR_Z");
                         } else {
                             tablein_T_KJPZ.setValue(Util.null2String(RsTable_main.getString("cbzxm")), "KOSTL_Z");
@@ -532,7 +532,7 @@ public class WfCost_SAP extends BaseAction {
                             // 10 总账科目号   主表
                             tablein_T_KJPZ.setValue(Util.null2String(RsTable_1.getString("fykmm")), "HKONT_Z");
                             // 15 WBS元素
-                            if (bxlx.equals("1") || bxlx.equals("2")) {
+                            if (bxlx.equals("1") || bxlx.equals("2")|| bxlx.equals("3")) {
                                 tablein_T_KJPZ.setValue(Util.null2String(RsTable_1.getString("wbs")), "PSRNR_Z");
                             } else {
                                 tablein_T_KJPZ.setValue(Util.null2String(RsTable_1.getString("cbzxm")), "KOSTL_Z");
