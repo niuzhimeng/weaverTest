@@ -1,5 +1,6 @@
 package com.weavernorth.saiwen.action.khlr;
 
+import com.weavernorth.saiwen.myWeb.WebUtil;
 import weaver.conn.RecordSet;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
@@ -85,7 +86,31 @@ public class ClientInsert extends BaseAction {
                 String hkr = recordSet.getString("hkr");
                 // 账期（天）
                 String zqts = recordSet.getString("zqts");
+                String pushXml = "<?xml version=\"1.0\" encoding=\"utf‐16\"?>\n" +
+                        "<RequestCustomerList>\n" +
+                        "<CustomerList>\n" +
+                        "<CreateCustomerModel>\n" +
+                        "<M_effective>true</M_effective>\n" +
+                        "<M_tradeCurrency>C001</M_tradeCurrency>\n" +
+                        "<M_shortName>tsup0607‐1006</M_shortName>\n" +
+                        "<Name>test customer 0607‐1006</Name>\n" +
+                        "<M_code>customerts06071006</M_code>\n" +
+                        "<M_org>101</M_org>\n" +
+                        "<M_commission>0</M_commission>\n" +
+                        "<M_commissionType>‐1</M_commissionType>\n" +
+                        "<M_isCreditCheck>false</M_isCreditCheck>\n" +
+                        "<M_isARCfmModify>true</M_isARCfmModify>\n" +
+                        "<M_isRecTermModify>true</M_isRecTermModify>\n" +
+                        "<M_isShipmentModify>true</M_isShipmentModify>\n" +
+                        "<M_isPriceListModify>true</M_isPriceListModify>\n" +
+                        "</CreateCustomerModel\n" +
+                        "</CustomerList>\n" +
+                        "</RequestCustomerList>";
+                this.writeLog("OA创建客户推送xml：" + pushXml);
 
+                // 调用创建接口
+                String returnStr = WebUtil.createClient(pushXml,"");
+                this.writeLog("U9返回xml： " + returnStr);
             }
 
             this.writeLog("新客户录入 End ===============");

@@ -6,7 +6,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
-import weaver.soa.workflow.WorkFlowInit;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.soa.workflow.request.RequestService;
 import weaver.workflow.webservices.WorkflowRequestInfo;
@@ -81,7 +80,7 @@ public class CreateWorkFlowImpl implements CreateWorkFlow {
             baseBean.writeLog("处理后的xml============》 " + doc.asXML());
             //创建流程的类
             WorkflowServiceImplXml workflowServiceImplXml = new WorkflowServiceImplXml();
-           // returnStr = workflowServiceImplXml.doCreateWorkflowRequest(doc.asXML(), Integer.parseInt(id));
+            returnStr = workflowServiceImplXml.doCreateWorkflowRequest(doc.asXML(), Integer.parseInt(id));
             baseBean.writeLog("准备创建流程===============");
             XmlUtil xmlutil1 = XmlUtil.getInstance();
             WorkflowRequestInfo var3 = (WorkflowRequestInfo)xmlutil1.xmlToObject(doc.asXML());

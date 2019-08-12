@@ -1,5 +1,6 @@
 package com.weavernorth.saiwen.action.gyslr;
 
+import com.weavernorth.saiwen.myWeb.WebUtil;
 import weaver.conn.RecordSet;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
@@ -26,66 +27,52 @@ public class SupplierInsert extends BaseAction {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             if (recordSet.next()) {
+                // 交易币种
+                String jybz = recordSet.getString("jybzn");
                 // 全称
                 String kh = recordSet.getString("kh");
-                // 统一社会信用代码
-                String xydm = recordSet.getString("xydm");
-                // 办公地址
-                String bgdz = recordSet.getString("bgdz");
-                // 注册地址
-                String zcdz = recordSet.getString("zcdz");
-                // 联系人
-                String lxr = recordSet.getString("lxr");
+                // 简称
+                String gysjc = recordSet.getString("gysjc");
+                // 供应商编码
+                String gysbm = recordSet.getString("gysbm");
+                // 组织编码
+                String zzbm = recordSet.getString("zzbm");
 
-                // 手机
-                String sj = recordSet.getString("sj");
-                // 邮箱
-                String yx = recordSet.getString("yx");
-                // 成立年份
-                String clnf = recordSet.getString("clnf");
-                // 员工人数
-                String ygrs = recordSet.getString("ygrs");
-                // 职务
-                String zw = recordSet.getString("zw");
+                String pushXml = "<?xml version=\"1.0\" encoding=\"utf‐16\"?>\n" +
+                        "<RequestSupplierList>\n" +
+                        "<SupplierList>\n" +
+                        "<CreateSupplierModel>\n" +
+                        "<M_effective>true</M_effective>\n" +
+                        "<M_tradeCurrency>" + jybz + "</M_tradeCurrency>\n" + // 交易币种 code 字符串
+                        "<M_shortName>" + gysjc + "</M_shortName>\n" + // 供应商简称 字符串
+                        "<Name>" + kh + "</Name>\n" + // 供应商全称 字符串
+                        "<M_code>" + gysbm + "</M_code>\n" + // 供应商编码 字符串
+                        "<M_officialLocation></M_officialLocation>\n" + // 办公地址 code    可选
+                        "<M_org>" + zzbm + "</M_org>\n" + // 组织编码
+                        "<M_isPriceListModify>true</M_isPriceListModify>\n" +
+                        "<M_isAPConfirmTermEditable>true</M_isAPConfirmTermEditable>\n" +
+                        "<M_isPaymentTermModify>true</M_isPaymentTermModify>\n" +
+                        "<M_isReceiptRuleEditable>true</M_isReceiptRuleEditable>\n" +
+                        "</CreateSupplierModel>\n" +
+                        "</SupplierList>\n" +
+                        "</RequestSupplierList>";
+                this.writeLog("OA创建供应商推送xml：" + pushXml);
 
-                // 办公电话
-                String bgdh = recordSet.getString("bgdh");
-                // 企业性质
-                String qyxz = recordSet.getString("qyxz");
-                // 建筑面积
-                String jzmj = recordSet.getString("jzmj");
-                // 发票税率
-                String fpsl = recordSet.getString("fpsl");
-                // 注册资本
-                String zczb = recordSet.getString("zczb");
-
-                // 上一财务年营业额
-                String syye = recordSet.getString("syye");
-                // 资本额币种
-                String bz = recordSet.getString("bz");
-                // 交易币种
-                String jybz = recordSet.getString("jybz");
-                // 产品类别
-                String cplb = recordSet.getString("cplb");
-                // 供应商等级
-                String gysdj = recordSet.getString("gysdj");
-
-                // 主要产品
-                String zycp = recordSet.getString("zycp");
-                // 收货原则
-                String shyz = recordSet.getString("shyz");
-                // 账期
-                String zq = recordSet.getString("zq");
-                // 必备文件
-                String fj = recordSet.getString("fj");
-
-
+                // 调用创建接口
+                String returnStr = WebUtil.createSupplier(pushXml, zzbm);
+                this.writeLog("U9返回xml： " + returnStr);
+                if (returnStr.contains("error")) {
+                    this.writeLog("推送供应商错误： " + returnStr);
+                    requestInfo.getRequestManager().setMessageid("1100000");
+                    requestInfo.getRequestManager().setMessagecontent("供应商录入 异常： " + returnStr);
+                    return "0";
+                }
             }
 
             this.writeLog("供应商录入 End ===============");
         } catch (Exception e) {
             this.writeLog("供应商录入 异常： " + e);
-            requestInfo.getRequestManager().setMessageid("110000");
+            requestInfo.getRequestManager().setMessageid("1100000");
             requestInfo.getRequestManager().setMessagecontent("供应商录入 异常： " + e);
             return "0";
         }
