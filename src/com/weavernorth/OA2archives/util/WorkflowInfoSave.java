@@ -704,9 +704,9 @@ public class WorkflowInfoSave {
                 bean.setC_target_dept(deptid);
                 bean.setC_page_counts(c_page_counts);
                 bean.setC_archive_date(c_archive_date);
-                bean.setC_archive_org(c_archive_org);
+                bean.setC_archive_org(deptid);
                 bean.setC_inner_sequence(c_inner_sequence);
-                bean.setC_archive_owne(Lastoperator);
+                bean.setC_archive_owne(createridReal);
                 bean.setTypeid(typeid);
                 bean.setSaveStatus(saveStatus);
                 bean.setUploadStatus(uploadStatus);
@@ -733,9 +733,9 @@ public class WorkflowInfoSave {
                 bean.setC_target_dept(deptid);
                 bean.setC_page_counts(c_page_counts);
                 bean.setC_archive_date(c_archive_date);
-                bean.setC_archive_org(c_archive_org);
+                bean.setC_archive_org(deptid);
                 bean.setC_inner_sequence(c_inner_sequence);
-                bean.setC_archive_owne(Lastoperator);
+                bean.setC_archive_owne(createridReal);
                 bean.setTypeid(typeid);
                 bean.setSaveStatus(saveStatus);
                 bean.setUploadStatus(uploadStatus);
@@ -762,9 +762,9 @@ public class WorkflowInfoSave {
                 bean.setC_target_dept(deptid);
                 bean.setC_page_counts(c_page_counts);
                 bean.setC_archive_date(c_archive_date);
-                bean.setC_archive_org(c_archive_org);
+                bean.setC_archive_org(deptid);
                 bean.setC_inner_sequence(c_inner_sequence);
-                bean.setC_archive_owne(Lastoperator);
+                bean.setC_archive_owne(createridReal);
                 bean.setTypeid(typeid);
                 bean.setSaveStatus(saveStatus);
                 bean.setUploadStatus(uploadStatus);
@@ -1489,9 +1489,9 @@ public class WorkflowInfoSave {
                 bean.setC_target_dept(deptid);
                 bean.setC_page_counts(c_page_counts);
                 bean.setC_archive_date(c_archive_date);
-                bean.setC_archive_org(deptid);
+                bean.setC_archive_org(c_archive_org);
                 bean.setC_inner_sequence(c_inner_sequence);
-                bean.setC_archive_owne(createridReal);
+                bean.setC_archive_owne(Lastoperator);
                 bean.setTypeid(typeid);
                 bean.setSaveStatus(saveStatus);
                 bean.setUploadStatus(uploadStatus);
