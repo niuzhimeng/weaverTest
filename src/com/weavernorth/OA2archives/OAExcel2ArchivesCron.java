@@ -72,7 +72,7 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
         String newXlsPath = "";
         String sql = "";
         RecordSet rs = new RecordSet();
-        for (int i = 1; i <= 33; i++) {
+        for (int i = 1; i <= 41; i++) {
             LogUtil.debugLog("==进入循环开始生产excel=>"+i);
             boolean hasData = false;
             if (i == 1) {
@@ -168,6 +168,46 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
             }else if (i == 33) {
                 tableName = "wn_oa2emc_document";
                 param = " =28";
+            }
+            // 	DBN合同签订流程
+            else if (i == 34) {
+                tableName = "wn_oa2emc_contract";
+                param = " =42";
+            }
+            // DBN项目部发文申请
+            else if (i == 35) {
+                tableName = "wn_oa2emc_document";
+                param = " =43";
+            }
+            // DBN项目部发函申请
+            else if (i == 36) {
+                tableName = "wn_oa2emc_document";
+                param = " =44";
+            }
+            // DBN项目部会议纪要申请
+            else if (i == 37) {
+                tableName = "wn_oa2emc_document";
+                param = " =45";
+            }
+            // DBN项目部部门会议纪要申请
+            else if (i == 38) {
+                tableName = "wn_oa2emc_document";
+                param = " =46";
+            }
+            // DBN项目部签报单申请
+            else if (i == 39) {
+                tableName = "wn_oa2emc_document";
+                param = " =47";
+            }
+            // DBN 合同变更审批流程
+            else if (i == 40) {
+                tableName = "wn_oa2emc_contract";
+                param = " =49";
+            }
+            // DBN 授权委托申请
+            else if (i == 41) {
+                tableName = "wn_oa2emc_document";
+                param = " =50";
             }
             sql = "select * from " + tableName + " where typeid " + param + "  and c_archive_date>='" + strStartDate + "' and c_archive_date<='" + strEndDate + "'";
             LogUtil.debugLog("==查询excel信息所需==>" + sql);
@@ -1577,6 +1617,361 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     hasData = true;
                 }
             }
+            // 	DBN合同签订流程
+            else if (i == 34) {
+                while (rs.next()) {
+                    Map<String, String> dataMap = new HashMap<String, String>();
+                    oldXlsxPath = Util.null2String(rs.getString("excelmode_path")) + 42 + ".xls";
+                    LogUtil.debugLog("==DBN合同签订模板路径==>" + oldXlsxPath);
+                    newXlsPath = Util.null2String(rs.getString("newexcel_path")) + "DBN合同签订" + ".xls";
+                    LogUtil.debugLog("==DBN合同签订保存路径==>" + newXlsPath);
+                    String requestid = Util.null2String(rs.getString("requestid"));
+                    typeid = Util.getIntValue(rs.getString("typeid"));
+                    dataMap.put("object_name", Util.null2String(rs.getString("object_name")));
+                    dataMap.put("file_path", Util.null2String(rs.getString("file_path")).replace("/", "\\").replace("/", "\\"));
+                    dataMap.put("file_format", Util.null2String(rs.getString("file_format")));
+                    dataMap.put("c_chinese_title", Util.null2String(rs.getString("c_chinese_title")));
+                    dataMap.put("c_doc_code", Util.null2String(rs.getString("c_doc_code")));
+                    //流程中的c_contract_type的数值
+                    String c_contract_type = Util.null2String(rs.getString("c_contract_type"));
+                    LogUtil.debugLog("c_contract_type:" + c_contract_type);
+                    //合同类型的数据库字段
+                    String columName = getSettingColName(typeid + "", "gw_fwlx");
+                    //合同类型字段的页面fieldid
+                    String fieldId = WorkflowUtil.getFieldId(requestid, columName);
+                    //合同类型的中文名称
+                    String c_contract_type_CH = WorkflowUtil.getSelectChinesType(c_contract_type, fieldId);
+                    dataMap.put("c_contract_type", c_contract_type_CH);
+                    dataMap.put("c_year", Util.null2String(rs.getString("c_year")));
+                    dataMap.put("c_party_a", Util.null2String(rs.getString("c_party_a")));
+                    dataMap.put("newexcel_path", newXlsPath);
+                    dataMap.put("c_party_b", Util.null2String(rs.getString("c_party_b")));
+                    String c_resp_dept = Util.null2String(rs.getString("c_resp_dept"));
+                    String c_resp_dept_ZH = WorkflowUtil.getDepartmentname(c_resp_dept);
+                    dataMap.put("c_resp_dept", c_resp_dept_ZH);
+                    dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
+                    dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
+                    String hrmid = Util.null2String(rs.getString("c_archive_owne"));
+                    String hrmName = ArchivesUtil.getChineseHrmName(hrmid);
+                    dataMap.put("c_archive_owne", hrmName);
+                    dataMap.put("c_inner_sequence", Util.null2String(rs.getString("c_inner_sequence")));
+                    dataList.add(dataMap);
+                    hasData = true;
+                }
+            }
+            // 	DBN项目部发文申请
+            else if (i == 35) {
+                while (rs.next()) {
+                    Map<String, String> dataMap = new HashMap<String, String>();
+                    oldXlsxPath = Util.null2String(rs.getString("excelmode_path")) + 43 + ".xls";
+                    LogUtil.debugLog("==DBN项目部发文路径==>" + oldXlsxPath);
+                    String fileName = "DBN项目部发文";
+                    DepartmentComInfo deptinfo = new DepartmentComInfo();
+                    String departmentName = "";
+                    try {
+                        departmentName = deptinfo.getDepartmentName(Util.null2String(rs.getString("c_compile_dept")));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    typeid = Util.getIntValue(rs.getString("typeid"));
+                    newXlsPath = Util.null2String(rs.getString("newexcel_path")) + fileName + ".xls";
+                    LogUtil.debugLog("==DBN项目部发文申请保存路径==>" + newXlsPath);
+                    dataMap.put("object_name", Util.null2String(rs.getString("object_name")));
+                    dataMap.put("file_path", Util.null2String(rs.getString("file_path")).replace("/", "\\"));
+                    dataMap.put("file_format", Util.null2String(rs.getString("file_format")));
+                    dataMap.put("c_chinese_title", Util.null2String(rs.getString("c_chinese_title")));
+                    //发文类型数据库存的值
+                    // String fwlx = Util.null2String(rs.getString("c_doc_type"));
+                    String requestid = Util.null2String(rs.getString("requestid"));
+                    //发文类型数据库的字段名
+                    // String columName = getSettingColName(typeid + "", "gw_fwlx");
+                    dataMap.put("newexcel_path", newXlsPath);
+                    dataMap.put("c_doc_type", "");
+                    dataMap.put("c_compile_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_compile_dept"))));
+                    dataMap.put("c_compile_date", Util.null2String(rs.getString("c_compile_date")));
+                    dataMap.put("c_compiler", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_compiler"))));
+                    dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
+                    dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
+                    dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
+                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
+                    dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
+                    dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
+                    dataMap.put("c_archive_org", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_archive_org"))));
+                    dataMap.put("c_archive_owner", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_archive_owner"))));
+                    dataMap.put("c_inner_sequence", Util.null2String(rs.getString("c_inner_sequence")));
+                    dataList.add(dataMap);
+                    hasData = true;
+                }
+            }
+            // 	DBN项目部发函申请
+            else if (i == 36) {
+                while (rs.next()) {
+                    Map<String, String> dataMap = new HashMap<String, String>();
+                    oldXlsxPath = Util.null2String(rs.getString("excelmode_path")) + 44 + ".xls";
+                    LogUtil.debugLog("==DBN项目部发函路径==>" + oldXlsxPath);
+                    String fileName = "DBN项目部发函";
+                    DepartmentComInfo deptinfo = new DepartmentComInfo();
+                    String departmentName = "";
+                    try {
+                        departmentName = deptinfo.getDepartmentName(Util.null2String(rs.getString("c_compile_dept")));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    typeid = Util.getIntValue(rs.getString("typeid"));
+                    newXlsPath = Util.null2String(rs.getString("newexcel_path")) + fileName + ".xls";
+                    LogUtil.debugLog("==DBN项目部发函申请保存路径==>" + newXlsPath);
+                    dataMap.put("object_name", Util.null2String(rs.getString("object_name")));
+                    dataMap.put("file_path", Util.null2String(rs.getString("file_path")).replace("/", "\\"));
+                    dataMap.put("file_format", Util.null2String(rs.getString("file_format")));
+                    dataMap.put("c_chinese_title", Util.null2String(rs.getString("c_chinese_title")));
+                    //发文类型数据库存的值
+                    // String fwlx = Util.null2String(rs.getString("c_doc_type"));
+                    String requestid = Util.null2String(rs.getString("requestid"));
+                    //发文类型数据库的字段名
+                    // String columName = getSettingColName(typeid + "", "gw_fwlx");
+                    dataMap.put("newexcel_path", newXlsPath);
+                    dataMap.put("c_doc_type", "");
+                    dataMap.put("c_compile_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_compile_dept"))));
+                    dataMap.put("c_compile_date", Util.null2String(rs.getString("c_compile_date")));
+                    dataMap.put("c_compiler", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_compiler"))));
+                    dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
+                    dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
+                    dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
+                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
+                    dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
+                    dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
+                    dataMap.put("c_archive_org", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_archive_org"))));
+                    dataMap.put("c_archive_owner", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_archive_owner"))));
+                    dataMap.put("c_inner_sequence", Util.null2String(rs.getString("c_inner_sequence")));
+                    dataList.add(dataMap);
+                    hasData = true;
+                }
+            }
+            // 	DBN项目部会议纪要申请
+            else if (i == 37) {
+                while (rs.next()) {
+                    Map<String, String> dataMap = new HashMap<String, String>();
+                    oldXlsxPath = Util.null2String(rs.getString("excelmode_path")) + 45 + ".xls";
+                    LogUtil.debugLog("==DBN项目部会议纪要路径==>" + oldXlsxPath);
+                    String fileName = "DBN项目部会议纪";
+                    DepartmentComInfo deptinfo = new DepartmentComInfo();
+                    String departmentName = "";
+                    try {
+                        departmentName = deptinfo.getDepartmentName(Util.null2String(rs.getString("c_compile_dept")));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    typeid = Util.getIntValue(rs.getString("typeid"));
+                    newXlsPath = Util.null2String(rs.getString("newexcel_path")) + fileName + ".xls";
+                    LogUtil.debugLog("==DBN项目部会议纪要申请保存路径==>" + newXlsPath);
+                    dataMap.put("object_name", Util.null2String(rs.getString("object_name")));
+                    dataMap.put("file_path", Util.null2String(rs.getString("file_path")).replace("/", "\\"));
+                    dataMap.put("file_format", Util.null2String(rs.getString("file_format")));
+                    dataMap.put("c_chinese_title", Util.null2String(rs.getString("c_chinese_title")));
+                    //发文类型数据库存的值
+                    // String fwlx = Util.null2String(rs.getString("c_doc_type"));
+                    String requestid = Util.null2String(rs.getString("requestid"));
+                    //发文类型数据库的字段名
+                    // String columName = getSettingColName(typeid + "", "gw_fwlx");
+                    dataMap.put("newexcel_path", newXlsPath);
+                    dataMap.put("c_doc_type", "");
+                    dataMap.put("c_compile_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_compile_dept"))));
+                    dataMap.put("c_compile_date", Util.null2String(rs.getString("c_compile_date")));
+                    dataMap.put("c_compiler", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_compiler"))));
+                    dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
+                    dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
+                    dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
+                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
+                    dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
+                    dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
+                    dataMap.put("c_archive_org", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_archive_org"))));
+                    dataMap.put("c_archive_owner", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_archive_owner"))));
+                    dataMap.put("c_inner_sequence", Util.null2String(rs.getString("c_inner_sequence")));
+                    dataList.add(dataMap);
+                    hasData = true;
+                }
+            }
+            // 	DBN项目部部门会议纪要申请
+            else if (i == 38) {
+                while (rs.next()) {
+                    Map<String, String> dataMap = new HashMap<String, String>();
+                    oldXlsxPath = Util.null2String(rs.getString("excelmode_path")) + 46 + ".xls";
+                    LogUtil.debugLog("==DBN项目部部门会议纪要模板路径==>" + oldXlsxPath);
+                    String fileName = "DBN项目部部门会议纪要";
+                    DepartmentComInfo deptinfo = new DepartmentComInfo();
+                    String departmentName = "";
+                    try {
+                        departmentName = deptinfo.getDepartmentName(Util.null2String(rs.getString("c_compile_dept")));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    typeid = Util.getIntValue(rs.getString("typeid"));
+                    newXlsPath = Util.null2String(rs.getString("newexcel_path")) + fileName + ".xls";
+                    LogUtil.debugLog("==DBN项目部部门会议纪要申请保存路径==>" + newXlsPath);
+                    dataMap.put("object_name", Util.null2String(rs.getString("object_name")));
+                    dataMap.put("file_path", Util.null2String(rs.getString("file_path")).replace("/", "\\"));
+                    dataMap.put("file_format", Util.null2String(rs.getString("file_format")));
+                    dataMap.put("c_chinese_title", Util.null2String(rs.getString("c_chinese_title")));
+                    //发文类型数据库存的值
+                    // String fwlx = Util.null2String(rs.getString("c_doc_type"));
+                    String requestid = Util.null2String(rs.getString("requestid"));
+                    //发文类型数据库的字段名
+                    // String columName = getSettingColName(typeid + "", "gw_fwlx");
+                    dataMap.put("newexcel_path", newXlsPath);
+                    dataMap.put("c_doc_type", "");
+                    dataMap.put("c_compile_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_compile_dept"))));
+                    dataMap.put("c_compile_date", Util.null2String(rs.getString("c_compile_date")));
+                    dataMap.put("c_compiler", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_compiler"))));
+                    dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
+                    dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
+                    dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
+                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
+                    dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
+                    dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
+                    dataMap.put("c_archive_org", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_archive_org"))));
+                    dataMap.put("c_archive_owner", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_archive_owner"))));
+                    dataMap.put("c_inner_sequence", Util.null2String(rs.getString("c_inner_sequence")));
+                    dataList.add(dataMap);
+                    hasData = true;
+                }
+            }
+            // DBN项目部签报单申请
+            else if (i == 39) {
+                while (rs.next()) {
+                    Map<String, String> dataMap = new HashMap<String, String>();
+                    oldXlsxPath = Util.null2String(rs.getString("excelmode_path")) + 47 + ".xls";
+                    LogUtil.debugLog("==DBN项目部签报单路径==>" + oldXlsxPath);
+                    String fileName = "DBN项目部签报单";
+                    DepartmentComInfo deptinfo = new DepartmentComInfo();
+                    String departmentName = "";
+                    try {
+                        departmentName = deptinfo.getDepartmentName(Util.null2String(rs.getString("c_compile_dept")));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    typeid = Util.getIntValue(rs.getString("typeid"));
+                    newXlsPath = Util.null2String(rs.getString("newexcel_path")) + fileName + ".xls";
+                    LogUtil.debugLog("==DBN项目部签报单申请保存路径==>" + newXlsPath);
+                    dataMap.put("object_name", Util.null2String(rs.getString("object_name")));
+                    dataMap.put("file_path", Util.null2String(rs.getString("file_path")).replace("/", "\\"));
+                    dataMap.put("file_format", Util.null2String(rs.getString("file_format")));
+                    dataMap.put("c_chinese_title", Util.null2String(rs.getString("c_chinese_title")));
+                    //发文类型数据库存的值
+                    // String fwlx = Util.null2String(rs.getString("c_doc_type"));
+                    String requestid = Util.null2String(rs.getString("requestid"));
+                    //发文类型数据库的字段名
+                    // String columName = getSettingColName(typeid + "", "gw_fwlx");
+                    dataMap.put("newexcel_path", newXlsPath);
+                    dataMap.put("c_doc_type", "");
+                    dataMap.put("c_compile_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_compile_dept"))));
+                    dataMap.put("c_compile_date", Util.null2String(rs.getString("c_compile_date")));
+                    dataMap.put("c_compiler", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_compiler"))));
+                    dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
+                    dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
+                    dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
+                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
+                    dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
+                    dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
+                    dataMap.put("c_archive_org", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_archive_org"))));
+                    dataMap.put("c_archive_owner", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_archive_owner"))));
+                    dataMap.put("c_inner_sequence", Util.null2String(rs.getString("c_inner_sequence")));
+                    dataList.add(dataMap);
+                    hasData = true;
+                }
+            }
+            // DBN合同变更审批流程
+            else if (i == 40) {
+                while (rs.next()) {
+                    Map<String, String> dataMap = new HashMap<String, String>();
+                    oldXlsxPath = Util.null2String(rs.getString("excelmode_path")) + 49 + ".xls";
+                    LogUtil.debugLog("==DBN合同变更审批模板路径==>" + oldXlsxPath);
+                    newXlsPath = Util.null2String(rs.getString("newexcel_path")) + "DBN合同变更审批" + ".xls";
+                    LogUtil.debugLog("==DBN合同变更审批保存路径==>" + newXlsPath);
+                    String requestid = Util.null2String(rs.getString("requestid"));
+                    typeid = Util.getIntValue(rs.getString("typeid"));
+                    dataMap.put("object_name", Util.null2String(rs.getString("object_name")));
+                    dataMap.put("file_path", Util.null2String(rs.getString("file_path")).replace("/", "\\").replace("/", "\\"));
+                    dataMap.put("file_format", Util.null2String(rs.getString("file_format")));
+                    dataMap.put("c_chinese_title", Util.null2String(rs.getString("c_chinese_title")));
+                    dataMap.put("c_doc_code", Util.null2String(rs.getString("c_doc_code")));
+                    //流程中的c_contract_type的数值
+                    String c_contract_type = Util.null2String(rs.getString("c_contract_type"));
+                    LogUtil.debugLog("c_contract_type:" + c_contract_type);
+                    //合同类型的数据库字段
+                    String columName = getSettingColName(typeid + "", "gw_fwlx");
+                    //合同类型字段的页面fieldid
+                    String fieldId = WorkflowUtil.getFieldId(requestid, columName);
+                    //合同类型的中文名称
+                    String c_contract_type_CH = WorkflowUtil.getSelectChinesType(c_contract_type, fieldId);
+                    dataMap.put("c_contract_type", c_contract_type_CH);
+                    dataMap.put("c_year", Util.null2String(rs.getString("c_year")));
+                    dataMap.put("c_party_a", Util.null2String(rs.getString("c_party_a")));
+                    dataMap.put("newexcel_path", newXlsPath);
+                    dataMap.put("c_party_b", Util.null2String(rs.getString("c_party_b")));
+                    String c_resp_dept = Util.null2String(rs.getString("c_resp_dept"));
+                    String c_resp_dept_ZH = WorkflowUtil.getDepartmentname(c_resp_dept);
+                    dataMap.put("c_resp_dept", c_resp_dept_ZH);
+                    dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
+                    dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
+                    String hrmid = Util.null2String(rs.getString("c_archive_owne"));
+                    String hrmName = ArchivesUtil.getChineseHrmName(hrmid);
+                    dataMap.put("c_archive_owne", hrmName);
+                    dataMap.put("c_inner_sequence", Util.null2String(rs.getString("c_inner_sequence")));
+                    dataList.add(dataMap);
+                    hasData = true;
+                }
+            }
+            // DBN授权委托申请
+            else if (i == 41) {
+                while (rs.next()) {
+                    Map<String, String> dataMap = new HashMap<String, String>();
+                    oldXlsxPath = Util.null2String(rs.getString("excelmode_path")) + 50 + ".xls";
+                    LogUtil.debugLog("==DBN授权委托模板路径==>" + oldXlsxPath);
+                    String fileName = "DBN授权委托";
+                    DepartmentComInfo deptinfo = new DepartmentComInfo();
+                    String departmentName = "";
+                    try {
+                        departmentName = deptinfo.getDepartmentName(Util.null2String(rs.getString("c_compile_dept")));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    typeid = Util.getIntValue(rs.getString("typeid"));
+                    newXlsPath = Util.null2String(rs.getString("newexcel_path")) + fileName + ".xls";
+                    LogUtil.debugLog("==DBN授权委托保存路径==>" + newXlsPath);
+                    dataMap.put("object_name", Util.null2String(rs.getString("object_name")));
+                    dataMap.put("file_path", Util.null2String(rs.getString("file_path")).replace("/", "\\"));
+                    dataMap.put("file_format", Util.null2String(rs.getString("file_format")));
+                    dataMap.put("c_chinese_title", Util.null2String(rs.getString("c_chinese_title")));
+                    //发文类型数据库存的值
+                    // String fwlx = Util.null2String(rs.getString("c_doc_type"));
+                    String requestid = Util.null2String(rs.getString("requestid"));
+                    //发文类型数据库的字段名
+                    // String columName = getSettingColName(typeid + "", "gw_fwlx");
+                    dataMap.put("newexcel_path", newXlsPath);
+                    dataMap.put("c_doc_type", "");
+                    dataMap.put("c_compile_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_compile_dept"))));
+                    dataMap.put("c_compile_date", Util.null2String(rs.getString("c_compile_date")));
+                    dataMap.put("c_compiler", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_compiler"))));
+                    dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
+                    dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
+                    dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
+                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
+                    dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
+                    dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
+                    dataMap.put("c_archive_org", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_archive_org"))));
+                    dataMap.put("c_archive_owner", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_archive_owner"))));
+                    dataMap.put("c_inner_sequence", Util.null2String(rs.getString("c_inner_sequence")));
+                    dataList.add(dataMap);
+                    hasData = true;
+                }
+            }
+
             //生成excel到每月的目录下 例如：D:/WEAVER/ecology/archivesftpfile/2017/11/合同管理/
             if (hasData) {
                 LogUtil.debugLog("==dataList==>" + dataList.toString());

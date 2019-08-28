@@ -47,7 +47,9 @@ public class WriteExcel {
              * 往Excel中写新数据   wn_workflowexceltype
              */
             //合同模板中插入数据
-            if ("1".equals(strType) || "2".equals(strType) || "29".equals(strType) || "30".equals(strType)) {
+            if ("1".equals(strType) || "2".equals(strType) || "29".equals(strType) || "30".equals(strType)
+                    || "42".equals(strType) || "49".equals(strType)
+            ) {
                 for (int j = 0; j < dataList.size(); j++) {
                     // 创建一行：从第二行开始，跳过属性列
                     Row row = sheet.createRow(j + 6);
@@ -100,7 +102,10 @@ public class WriteExcel {
                     || "28".equals(strType) || "31".equals(strType) || "32".equals(strType)
                     || "33".equals(strType) || "34".equals(strType) || "35".equals(strType)
                     || "36".equals(strType) || /*"37".equals(strType)|| "38".equals(strType)
-                    || "39".equals(strType)|| "40".equals(strType)||*/ "41".equals(strType)) {
+                    || "39".equals(strType)|| "40".equals(strType)||*/ "41".equals(strType)
+                    || "43".equals(strType) || "44".equals(strType) || "45".equals(strType) || "46".equals(strType)
+                    || "47".equals(strType) || "50".equals(strType)
+            ) {
                 LogUtil.debugLog("=开始写入==>" + strType);
                 for (int j = 0; j < dataList.size(); j++) {
                     // 创建一行：从第二行开始，跳过属性列

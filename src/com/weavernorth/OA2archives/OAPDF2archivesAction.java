@@ -173,31 +173,31 @@ public class OAPDF2archivesAction extends BaseBean {
             // 2019-07-20 新增dbn系列五条流程
             // DBN项目部发文申请
             else if ("43".equals(type)) {
-                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部发文";
+                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部发文/";
             }
             // DBN项目部发函申请
             else if ("44".equals(type)) {
-                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部发函";
+                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部发函/";
             }
             // DBN项目部会议纪要申请
             else if ("45".equals(type)) {
-                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部会议纪要";
+                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部会议纪要/";
             }
             // DBN项目部部门会议纪要申请
             else if ("46".equals(type)) {
-                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部部门会议纪要";
+                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/项目部部门会议纪要/";
             }
             // DBN项目部签报单申请
             else if ("47".equals(type)) {
-                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/签报单";
+                ftppath = "/" + year + "/" + month + "/DBN/公文管理类/签报单/";
             }
             // DBN 合同变更审批流程
             else if ("49".equals(type)) {
-                ftppath = "/" + year + "/" + month + "/DBN/合同管理";
+                ftppath = "/" + year + "/" + month + "/DBN/合同管理/";
             }
             // DBN 授权委托申请
             else if ("50".equals(type)) {
-                ftppath = "/" + year + "/" + month + "/DBN/授权管理";
+                ftppath = "/" + year + "/" + month + "/DBN/授权管理/";
             }
 
         }
