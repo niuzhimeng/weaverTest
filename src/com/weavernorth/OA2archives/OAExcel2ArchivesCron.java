@@ -630,7 +630,9 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_compiler", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_compiler"))));
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
-                    dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
+                    //dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
+                    String c_issue_dept = getlwdwName(requestid);
+                    dataMap.put("c_issue_dept", c_issue_dept);
                     String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
@@ -673,7 +675,10 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_compiler", ArchivesUtil.getChineseHrmName(Util.null2String(rs.getString("c_compiler"))));
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
-                    dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
+                    //dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
+                    String c_issue_dept = getlwdwName(requestid);
+                    dataMap.put("c_issue_dept", c_issue_dept);
+
                     String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
@@ -998,7 +1003,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName = getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1046,7 +1052,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName = getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1092,7 +1099,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                   // String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1138,7 +1146,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1184,7 +1193,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1231,7 +1241,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1279,7 +1290,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                   // String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1327,7 +1339,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                   // String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1374,7 +1387,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1421,7 +1435,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1468,7 +1483,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1515,7 +1531,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("newexcel_path", newXlsPath);
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
@@ -1693,7 +1710,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1738,7 +1756,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1783,7 +1802,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -1828,7 +1848,8 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
                     dataMap.put("c_issue_date", Util.null2String(rs.getString("c_issue_date")));
                     dataMap.put("c_issue_num", Util.null2String(rs.getString("c_issue_num")));
                     dataMap.put("c_issue_dept", WorkflowUtil.getDepartmentname(Util.null2String(rs.getString("c_issue_dept"))));
-                    String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    //String c_target_deptName = WorkflowUtil.getDepartmentname(Util.null2String((rs.getString("c_target_dept"))));
+                    String c_target_deptName =getzsName(requestid);
                     dataMap.put("c_target_dept", Util.null2String(c_target_deptName));
                     dataMap.put("c_page_counts", Util.null2String(rs.getString("c_page_counts")));
                     dataMap.put("c_archive_date", Util.null2String(rs.getString("c_archive_date")));
@@ -2021,6 +2042,30 @@ public class OAExcel2ArchivesCron extends BaseCronJob {
             }
             LogUtil.debugLog("==上传excel结束，无论是否成功==");
         }
+    }
+
+    private String getzsName(String requestid){
+        String zsname = "";
+        RecordSet rs = new RecordSet();
+        //公文表单名称
+        String tableName = WorkflowUtil.getMainTableNameByReqId(requestid);
+        rs.execute("select  zs from " + tableName + " where requestid='" + requestid + "'");
+        if (rs.next()) {
+            zsname = com.weaver.general.Util.null2String(rs.getString("zs"));
+        }
+        return zsname;
+    }
+
+    private String getlwdwName(String requestid){
+        String zsname = "";
+        RecordSet rs = new RecordSet();
+        //公文表单名称
+        String tableName = WorkflowUtil.getMainTableNameByReqId(requestid);
+        rs.execute("select  lwdw from " + tableName + " where requestid='" + requestid + "'");
+        if (rs.next()) {
+            zsname = com.weaver.general.Util.null2String(rs.getString("lwdw"));
+        }
+        return zsname;
     }
 
     public static void main(String[] args) {
