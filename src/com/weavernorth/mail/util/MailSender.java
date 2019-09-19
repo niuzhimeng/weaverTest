@@ -1,5 +1,7 @@
 package com.weavernorth.mail.util;
 
+import weaver.general.BaseBean;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.Message.RecipientType;
@@ -9,6 +11,8 @@ import javax.mail.internet.*;
 import java.util.*;
 
 public class MailSender {
+
+   private static BaseBean baseBean = new BaseBean();
 
    public boolean sendTextMail(MailSenderInfo mailInfo) {
       MyAuthenticator authenticator = null;
@@ -125,6 +129,7 @@ public class MailSender {
          return true;
       } catch (Exception var17) {
          var17.printStackTrace();
+         baseBean.writeLog("0822发送邮件异常： "+ var17);
          return false;
       }
    }

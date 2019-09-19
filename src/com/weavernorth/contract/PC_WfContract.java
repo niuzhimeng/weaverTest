@@ -40,33 +40,6 @@ public class PC_WfContract {
 			LogUtil.doWriteLog("==查询授权限额值=="+strMonetDt+"==审批级别=="+strApprovalLevel);
 		}
 		LogUtil.doWriteLog("==startdate=="+startdate+"==enddate=="+enddate);
-		if(startdate.equals("") || enddate.equals("")){
-			// 为空时，不进行计算
-		}else{
-			if((Integer.parseInt(enddate.replaceAll("-", "").substring(0,4)) - Integer.parseInt(startdate.replaceAll("-", "").substring(0, 4))) == 3){
-				if(Integer.parseInt(enddate.replaceAll("-","").substring(4,8)) > Integer.parseInt(startdate.replaceAll("-","").substring(4,8))){
-					try {
-						obj.put("strMonetDt", strMonetDt);
-						obj.put("strApprovalLevel", "5");
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						LogUtil.doWriteLog("==获取授权限额异常=="+e);
-					}
-				}
-			}
-			if((Integer.parseInt(enddate.replaceAll("-", "").substring(0,4)) - Integer.parseInt(startdate.replaceAll("-", "").substring(0, 4))) > 3){
-				try {
-					obj.put("strMonetDt", strMonetDt);
-					obj.put("strApprovalLevel", "5");
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					LogUtil.doWriteLog("==获取授权限额异常=="+e);
-				}
-			}
-		}
-		
 		return obj;
 	}
 	/**
