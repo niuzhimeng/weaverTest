@@ -24,6 +24,8 @@ public class XinZiAction extends BaseAction {
     private static final String GWLB_FIELD = "field72";
     // 调入岗位级别
     private static final String GWJB_FIELD = "field73";
+    // 调入岗位地图
+    private static final String GWDT_FIELD = "field83";
 
     private Gson gson = new Gson();
     private static Map<String, String> zdMap = new HashMap<String, String>();
@@ -32,6 +34,7 @@ public class XinZiAction extends BaseAction {
         zdMap.put("gwmc", "岗位名称");
         zdMap.put("gwlb", "岗位类别");
         zdMap.put("gwjb", "岗位级别");
+        zdMap.put("gwdt", "岗位地图");
     }
 
     @Override
@@ -65,6 +68,9 @@ public class XinZiAction extends BaseAction {
             // 调入岗位级别
             newChangeVo.setGwjb(recordSet.getString("gwjbtzhStr"));
             String drgwjb = recordSet.getString("gwjbh");
+            // 调入岗位地图
+            newChangeVo.setGwdt(recordSet.getString("gwdttzhStr"));
+            String gwdttzh = recordSet.getString("gwdttzh");
             this.writeLog("新数据对象： " + newChangeVo.toString());
 
             ChangeVo oldChangeVo = new ChangeVo();
@@ -74,6 +80,8 @@ public class XinZiAction extends BaseAction {
             oldChangeVo.setGwlb(recordSet.getString("gwlbtzqStr"));
             // 调出岗位级别
             oldChangeVo.setGwjb(recordSet.getString("gwjbtzqStr"));
+            // 调出岗位地图
+            oldChangeVo.setGwdt(recordSet.getString("gwdttzqStr"));
             this.writeLog("旧数据对象： " + oldChangeVo.toString());
 
             // 更新自定义字段
@@ -81,17 +89,18 @@ public class XinZiAction extends BaseAction {
             recordSet.executeQuery("select * from CUS_FIELDDATA where id = " + xm);
             if (recordSet.next()) {
                 // 更新
-                String updateSql = "update CUS_FIELDDATA set " + GWMC_FIELD + " = ?, " + GWLB_FIELD + " = ?, " + GWJB_FIELD + " = ? where id = ?";
+                String updateSql = "update CUS_FIELDDATA set " + GWMC_FIELD + " = ?, " + GWLB_FIELD + " = ?, " +
+                        GWJB_FIELD + " = ?," + GWDT_FIELD + " = ? where id = ?";
                 this.writeLog("薪资申请updateSql: " + updateSql);
                 updateSet.executeUpdate(updateSql,
-                        drgwmc, drgwlb, drgwjb, xm);
+                        drgwmc, drgwlb, drgwjb, gwdttzh, xm);
             } else {
                 // 新增
-                String insertSql = "insert into CUS_FIELDDATA(" + GWMC_FIELD + "," + GWLB_FIELD + "," + GWJB_FIELD +
-                        ", scope, scopeid, id) values(?,?,?,?,? ,?)";
+                String insertSql = "insert into CUS_FIELDDATA(" + GWMC_FIELD + "," + GWLB_FIELD + "," + GWJB_FIELD + "," + GWDT_FIELD +
+                        ", scope, scopeid, id) values(?,?,?,?,?, ?,?)";
                 this.writeLog("薪资申请insertSql： " + insertSql);
                 updateSet.executeUpdate(insertSql,
-                         drgwmc, drgwlb, drgwjb,
+                        drgwmc, drgwlb, drgwjb, gwdttzh,
                         "HrmCustomFieldByInfoType", "-1", xm);
             }
 

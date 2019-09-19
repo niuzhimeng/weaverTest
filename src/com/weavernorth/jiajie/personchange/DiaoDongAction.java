@@ -26,6 +26,8 @@ public class DiaoDongAction extends BaseAction {
     private static final String GWLB_FIELD = "field72";
     // 调入岗位级别
     private static final String GWJB_FIELD = "field73";
+    // 调入岗位地图
+    private static final String GWDT_FIELD = "field83";
 
     private Gson gson = new Gson();
     private static Map<String, String> zdMap = new HashMap<String, String>();
@@ -37,6 +39,7 @@ public class DiaoDongAction extends BaseAction {
         zdMap.put("gwmc", "岗位名称");
         zdMap.put("gwlb", "岗位类别");
         zdMap.put("gwjb", "岗位级别");
+        zdMap.put("gwdt", "岗位地图");
     }
 
     @Override
@@ -79,6 +82,9 @@ public class DiaoDongAction extends BaseAction {
             // 调入岗位级别
             newChangeVo.setGwjb(recordSet.getString("drgwjbStr"));
             String drgwjb = recordSet.getString("drgwjb");
+            // 调入岗位地图
+            newChangeVo.setGwdt(recordSet.getString("drgwdtStr"));
+            String drgwdt = recordSet.getString("drgwdt");
             this.writeLog("新数据对象： " + newChangeVo.toString());
 
             ChangeVo oldChangeVo = new ChangeVo();
@@ -95,6 +101,8 @@ public class DiaoDongAction extends BaseAction {
             oldChangeVo.setGwlb(recordSet.getString("dcgwlbstr"));
             // 调出岗位级别
             oldChangeVo.setGwjb(recordSet.getString("dcgwjbstr"));
+            // 调出岗位地图
+            oldChangeVo.setGwdt(recordSet.getString("dcgwdtStr"));
             this.writeLog("旧数据对象： " + oldChangeVo.toString());
 
             // 更新系统表
@@ -108,17 +116,17 @@ public class DiaoDongAction extends BaseAction {
             if (recordSet.next()) {
                 // 更新
                 String updateSql = "update CUS_FIELDDATA set " + FRT_FIELD + " = ?, " + GWMC_FIELD + " = ?, "
-                        + GWLB_FIELD + " = ?, " + GWJB_FIELD + " = ? where id = ?";
+                        + GWLB_FIELD + " = ?, " + GWJB_FIELD + " = ?," + GWDT_FIELD + " = ? where id = ?";
                 this.writeLog("调用申请updateSql: " + updateSql);
                 updateSet.executeUpdate(updateSql,
-                        drfart, drgwmc, drgwlb, drgwjb, xm);
+                        drfart, drgwmc, drgwlb, drgwjb, drgwdt, xm);
             } else {
                 // 新增
                 String insertSql = "insert into CUS_FIELDDATA(" + FRT_FIELD + "," + GWMC_FIELD + "," + GWLB_FIELD +
-                        "," + GWJB_FIELD + ", scope, scopeid, id) values(?,?,?,?,? ,?,?)";
+                        "," + GWJB_FIELD + "," + GWDT_FIELD + ", scope, scopeid, id) values(?,?,?,?,?, ?,?,?)";
                 this.writeLog("调用申请insertSql： " + insertSql);
                 updateSet.executeUpdate(insertSql,
-                        drfart, drgwmc, drgwlb, drgwjb,
+                        drfart, drgwmc, drgwlb, drgwjb, drgwdt,
                         "HrmCustomFieldByInfoType", "-1", xm);
             }
 

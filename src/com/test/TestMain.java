@@ -1,11 +1,18 @@
 package com.test;
 
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.artofsolving.jodconverter.DocumentConverter;
+import com.artofsolving.jodconverter.openoffice.connection.OpenOfficeConnection;
+import com.artofsolving.jodconverter.openoffice.connection.SocketOpenOfficeConnection;
+import com.artofsolving.jodconverter.openoffice.converter.OpenOfficeDocumentConverter;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.lowagie.text.pdf.*;
+import com.test.webserviceTest.vo.Student;
 import com.weaver.general.TimeUtil;
-import com.weavernorth.saiwen.myWeb.WebUtil;
+import com.weaver.general.Util;
 import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -22,6 +29,8 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TestMain {
 
@@ -328,16 +337,177 @@ public class TestMain {
 
     }
 
+    public static void WordToPDF(String startFile, String overFile) throws IOException {
+        // 源文件目录
+        File inputFile = new File(startFile);
+        if (!inputFile.exists()) {
+            System.out.println("源文件不存在！");
+            return;
+        }
+
+        // 输出文件目录
+        File outputFile = new File(overFile);
+        if (!outputFile.getParentFile().exists()) {
+            outputFile.getParentFile().exists();
+        }
+
+        // 调用openoffice服务线程
+        /** 我把openOffice下载到了 C:/Program Files (x86)/下  ,下面的写法自己修改编辑就可以**/
+        String command = "D:/openOffice/program/soffice.exe -headless -accept=\"socket,host=127.0.0.1,port=8100;urp;\"";
+        Process p = Runtime.getRuntime().exec(command);
+
+        // 连接openoffice服务
+        OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
+
+        connection.connect();
+
+        // 转换
+        DocumentConverter converter = new OpenOfficeDocumentConverter(connection);
+        converter.convert(inputFile, outputFile);
+
+        // 关闭连接
+        connection.disconnect();
+
+        // 关闭进程
+        p.destroy();
+    }
+
     @Test
-    public void test13() throws Exception {
-        String myXml = "<?xml version=\"1.0\" encoding=\"utf‐16\"?>\n" +
-                "<Cbo_SupplierBankAccount_Query_Model>\n" +
-                "</Cbo_SupplierBankAccount_Query_Model>";
+    public void test13() {
+        String start = "C:\\Users\\29529\\Desktop\\123.docx";
+        String over = "C:\\Users\\29529\\Desktop\\成了.pdf";
+        try {
+            WordToPDF(start, over);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-        // 获取客户信息
-        String returnXml = WebUtil.getCustomer(myXml);
-        System.out.println(returnXml);
+    @Test
+    public void test14() {
 
+
+        Element root = DocumentHelper.createElement("RequestSupplierList");
+        Element SupplierList = root.addElement("SupplierList");
+        Element CreateSupplierModel = SupplierList.addElement("CreateSupplierModel");
+
+        // 拼接子级
+        Element m_descFlexField = CreateSupplierModel.addElement("M_descFlexField");
+        m_descFlexField.addElement("M_privateDescSeg4").setText(""); // 供应商等级
+        m_descFlexField.addElement("M_privateDescSeg3").setText(""); // 建筑面积
+        m_descFlexField.addElement("M_privateDescSeg2").setText(""); // 企业性质
+        m_descFlexField.addElement("M_pubDescSeg8").setText(""); // 主要产品
+
+        CreateSupplierModel.addElement("M_Turnover").setText("");
+        CreateSupplierModel.addElement("M_RegisterCapital").setText("");
+        CreateSupplierModel.addElement("M_tradeCategory").setText("");
+        CreateSupplierModel.addElement("M_RegisterLocation").setText("");
+        CreateSupplierModel.addElement("M_EmployeeCount").setText("");
+
+        CreateSupplierModel.addElement("M_EstablishDate").setText("");
+        CreateSupplierModel.addElement("M_effective").setText("");
+        CreateSupplierModel.addElement("M_tradeCurrency").setText("");
+        CreateSupplierModel.addElement("M_shortName").setText("");
+        CreateSupplierModel.addElement("Name").setText("");
+
+        CreateSupplierModel.addElement("M_code").setText("");
+        CreateSupplierModel.addElement("M_officialLocation").setText("");
+        CreateSupplierModel.addElement("M_org").setText("");
+        CreateSupplierModel.addElement("M_corpUnifyCode").setText("");
+        CreateSupplierModel.addElement("M_isPriceListModify").setText("true");
+
+        CreateSupplierModel.addElement("M_isAPConfirmTermEditable").setText("true");
+        CreateSupplierModel.addElement("M_isPaymentTermModify").setText("true");
+        CreateSupplierModel.addElement("M_isReceiptRuleEditable").setText("true");
+
+        Document document = DocumentHelper.createDocument(root);
+        String requestXml = document.asXML();
+
+        System.out.println(requestXml);
+    }
+
+    @Test
+    public void test15() {
+        Map<String, String> map = new HashMap<String, String>();
+        String xml = "<?xml{哈哈哈} {} versi{ }on=\"1.0\" enc{a _1}odi{endtime}ng=\"UTF-8\" standalone=\"yes\"?><w:document xmlns:wpc=\"http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:wp14=\"http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing\" xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:w14=\"http://schemas.microsoft.com/office/word/2010/wordml\" xmlns:w10=\"urn:schemas-microsoft-com:office:word\" xmlns:w15=\"http://schemas.microsoft.com/office/word/2012/wordml\" xmlns:wpg=\"http://schemas.microsoft.com/office/word/2010/wordprocessingGroup\" xmlns:wpi=\"http://schemas.microsoft.com/office/word/2010/wordprocessingInk\" xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/wordml\" xmlns:wps=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\" xmlns:wpsCustomData=\"http://www.wps.cn/officeDocument/2013/wpsCustomData\" mc:Ignorable=\"w14 w15 wp14\"><w:body><w:p><w:pPr><w:rPr><w:rFonts w:hint=\"eastAsia\" w:eastAsiaTheme=\"minorEastAsia\"/><w:lang w:val=\"en-US\" w:eastAsia=\"zh-CN\"/></w:rPr></w:pPr><w:r><w:rPr><w:rFonts w:hint=\"eastAsia\"/><w:lang w:val=\"en-US\" w:eastAsia=\"zh-CN\"/></w:rPr><w:t>牛智萌：{name}</w:t><w:t>牛智萌：{sex}</w:t><w:t>牛智萌：{age_12}</w:t></w:r><w:bookmarkStart w:id=\"0\" w:name=\"_GoBack\"/><w:bookmarkEnd w:id=\"0\"/></w:p><w:sectPr><w:pgSz w:w=\"11906\" w:h=\"16838\"/><w:pgMar w:top=\"1440\" w:right=\"1800\" w:bottom=\"1440\" w:left=\"1800\" w:header=\"851\" w:footer=\"992\" w:gutter=\"0\"/><w:cols w:space=\"425\" w:num=\"1\"/><w:docGrid w:type=\"lines\" w:linePitch=\"312\" w:charSpace=\"0\"/></w:sectPr></w:body></w:document>";
+        // 匹配{数字、字母、下划线}
+        Pattern pattern = Pattern.compile("\\{\\w+}");
+        Matcher matcher = pattern.matcher(xml);
+        while (matcher.find()) {
+            String group = matcher.group().replaceAll("\\s*", "");
+            String substring = group.substring(1, group.length() - 1);
+            map.put(group, substring);
+        }
+
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+
+
+    }
+
+    @Test
+    public void test16() throws Exception {
+        String result = String.format("%03d", 12345);
+        System.out.println(result);
+
+        int num = 76543468;
+        String str = String.format("%,d", num);
+        System.out.println(str);
+
+//        LocalDateTime now = LocalDateTime.now();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd E a hh:mm:ss");
+//        System.out.println(now.format(formatter));
+
+    }
+
+    @Test
+    public void test17() {
+        List<Student> studentList = new ArrayList<Student>();
+        for (int i = 0; i < 5; i++) {
+            Student student = new Student();
+            student.setAge("25");
+            student.setIdentityCardNumber("230106xxxx");
+            student.setName("nzm:" + i);
+            studentList.add(student);
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", "test");
+        jsonObject.put("studentlIST", studentList);
+        System.out.println(jsonObject.toJSONString());
+    }
+
+    @Test
+    public void test18() {
+        String josnStr = "{\"studentlIST\":[{\"age\":\"25\",\"identityCardNumber\":\"230106xxxx\",\"name\":\"nzm:0\"},{\"age\":\"25\",\"identityCardNumber\":\"230106xxxx\",\"name\":\"nzm:1\"},{\"age\":\"25\",\"identityCardNumber\":\"230106xxxx\",\"name\":\"nzm:2\"},{\"age\":\"25\",\"identityCardNumber\":\"230106xxxx\",\"name\":\"nzm:3\"},{\"age\":\"25\",\"identityCardNumber\":\"230106xxxx\",\"name\":\"nzm:4\"}],\"name\":null}";
+
+        JSONObject jsonObject = JSONObject.parseObject(josnStr);
+        String name = jsonObject.getString("name");
+        //System.out.println(name);
+        String studentlIST = jsonObject.getString("studentlIST");
+        //System.out.println(studentlIST);
+
+        JSONArray studentArray = jsonObject.getJSONArray("studentlIST");
+        System.out.println("数组长度：" + studentArray.size());
+
+        List<Student> studentList = studentArray.toJavaList(Student.class);
+//        for (Object object : studentArray) {
+//            JSONObject obj = (JSONObject) object;
+//            System.out.println(obj.getString("name"));
+//            System.out.println(obj.getString("age"));
+//            System.out.println(obj.getString("identityCardNumber"));
+//            System.out.println("========");
+//        }
+        String s = JSONObject.toJSONString(studentList, true);
+        System.out.println(s);
+    }
+
+    @Test
+    public void test19() {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("1", "1");
+        System.out.println(Util.null2String(map.get("2")));
     }
 
 }

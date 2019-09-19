@@ -25,6 +25,10 @@ public class ChangeVo {
      * 岗位级别
      */
     private String gwjb;
+    /**
+     * 岗位地图
+     */
+    private String gwdt;
 
     public ChangeVo() {
     }
@@ -38,7 +42,16 @@ public class ChangeVo {
                 ", gwmc='" + gwmc + '\'' +
                 ", gwlb='" + gwlb + '\'' +
                 ", gwjb='" + gwjb + '\'' +
+                ", gwdt='" + gwdt + '\'' +
                 '}';
+    }
+
+    public String getGwdt() {
+        return gwdt;
+    }
+
+    public void setGwdt(String gwdt) {
+        this.gwdt = gwdt;
     }
 
     public String getGzdd() {
