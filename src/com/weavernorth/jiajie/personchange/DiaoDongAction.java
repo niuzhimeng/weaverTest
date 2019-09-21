@@ -1,6 +1,6 @@
 package com.weavernorth.jiajie.personchange;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSONObject;
 import com.weaver.general.TimeUtil;
 import com.weavernorth.jiajie.personchange.vo.ChangeVo;
 import com.weavernorth.jiajie.personchange.vo.Different;
@@ -15,21 +15,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 调用申请-wdd
+ * 调动申请-wdd
  */
 public class DiaoDongAction extends BaseAction {
     //调入法人体
-    private static final String FRT_FIELD = "field51";
+    private static final String FRT_FIELD = "field8";
     // 调入岗位名称
-    private static final String GWMC_FIELD = "field78";
+    private static final String GWMC_FIELD = "field12";
     // 调入岗位类别
-    private static final String GWLB_FIELD = "field72";
+    private static final String GWLB_FIELD = "field10";
     // 调入岗位级别
-    private static final String GWJB_FIELD = "field73";
+    private static final String GWJB_FIELD = "field11";
     // 调入岗位地图
-    private static final String GWDT_FIELD = "field83";
+    private static final String GWDT_FIELD = "field9";
 
-    private Gson gson = new Gson();
     private static Map<String, String> zdMap = new HashMap<String, String>();
 
     static {
@@ -55,7 +54,7 @@ public class DiaoDongAction extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        this.writeLog("调用申请-wdd Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
+        this.writeLog("调动申请-wdd Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
@@ -71,11 +70,11 @@ public class DiaoDongAction extends BaseAction {
             String drbm = recordSet.getString("drbm");
 
             // 调入法人体
-            newChangeVo.setFrt(recordSet.getString("drfartStr"));
-            String drfart = recordSet.getString("drfart");
+            newChangeVo.setFrt(recordSet.getString("drfrtStr"));
+            String drfart = recordSet.getString("drfrt");
             // 调入岗位名称
-            newChangeVo.setGwmc(recordSet.getString("drgwmcStr"));
-            String drgwmc = recordSet.getString("drgwmc");
+            newChangeVo.setGwmc(recordSet.getString("drgwStr"));
+            String drgwmc = recordSet.getString("drgw");
             // 调入岗位类别
             newChangeVo.setGwlb(recordSet.getString("drgwlbStr"));
             String drgwlb = recordSet.getString("drgwlb");
@@ -89,18 +88,18 @@ public class DiaoDongAction extends BaseAction {
 
             ChangeVo oldChangeVo = new ChangeVo();
             // 调出工作地点
-            oldChangeVo.setGzdd(recordSet.getString("dcgzddstr"));
+            oldChangeVo.setGzdd(recordSet.getString("dcgzddStr"));
             // 调出部门
-            oldChangeVo.setBm(recordSet.getString("dcbmstr"));
+            oldChangeVo.setBm(recordSet.getString("dcbmStr"));
 
             // 调出法人体
-            oldChangeVo.setFrt(recordSet.getString("dcfrtstr"));
+            oldChangeVo.setFrt(recordSet.getString("dcfrtStr"));
             // 调出岗位名称
-            oldChangeVo.setGwmc(recordSet.getString("dcgwmcstr"));
+            oldChangeVo.setGwmc(recordSet.getString("dcgwStr"));
             // 调出岗位类别
-            oldChangeVo.setGwlb(recordSet.getString("dcgwlbstr"));
+            oldChangeVo.setGwlb(recordSet.getString("dcgwlbStr"));
             // 调出岗位级别
-            oldChangeVo.setGwjb(recordSet.getString("dcgwjbstr"));
+            oldChangeVo.setGwjb(recordSet.getString("dcgwjbStr"));
             // 调出岗位地图
             oldChangeVo.setGwdt(recordSet.getString("dcgwdtStr"));
             this.writeLog("旧数据对象： " + oldChangeVo.toString());
@@ -117,14 +116,14 @@ public class DiaoDongAction extends BaseAction {
                 // 更新
                 String updateSql = "update CUS_FIELDDATA set " + FRT_FIELD + " = ?, " + GWMC_FIELD + " = ?, "
                         + GWLB_FIELD + " = ?, " + GWJB_FIELD + " = ?," + GWDT_FIELD + " = ? where id = ?";
-                this.writeLog("调用申请updateSql: " + updateSql);
+                this.writeLog("调动申请updateSql: " + updateSql);
                 updateSet.executeUpdate(updateSql,
                         drfart, drgwmc, drgwlb, drgwjb, drgwdt, xm);
             } else {
                 // 新增
                 String insertSql = "insert into CUS_FIELDDATA(" + FRT_FIELD + "," + GWMC_FIELD + "," + GWLB_FIELD +
                         "," + GWJB_FIELD + "," + GWDT_FIELD + ", scope, scopeid, id) values(?,?,?,?,?, ?,?,?)";
-                this.writeLog("调用申请insertSql： " + insertSql);
+                this.writeLog("调动申请insertSql： " + insertSql);
                 updateSet.executeUpdate(insertSql,
                         drfart, drgwmc, drgwlb, drgwjb, drgwdt,
                         "HrmCustomFieldByInfoType", "-1", xm);
@@ -135,7 +134,7 @@ public class DiaoDongAction extends BaseAction {
 
             // 查询变动字段
             List<Different> differentList = JiaJieUtil.compareObj(oldChangeVo, newChangeVo);
-            this.writeLog("变动字段集合： " + gson.toJson(differentList));
+            this.writeLog("变动字段集合： " + JSONObject.toJSONString(differentList));
 
             // 插入人员信息变更记录表
             for (Different different : differentList) {
@@ -145,11 +144,11 @@ public class DiaoDongAction extends BaseAction {
             this.writeLog("建模授权开始=====");
             JiaJieUtil.rebuildModeDataShare(currentTimeString);
 
-            this.writeLog("调用申请-wdd End ===============");
+            this.writeLog("调动申请-wdd End ===============");
         } catch (Exception e) {
-            this.writeLog("调用申请-wdd 异常： " + e);
+            this.writeLog("调动申请-wdd 异常： " + e);
             requestInfo.getRequestManager().setMessageid("110000");
-            requestInfo.getRequestManager().setMessagecontent("调用申请-wdd 异常： " + e);
+            requestInfo.getRequestManager().setMessagecontent("调动申请-wdd 异常： " + e);
             return "0";
         }
 

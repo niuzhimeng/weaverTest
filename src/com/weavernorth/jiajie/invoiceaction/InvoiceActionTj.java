@@ -55,7 +55,7 @@ public class InvoiceActionTj extends BaseAction {
 
             RecordSet fpSet = new RecordSet();
             StringBuilder errBuilder = new StringBuilder();
-            fpSet.executeQuery("select fph from uf_fpcheck where fph in (" + fpStr + ")");
+            fpSet.executeQuery("select fph from uf_fpyc where fph in (" + fpStr + ")");
             while (fpSet.next()) {
                 errBuilder.append(fpSet.getString("fph")).append(", ");
             }
@@ -70,7 +70,7 @@ public class InvoiceActionTj extends BaseAction {
             // 插入发票表
             String[] split = fpStr.split(",");
             for (String fph : split) {
-                recordSet.executeUpdate("insert into uf_fpcheck(requestid, fph) values(?,?)", requestId, fph);
+                recordSet.executeUpdate("insert into uf_fpyc(requestid, fph) values(?,?)", requestId, fph);
             }
 
             this.writeLog("发票验证接口提交End ===============");

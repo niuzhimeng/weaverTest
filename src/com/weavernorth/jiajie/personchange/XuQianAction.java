@@ -1,6 +1,6 @@
 package com.weavernorth.jiajie.personchange;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSONObject;
 import com.weaver.general.TimeUtil;
 import com.weavernorth.jiajie.personchange.vo.Different;
 import com.weavernorth.jiajie.personchange.vo.XuQianVo;
@@ -22,12 +22,12 @@ public class XuQianAction extends BaseAction {
     /**
      * 公共选择框 - 法人体id
      */
-    private static final Integer FRT_ID = 2041;
+    private static final Integer FRT_ID = 1041;
     /**
      * 自定义字段 - 法人体id
      */
-    private static final String FRT_FIELD_ID = "field51";
-    private Gson gson = new Gson();
+    private static final String FRT_FIELD_ID = "field8";
+
     private static Map<String, String> zdMap = new HashMap<String, String>();
 
     static {
@@ -69,9 +69,9 @@ public class XuQianAction extends BaseAction {
             String xqfrt = recordSet.getString("xqfrt");
             newVo.setFrt(frtMap.get(xqfrt));
             // 续签劳动合同期限
-            newVo.setStartDate(recordSet.getString("xqhtrq"));
+            newVo.setStartDate(recordSet.getString("xqldhtqx"));
             // 续签劳动终止合同期限
-            newVo.setEndDate(recordSet.getString("zzhtrq"));
+            newVo.setEndDate(recordSet.getString("xqldzzhtqx"));
             this.writeLog("续签流程新对象： " + newVo.toString());
 
             RecordSet updateSet = new RecordSet();
@@ -112,7 +112,7 @@ public class XuQianAction extends BaseAction {
 
             // 查询变动字段
             List<Different> differentList = JiaJieUtil.compareObj(oldVo, newVo);
-            this.writeLog("变动字段集合： " + gson.toJson(differentList));
+            this.writeLog("变动字段集合： " + JSONObject.toJSONString(differentList));
 
             // 插入人员信息变更记录表
             for (Different different : differentList) {

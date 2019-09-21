@@ -13,7 +13,7 @@ public class ZhuanZhengAction extends BaseAction {
     /**
      * 转正日期
      */
-    private static final String ZZRQ_FIELD = "field54";
+    private static final String ZZRQ_FIELD = "field17";
 
 
     @Override

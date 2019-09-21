@@ -12,7 +12,6 @@ import com.google.gson.JsonParser;
 import com.lowagie.text.pdf.*;
 import com.test.webserviceTest.vo.Student;
 import com.weaver.general.TimeUtil;
-import com.weaver.general.Util;
 import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -505,9 +504,10 @@ public class TestMain {
 
     @Test
     public void test19() {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("1", "1");
-        System.out.println(Util.null2String(map.get("2")));
+        String myJson = "{\"gwjb\":\"0\",\"mxData\":[{\"myNumber\":1,\"cctsVal\":\"2.0\",\"mddVal\":\"0\",\"zsfVal\":\"9999.00\",\"cfVal\":\"0.00\",\"jtbtVal\":\"0.00\"}]}";
+        JSONObject jsonObject = JSONObject.parseObject(myJson);
+        System.out.println(jsonObject.getString("gwjb"));
+
     }
 
 }

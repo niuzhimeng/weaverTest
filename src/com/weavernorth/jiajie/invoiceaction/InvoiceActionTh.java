@@ -52,7 +52,7 @@ public class InvoiceActionTh extends BaseAction {
             this.writeLog("表单发票号码： " + fpBuilder.toString());
 
             RecordSet fpSet = new RecordSet();
-            fpSet.executeUpdate("delete from uf_fpcheck where fph in (" + fpBuilder.toString() + ")");
+            fpSet.executeUpdate("delete from uf_fpyc where fph in (" + fpBuilder.toString() + ")");
 
             this.writeLog("发票验证接口退回End ===============");
         } catch (Exception e) {

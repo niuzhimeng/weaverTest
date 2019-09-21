@@ -3,7 +3,6 @@ package com.weavernorth.jiajie.util;
 import com.weavernorth.jiajie.personchange.vo.Different;
 import weaver.conn.RecordSet;
 import weaver.formmode.setup.ModeRightInfo;
-import weaver.general.BaseBean;
 import weaver.general.TimeUtil;
 
 import java.lang.reflect.Field;
@@ -14,9 +13,8 @@ public class JiaJieUtil {
     /**
      * 人员卡片更新 模块id
      */
-    private static final Integer MODE_ID = 20064;
+    private static final Integer MODE_ID = 14564;
 
-    private static BaseBean baseBean = new BaseBean();
     private static ModeRightInfo moderightinfo = new ModeRightInfo();
 
     /**
@@ -32,7 +30,7 @@ public class JiaJieUtil {
         String myDate = TimeUtil.getCurrentTimeString().substring(0, 10);
         String myTime = TimeUtil.getCurrentTimeString().substring(11);
         RecordSet updateSet = new RecordSet();
-        updateSet.executeUpdate("insert into uf_rykp_wdd(bglc, sxrq, yzd, xzf, zdmc, lccjr, " +
+        updateSet.executeUpdate("insert into uf_rykplsjl(bglc, sxrq, yz, xz, zdmc, lccjr, " +
                         " formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) values(?,?,?,?,?, ?,?,?,?,?, ?)",
                 requestId, myDate, oldVal, newVal, fieldName, flowCreator,
                 MODE_ID, 1, 0, myDate, myTime);
@@ -47,7 +45,7 @@ public class JiaJieUtil {
         //赋权
         moderightinfo.setNewRight(true);
         RecordSet maxSet = new RecordSet();
-        maxSet.executeSql("select id from uf_rykp_wdd where MODEDATACREATEDATE || MODEDATACREATETIME >= '" + myTime + "'");
+        maxSet.executeSql("select id from uf_rykplsjl where MODEDATACREATEDATE || MODEDATACREATETIME >= '" + myTime + "'");
 
         int maxId;
         while (maxSet.next()) {

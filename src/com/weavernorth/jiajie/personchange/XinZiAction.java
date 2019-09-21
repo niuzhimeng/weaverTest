@@ -1,6 +1,6 @@
 package com.weavernorth.jiajie.personchange;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSONObject;
 import com.weaver.general.TimeUtil;
 import com.weavernorth.jiajie.personchange.vo.ChangeVo;
 import com.weavernorth.jiajie.personchange.vo.Different;
@@ -19,15 +19,14 @@ import java.util.Map;
  */
 public class XinZiAction extends BaseAction {
     // 调入岗位名称
-    private static final String GWMC_FIELD = "field78";
+    private static final String GWMC_FIELD = "field12";
     // 调入岗位类别
-    private static final String GWLB_FIELD = "field72";
+    private static final String GWLB_FIELD = "field10";
     // 调入岗位级别
-    private static final String GWJB_FIELD = "field73";
+    private static final String GWJB_FIELD = "field11";
     // 调入岗位地图
-    private static final String GWDT_FIELD = "field83";
+    private static final String GWDT_FIELD = "field9";
 
-    private Gson gson = new Gson();
     private static Map<String, String> zdMap = new HashMap<String, String>();
 
     static {
@@ -61,13 +60,13 @@ public class XinZiAction extends BaseAction {
 
             // 调入岗位名称
             newChangeVo.setGwmc(recordSet.getString("gwmctzhStr"));
-            String drgwmc = recordSet.getString("gwmch");
+            String drgwmc = recordSet.getString("gwmctzh");
             // 调入岗位类别
             newChangeVo.setGwlb(recordSet.getString("gwlbtzhStr"));
-            String drgwlb = recordSet.getString("gwlbh");
+            String drgwlb = recordSet.getString("gwlbtzh");
             // 调入岗位级别
             newChangeVo.setGwjb(recordSet.getString("gwjbtzhStr"));
-            String drgwjb = recordSet.getString("gwjbh");
+            String drgwjb = recordSet.getString("gwjbtzh");
             // 调入岗位地图
             newChangeVo.setGwdt(recordSet.getString("gwdttzhStr"));
             String gwdttzh = recordSet.getString("gwdttzh");
@@ -109,7 +108,7 @@ public class XinZiAction extends BaseAction {
 
             // 查询变动字段
             List<Different> differentList = JiaJieUtil.compareObj(oldChangeVo, newChangeVo);
-            this.writeLog("变动字段集合： " + gson.toJson(differentList));
+            this.writeLog("变动字段集合： " + JSONObject.toJSONString(differentList));
 
             // 插入人员信息变更记录表
             for (Different different : differentList) {
