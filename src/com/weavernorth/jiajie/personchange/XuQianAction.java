@@ -27,13 +27,21 @@ public class XuQianAction extends BaseAction {
      * 自定义字段 - 法人体id
      */
     private static final String FRT_FIELD_ID = "field8";
+    /**
+     * 自定义字段 - 签约合同开始日期id
+     */
+    private static final String START_FIELD_ID = "field68";
+    /**
+     * 自定义字段 - 签约合同结束日期id
+     */
+    private static final String END_FIELD_ID = "field69";
 
     private static Map<String, String> zdMap = new HashMap<String, String>();
 
     static {
         zdMap.put("frt", "法人体");
-        zdMap.put("startDate", "续签劳动合同期限");
-        zdMap.put("endDate", "续签劳动终止合同期限");
+        zdMap.put("startDate", "签约合同开始日期");
+        zdMap.put("endDate", "签约合同结束日期");
     }
 
     @Override
@@ -77,11 +85,16 @@ public class XuQianAction extends BaseAction {
             RecordSet updateSet = new RecordSet();
 
             String oldFrt = "";
-            recordSet.executeQuery("select " + FRT_FIELD_ID + " from CUS_FIELDDATA where id = " + xm);
+            String startDate = "";
+            String endDate = "";
+
+            // 基本信息(scopeid=-1)、个人信息（scopeid=1）、工作信息（scopeid=3）、自定义字段 人力资源模块字段标识：HrmCustomFieldByInfoType
+            // 查询基本信息
+            recordSet.executeQuery("select * from CUS_FIELDDATA where id = " + xm + " and scopeid = -1");
             if (recordSet.next()) {
                 // 更新
                 oldFrt = recordSet.getString(FRT_FIELD_ID);
-                String updateSql = "update CUS_FIELDDATA set " + FRT_FIELD_ID + " = '" + xqfrt + "' where id = " + xm;
+                String updateSql = "update CUS_FIELDDATA set " + FRT_FIELD_ID + " = '" + xqfrt + "' where id = " + xm + " and scopeid = -1";
                 this.writeLog("转正申请updateSql: " + updateSql);
                 updateSet.executeUpdate(updateSql);
             } else {
@@ -91,21 +104,33 @@ public class XuQianAction extends BaseAction {
                 updateSet.executeUpdate(insertSql,
                         xqfrt, "HrmCustomFieldByInfoType", "-1", xm);
             }
+
+            // 处理工作信息
+            recordSet.executeQuery("select * from CUS_FIELDDATA where id = " + xm + " and scopeid = 3");
+            if (recordSet.next()) {
+                // 更新
+                startDate = recordSet.getString(START_FIELD_ID);
+                endDate = recordSet.getString(END_FIELD_ID);
+                String updateSql = "update CUS_FIELDDATA set " + START_FIELD_ID + " = '" + newVo.getStartDate() + "', "
+                        + END_FIELD_ID + " = '" + newVo.getEndDate() + "' where id = " + xm + " and scopeid = 3";
+                this.writeLog("转正申请updateSql: " + updateSql);
+                updateSet.executeUpdate(updateSql);
+            } else {
+                // 新增
+                String insertSql = "insert into CUS_FIELDDATA(" + START_FIELD_ID + ", " + END_FIELD_ID
+                        + " scope, scopeid, id) values(?,?,?,?,?)";
+                this.writeLog("转正申请insertSql： " + insertSql);
+                updateSet.executeUpdate(insertSql,
+                        newVo.getStartDate(), newVo.getEndDate(), "HrmCustomFieldByInfoType", "3", xm);
+            }
             this.writeLog("更新自定义字段表结束=================");
 
             // 旧对象
             XuQianVo oldVo = new XuQianVo();
-            RecordSet selectSet = new RecordSet();
-            selectSet.executeQuery("SELECT STARTDATE, ENDDATE FROM HRMRESOURCE where id = " + xm);
-            selectSet.next();
             oldVo.setFrt(frtMap.get(oldFrt));
-            oldVo.setStartDate(selectSet.getString("STARTDATE"));
-            oldVo.setEndDate(selectSet.getString("ENDDATE"));
+            oldVo.setStartDate(startDate);
+            oldVo.setEndDate(endDate);
             this.writeLog("续签流程旧对象： " + oldVo.toString());
-
-            updateSet.executeUpdate("update hrmresource set STARTDATE = ?, ENDDATE = ? where id = ?",
-                    newVo.getStartDate(), newVo.getEndDate(), xm);
-            this.writeLog("更新系统表结束============");
 
             //清除缓存
             new ResourceComInfo().removeResourceCache();
