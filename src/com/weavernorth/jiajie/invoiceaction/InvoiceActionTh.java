@@ -1,7 +1,6 @@
 package com.weavernorth.jiajie.invoiceaction;
 
 import weaver.conn.RecordSet;
-import weaver.general.Util;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
@@ -29,30 +28,8 @@ public class InvoiceActionTh extends BaseAction {
 
         this.writeLog("发票验证接口退回Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
-            recordSet.executeQuery("select id from " + tableName + " where requestid = '" + requestId + "'");
-            recordSet.next();
-            int mainId = recordSet.getInt("id");
-
-            String mxSql = "select * from " + tableName + mxb + " where mainid = " + mainId;
-            this.writeLog("明细表查询sql： " + mxSql);
-            recordSet.executeQuery(mxSql);
-            StringBuilder fpBuilder = new StringBuilder();
-            while (recordSet.next()) {
-                String trim = Util.null2String(recordSet.getString(fpzd)).trim();
-                // 过滤空的发票号码
-                if (trim.length() > 0) {
-                    fpBuilder.append(trim).append(",");
-                }
-            }
-            if (fpBuilder.length() <= 0) {
-                this.writeLog("表单未填写发票号");
-                return "1";
-            }
-            fpBuilder.deleteCharAt(fpBuilder.length() - 1);
-            this.writeLog("表单发票号码： " + fpBuilder.toString());
-
             RecordSet fpSet = new RecordSet();
-            fpSet.executeUpdate("delete from uf_fpyc where fph in (" + fpBuilder.toString() + ")");
+            fpSet.executeUpdate("delete from uf_fpyc where fprequestid = '" + requestId + "'");
 
             this.writeLog("发票验证接口退回End ===============");
         } catch (Exception e) {

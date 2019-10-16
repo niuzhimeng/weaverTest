@@ -1,6 +1,10 @@
 package com.weavernorth.jiajie.invoiceaction;
 
+import weaver.conn.ConnStatement;
 import weaver.conn.RecordSet;
+import weaver.formmode.setup.ModeRightInfo;
+import weaver.general.BaseBean;
+import weaver.general.TimeUtil;
 import weaver.general.Util;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
@@ -14,6 +18,13 @@ public class InvoiceActionTj extends BaseAction {
      * 发票字段名
      */
     private String fpzd;
+
+    /**
+     * 模块id
+     */
+    private static final Integer LOG_MODE_ID = 16064;
+    private static ModeRightInfo moderightinfo = new ModeRightInfo();
+    private static BaseBean baseBean = new BaseBean();
 
     @Override
     public String execute(RequestInfo requestInfo) {
@@ -69,9 +80,7 @@ public class InvoiceActionTj extends BaseAction {
 
             // 插入发票表
             String[] split = fpStr.split(",");
-            for (String fph : split) {
-                recordSet.executeUpdate("insert into uf_fpyc(requestid, fph) values(?,?)", requestId, fph);
-            }
+            insertInvoiceTable(split, requestId);
 
             this.writeLog("发票验证接口提交End ===============");
         } catch (Exception e) {
@@ -82,6 +91,47 @@ public class InvoiceActionTj extends BaseAction {
         }
 
         return "1";
+    }
+
+    private static void insertInvoiceTable(String[] invoices, String requestid) {
+        String currentTimeString = TimeUtil.getCurrentTimeString();
+        ConnStatement statement = new ConnStatement();
+        String insertSql = "insert into uf_fpyc(fprequestid, fph, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
+                "values (?,?,  ?,?,?,?,?)";
+        try {
+            String subDate = com.weaver.general.TimeUtil.getCurrentTimeString().substring(0, 10);
+            String subTime = com.weaver.general.TimeUtil.getCurrentTimeString().substring(11);
+            statement.setStatementSql(insertSql);
+            for (String invoice : invoices) {
+                statement.setString(1, requestid);
+                statement.setString(2, invoice);
+                //模块id
+                statement.setInt(3, LOG_MODE_ID);
+                //创建人id
+                statement.setString(4, "1");
+                //一个默认值0
+                statement.setString(5, "0");
+                statement.setString(6, subDate);
+                statement.setString(7, subTime);
+                statement.executeUpdate();
+            }
+
+        } catch (Exception e) {
+            baseBean.writeLog("插入uf_fpyc异常： " + e);
+        } finally {
+            statement.close();
+            //赋权
+            moderightinfo.setNewRight(true);
+            RecordSet maxSet = new RecordSet();
+            maxSet.executeSql("select id from uf_fpyc where MODEDATACREATEDATE || MODEDATACREATETIME >= '" + TimeUtil.timeAdd(currentTimeString, -10) + "'");
+
+            int maxId;
+            while (maxSet.next()) {
+                maxId = maxSet.getInt("id");
+                // 创建人id， 模块id， 该条数据id
+                moderightinfo.editModeDataShare(1, LOG_MODE_ID, maxId);
+            }
+        }
     }
 
     public String getMxb() {
