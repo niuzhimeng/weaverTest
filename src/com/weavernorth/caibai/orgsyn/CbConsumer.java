@@ -4,7 +4,7 @@ import com.sap.conn.jco.JCoDestination;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoTable;
 import com.weavernorth.caibai.orgsyn.vo.CbHrmResource;
-import com.weavernorth.caibai.sap.CaiBaiPoolThree;
+import com.weavernorth.caibai.sap.CaiBaiPoolThreeFormal;
 import com.weavernorth.caibai.util.CbConnUtil;
 import com.weavernorth.caibai.util.CbUtils;
 import weaver.conn.RecordSet;
@@ -102,7 +102,7 @@ public class CbConsumer extends BaseCronJob {
             List<String> statusList = new ArrayList<String>();
             Collections.addAll(statusList, statusAll);
 
-            JCoDestination jCoDestination = CaiBaiPoolThree.getJCoDestination();
+            JCoDestination jCoDestination = CaiBaiPoolThreeFormal.getJCoDestination();
             JCoFunction function = jCoDestination.getRepository().getFunction("ZOAIF0020_RFC");
             baseBean.writeLog("获取函数完成===== " + function);
             // 调用sap人员接口
@@ -166,7 +166,7 @@ public class CbConsumer extends BaseCronJob {
                 } else if ("C".equalsIgnoreCase(sfdlzh)) {
                     // 登录名不变
                     loginId = codeLoginMap.get(workCode);
-                }else {
+                } else {
                     // 登录名不变,加错误日志
                     loginId = codeLoginMap.get(workCode);
                     CbHrmResource hrmResource = new CbHrmResource();
@@ -225,7 +225,7 @@ public class CbConsumer extends BaseCronJob {
                 // 部门ID
                 int depId = Util.getIntValue(depIdMap.get(sapDepCode), 0);
                 baseBean.writeLog("depId: " + depId);
-                if (depId <= 0 && !"5".equals(sapStatus) && !"6".equals(sapStatus)) {
+                if (depId <= 0 && Util.getIntValue(sapStatus) < 4) {
                     //所属部门不存在
                     hrmResource.setErrMessage("人员【部门】不存在, 部门编码: " + sapDepCode + " ,人员编码： " + workCode + ", 姓名: " + lastName);
                     errHrmResourceList.add(hrmResource);
