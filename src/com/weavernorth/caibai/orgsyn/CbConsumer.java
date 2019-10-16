@@ -63,6 +63,15 @@ public class CbConsumer extends BaseCronJob {
             }
             baseBean.writeLog("当前人数： " + codeIdMap.size());
 
+            recordSet.executeQuery("select workcode, loginid from hrmresource");
+            // 人员编码 - loginid map
+            Map<String, String> codeLoginMap = new HashMap<String, String>(recordSet.getCounts() + 50);
+            while (recordSet.next()) {
+                if (!"".equalsIgnoreCase(recordSet.getString("workcode").trim())) {
+                    codeLoginMap.put(recordSet.getString("workcode"), recordSet.getString("loginid"));
+                }
+            }
+
             // 部门编码 - id map
             recordSet.executeQuery("select id, departmentcode from hrmdepartment");
             Map<String, String> depIdMap = new HashMap<String, String>(recordSet.getCounts() + 50);
@@ -112,16 +121,6 @@ public class CbConsumer extends BaseCronJob {
                 String workCode = Util.null2String(otReturn.getString("WORKCODE")).trim();
                 // 姓名
                 String lastName = Util.null2String(otReturn.getString("LASTNAME")).trim();
-                // 是否有系统登录账号
-                String sfdlzh = Util.null2String(otReturn.getString("SFDLZH")).trim();
-                // 登录名
-                String loginId = "";
-                if ("X".equalsIgnoreCase(sfdlzh)) {
-                    loginId = workCode;
-                } else if ("N".equalsIgnoreCase(sfdlzh)) {
-                    continue;
-                }
-
                 // 员工状态
                 String sapStatus = Util.null2String(otReturn.getString("STATUS")).trim();
 
@@ -155,6 +154,25 @@ public class CbConsumer extends BaseCronJob {
                 String birthday = Util.null2String(otReturn.getString("BIRTHDAY")).trim();
                 // 身份证号码
                 String certificatenum = Util.null2String(otReturn.getString("IDNUMBER")).trim();
+                // 是否有系统登录账号
+                String sfdlzh = Util.null2String(otReturn.getString("SFDLZH")).trim();
+                // 登录名
+                String loginId = "";
+                if ("A".equalsIgnoreCase(sfdlzh)) {
+                    loginId = workCode;
+                } else if ("B".equalsIgnoreCase(sfdlzh)) {
+                    // 登录名清空
+                    loginId = "";
+                } else if ("C".equalsIgnoreCase(sfdlzh)) {
+                    // 登录名不变
+                    loginId = codeLoginMap.get(workCode);
+                }else {
+                    // 登录名不变,加错误日志
+                    loginId = codeLoginMap.get(workCode);
+                    CbHrmResource hrmResource = new CbHrmResource();
+                    hrmResource.setErrMessage("人员【是否有系统登录账号】为空, 部门code: " + sapDepCode + " ,人员编码: " + workCode + ", 姓名: " + lastName);
+                    errHrmResourceList.add(hrmResource);
+                }
 
                 baseBean.writeLog("人员code: " + workCode + ", 人员名称: " + lastName);
                 baseBean.writeLog("人员上级code: " + managerCode);
