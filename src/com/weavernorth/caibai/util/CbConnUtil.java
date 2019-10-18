@@ -72,7 +72,7 @@ public class CbConnUtil {
             while (maxSet.next()) {
                 maxId = maxSet.getInt("id");
                 // 创建人id， 模块id， 该条数据id
-                moderightinfo.editModeDataShare(1, LOG_MODE_ID, maxId);
+                moderightinfo.rebuildModeDataShareByEdit(1, LOG_MODE_ID, maxId);
             }
         }
     }
@@ -117,13 +117,13 @@ public class CbConnUtil {
             //赋权
             moderightinfo.setNewRight(true);
             RecordSet maxSet = new RecordSet();
-            maxSet.executeSql("select id from uf_org_errlog where MODEDATACREATEDATE || MODEDATACREATETIME >= '" + TimeUtil.timeAdd(currentTimeString, -10) + "'");
+            maxSet.executeSql("select id from uf_org_errlog where MODEDATACREATEDATE || MODEDATACREATETIME >= '" + TimeUtil.timeAdd(currentTimeString, -3) + "'");
 
             int maxId;
             while (maxSet.next()) {
                 maxId = maxSet.getInt("id");
                 // 创建人id， 模块id， 该条数据id
-                moderightinfo.editModeDataShare(1, ERR_LOG_MODE_ID, maxId);
+                moderightinfo.rebuildModeDataShareByEdit(1, ERR_LOG_MODE_ID, maxId);
             }
         }
     }

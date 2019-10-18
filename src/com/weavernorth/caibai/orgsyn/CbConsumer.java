@@ -57,6 +57,8 @@ public class CbConsumer extends BaseCronJob {
         baseBean.writeLog("人员同步 Start ========================= " + TimeUtil.getCurrentTimeString());
         // 员工正式状态
         String personFormalStatus = "1";
+        // 不检查直接上级的部门编码
+        String errDepartmentCode = "9040";
         // 开始时间戳
         long start = System.currentTimeMillis();
         try {
@@ -256,7 +258,7 @@ public class CbConsumer extends BaseCronJob {
                 }
 
                 // 直接上级为空
-                if ("00000000".equalsIgnoreCase(managerCode) && personFormalStatus.equals(sapStatus)) {
+                if ("00000000".equalsIgnoreCase(managerCode) && personFormalStatus.equals(sapStatus) && !errDepartmentCode.equals(sapDepCode)) {
                     hrmResource.setErrMessage("人员【直接上级】为空, 岗位id: " + sapJobTitleId + " ,人员编码: " + workCode + ", 姓名: " + lastName);
                     errHrmResourceList.add(hrmResource);
                 }
@@ -278,7 +280,7 @@ public class CbConsumer extends BaseCronJob {
 
                 //直接上级id
                 int managerIdReal = Util.getIntValue(codeIdMap.get(managerCode), 0);
-                if (managerIdReal <= 0 && personFormalStatus.equals(sapStatus)) {
+                if (managerIdReal <= 0 && personFormalStatus.equals(sapStatus) && !errDepartmentCode.equals(sapDepCode)) {
                     hrmResource.setErrMessage("人员【直接上级】不存在, 直接上级编码: " + managerCode + " ,人员编码: " + workCode + ", 姓名: " + lastName);
                     errHrmResourceList.add(hrmResource);
                 }
@@ -289,7 +291,6 @@ public class CbConsumer extends BaseCronJob {
                 String managerIdAndStr = hrmResource.getManagerIdAndStr(String.valueOf(managerIdReal));
                 hrmResource.setManagerstr(managerIdAndStr);
                 hrmResource.setDepId(String.valueOf(depId));
-
 
                 //账号类型
                 hrmResource.setAccounttype("0");
@@ -337,15 +338,19 @@ public class CbConsumer extends BaseCronJob {
                 CbConnUtil.insertErrorLog("hrmreource", errHrmResourceList, myUid);
             }
 
-            // 结束时间戳
-            long end = System.currentTimeMillis();
-            long cha = (end - start) / 1000;
+
             int addSize = insertHrmResourceList.size();
             int updateSize = updateHrmResourceList.size();
 
             baseBean.writeLog("输出txt开始================");
             insertTxt(insertHrmResourceList, updateHrmResourceList, errHrmResourceList);
             baseBean.writeLog("输出txt结束================");
+
+            clearMap(codeIdMap, codeLoginMap, depIdMap, subIdMap);
+            jobIdList.clear();
+            // 结束时间戳
+            long end = System.currentTimeMillis();
+            long cha = (end - start) / 1000;
 
             String logStr = "人员信息同步完成，此次新增人员： " + addSize + " 更新人员: "
                     + updateSize + ", 错误条数：" + errSize + " ,耗时：" + cha + " 秒。";
@@ -409,6 +414,15 @@ public class CbConsumer extends BaseCronJob {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void clearMap(Map... maps) {
+        if (maps != null) {
+            for (Map map : maps) {
+                map.clear();
+            }
+        }
+
     }
 
 
