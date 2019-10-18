@@ -71,6 +71,7 @@ public class CbHrmResource {
     private String exttcBankCardAddress;
 
     private String errMessage;
+    private String normalMessage;
 
     public boolean deleteHrmResource5(String hrmid, String status) {
         if (null == hrmid || "".equals(hrmid)) {
@@ -168,6 +169,14 @@ public class CbHrmResource {
         } catch (Exception e) {
             baseBean.writeLog("update rights Exception :" + e);
         }
+    }
+
+    public String getNormalMessage() {
+        return normalMessage;
+    }
+
+    public void setNormalMessage(String normalMessage) {
+        this.normalMessage = normalMessage;
     }
 
     public String getErrMessage() {

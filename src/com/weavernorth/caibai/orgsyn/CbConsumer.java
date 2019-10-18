@@ -14,10 +14,15 @@ import weaver.general.Util;
 import weaver.hrm.resource.ResourceComInfo;
 import weaver.interfaces.schedule.BaseCronJob;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
  * 菜百组织架构同步
+ * 上正式环境，记得修改txt输出路径，测试环境是在weavercs文件夹下
  *
  * @author 29529
  */
@@ -34,7 +39,8 @@ public class CbConsumer extends BaseCronJob {
         if (recordSet.next()) {
             kqtb = recordSet.getString("kqtb");
         }
-        if ("0".equalsIgnoreCase(kqtb)) {
+        baseBean.writeLog("当前同步开关状态： " + kqtb + ", 是否同步： " + "0".equals(kqtb));
+        if ("0".equals(kqtb)) {
             synHrmResource();
         } else {
             // 插入日志
@@ -49,6 +55,8 @@ public class CbConsumer extends BaseCronJob {
      */
     private void synHrmResource() {
         baseBean.writeLog("人员同步 Start ========================= " + TimeUtil.getCurrentTimeString());
+        // 员工正式状态
+        String personFormalStatus = "1";
         // 开始时间戳
         long start = System.currentTimeMillis();
         try {
@@ -205,12 +213,13 @@ public class CbConsumer extends BaseCronJob {
 
                 if ("00000000".equalsIgnoreCase(workCode)) {
                     // 工号为空
-                    hrmResource.setErrMessage("人员【工号】为空, 部门code: " + sapDepCode + " ,人员编码: " + workCode + ", 姓名: " + hrmResource.getLastname());
+                    hrmResource.setErrMessage("人员【工号】为空, 部门code: " + sapDepCode + " ,人员编码: " + workCode + ", 姓名: " + hrmResource.getLastname()
+                            + ", 人员状态： " + sapStatus);
                     errHrmResourceList.add(hrmResource);
                     continue;
                 }
 
-                if ("".equalsIgnoreCase(lastName)) {
+                if ("".equalsIgnoreCase(lastName) && personFormalStatus.equals(sapStatus)) {
                     // 姓名为空
                     hrmResource.setErrMessage("人员【姓名】为空, 部门code: " + sapDepCode + " ,人员编码: " + workCode + ", 姓名: " + hrmResource.getLastname());
                     errHrmResourceList.add(hrmResource);
@@ -225,7 +234,7 @@ public class CbConsumer extends BaseCronJob {
                 // 部门ID
                 int depId = Util.getIntValue(depIdMap.get(sapDepCode), 0);
                 baseBean.writeLog("depId: " + depId);
-                if (depId <= 0 && Util.getIntValue(sapStatus) < 4) {
+                if (depId <= 0 && personFormalStatus.equals(sapStatus)) {
                     //所属部门不存在
                     hrmResource.setErrMessage("人员【部门】不存在, 部门编码: " + sapDepCode + " ,人员编码： " + workCode + ", 姓名: " + lastName);
                     errHrmResourceList.add(hrmResource);
@@ -233,7 +242,7 @@ public class CbConsumer extends BaseCronJob {
                 }
 
                 //岗位id
-                if (!jobIdList.contains(sapJobTitleId)) {
+                if (!jobIdList.contains(sapJobTitleId) && personFormalStatus.equals(sapStatus)) {
                     //所属岗位不存在
                     hrmResource.setErrMessage("人员【岗位】不存在, 岗位id: " + sapJobTitleId + " ,人员编码: " + workCode + ", 姓名: " + lastName);
                     errHrmResourceList.add(hrmResource);
@@ -241,25 +250,25 @@ public class CbConsumer extends BaseCronJob {
                 }
 
                 // 手机号为空
-                if ("".equalsIgnoreCase(mobile)) {
+                if ("".equalsIgnoreCase(mobile) && personFormalStatus.equals(sapStatus)) {
                     hrmResource.setErrMessage("人员【手机号码】为空, 岗位id: " + sapJobTitleId + " ,人员编码: " + workCode + ", 姓名: " + lastName);
                     errHrmResourceList.add(hrmResource);
                 }
 
                 // 直接上级为空
-                if ("00000000".equalsIgnoreCase(managerCode)) {
+                if ("00000000".equalsIgnoreCase(managerCode) && personFormalStatus.equals(sapStatus)) {
                     hrmResource.setErrMessage("人员【直接上级】为空, 岗位id: " + sapJobTitleId + " ,人员编码: " + workCode + ", 姓名: " + lastName);
                     errHrmResourceList.add(hrmResource);
                 }
 
                 // 安全级别空
-                if ("".equalsIgnoreCase(seclevel)) {
+                if ("".equalsIgnoreCase(seclevel) && personFormalStatus.equals(sapStatus)) {
                     hrmResource.setErrMessage("人员【安全级别】为空, 岗位id: " + sapJobTitleId + " ,人员编码: " + workCode + ", 姓名: " + lastName);
                     errHrmResourceList.add(hrmResource);
                 }
 
                 // 分部不存在
-                if (subIdMap.get(subCode) == null) {
+                if (subIdMap.get(subCode) == null && personFormalStatus.equals(sapStatus)) {
                     hrmResource.setErrMessage("人员【分部】不存在, 分部编码: " + subCode + " ,人员编码: " + workCode + ", 姓名: " + lastName);
                     errHrmResourceList.add(hrmResource);
                     continue;
@@ -269,7 +278,7 @@ public class CbConsumer extends BaseCronJob {
 
                 //直接上级id
                 int managerIdReal = Util.getIntValue(codeIdMap.get(managerCode), 0);
-                if (managerIdReal <= 0) {
+                if (managerIdReal <= 0 && personFormalStatus.equals(sapStatus)) {
                     hrmResource.setErrMessage("人员【直接上级】不存在, 直接上级编码: " + managerCode + " ,人员编码: " + workCode + ", 姓名: " + lastName);
                     errHrmResourceList.add(hrmResource);
                 }
@@ -292,10 +301,14 @@ public class CbConsumer extends BaseCronJob {
                     baseBean.writeLog("新增==========");
                     String newId = String.valueOf(CbUtils.getHrmMaxid());
                     hrmResource.setId(newId);
+                    hrmResource.setNormalMessage("人员新增成功, 部门code: " + sapDepCode + " ,人员编码: " + workCode + ", 姓名: " + hrmResource.getLastname()
+                            + ", 人员状态： " + sapStatus);
                     insertHrmResourceList.add(hrmResource);
                     codeIdMap.put(workCode, "");
                 } else {
                     baseBean.writeLog("更新==========");
+                    hrmResource.setNormalMessage("人员更新成功, 部门code: " + sapDepCode + " ,人员编码: " + workCode + ", 姓名: " + hrmResource.getLastname()
+                            + ", 人员状态： " + sapStatus);
                     updateHrmResourceList.add(hrmResource);
                 }
             }
@@ -327,15 +340,75 @@ public class CbConsumer extends BaseCronJob {
             // 结束时间戳
             long end = System.currentTimeMillis();
             long cha = (end - start) / 1000;
-            String logStr = "人员信息同步完成，此次新增人员： " + insertHrmResourceList.size() + " 更新人员: "
-                    + updateHrmResourceList.size() + ", 错误条数：" + errHrmResourceList.size() + " ,耗时：" + cha + " 秒。";
+            int addSize = insertHrmResourceList.size();
+            int updateSize = updateHrmResourceList.size();
 
+            baseBean.writeLog("输出txt开始================");
+            insertTxt(insertHrmResourceList, updateHrmResourceList, errHrmResourceList);
+            baseBean.writeLog("输出txt结束================");
+
+            String logStr = "人员信息同步完成，此次新增人员： " + addSize + " 更新人员: "
+                    + updateSize + ", 错误条数：" + errSize + " ,耗时：" + cha + " 秒。";
+            baseBean.writeLog(logStr);
             // 插入日志
             CbConnUtil.insertTimedLog("hrmresource", logStr, numRows, tbzt, myUid);
         } catch (Exception e) {
             baseBean.writeLog("人员同步异常： " + e);
         }
         baseBean.writeLog("人员同步 End ========================= " + TimeUtil.getCurrentTimeString());
+    }
+
+    /**
+     * 输出txt
+     */
+    private void insertTxt(List<CbHrmResource> insertList, List<CbHrmResource> updateList, List<CbHrmResource> errList) {
+        BaseBean baseBean = new BaseBean();
+        String currentTimeString = com.weaver.general.TimeUtil.getCurrentTimeString().replace(":", "");
+        BufferedWriter bufferedWriter = null;
+        try {
+            String outTxtPath = File.separator + "usr" + File.separator + "weavercs" + File.separator + "ecology"
+                    + File.separator + "orgLog" + File.separator + currentTimeString + ".txt";
+            baseBean.writeLog("输出路径： " + outTxtPath);
+            File file = new File(outTxtPath);
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            bufferedWriter = new BufferedWriter(new FileWriter(file));
+            // insert 日志
+            for (CbHrmResource cbHrmResource : insertList) {
+                bufferedWriter.write(Util.null2String(cbHrmResource.getNormalMessage()));
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.write(";");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+
+            // update 日志
+            for (CbHrmResource cbHrmResource : updateList) {
+                bufferedWriter.write(Util.null2String(cbHrmResource.getNormalMessage()));
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.write(";");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+
+            // err 日志
+            for (CbHrmResource cbHrmResource : errList) {
+                bufferedWriter.write(Util.null2String(cbHrmResource.getErrMessage()));
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.flush();
+        } catch (IOException e) {
+            baseBean.writeLog("org输出TXT异常： " + e);
+        } finally {
+            try {
+                if (bufferedWriter != null) {
+                    bufferedWriter.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
