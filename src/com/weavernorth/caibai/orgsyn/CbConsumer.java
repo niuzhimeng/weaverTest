@@ -91,6 +91,15 @@ public class CbConsumer extends BaseCronJob {
                 }
             }
 
+            // 部门 - canceled map
+            recordSet.executeQuery("select id, canceled from hrmdepartment");
+            Map<Integer, String> idCanceledMap = new HashMap<Integer, String>(recordSet.getCounts());
+            while (recordSet.next()) {
+                if (!"".equalsIgnoreCase(recordSet.getString("id").trim())) {
+                    idCanceledMap.put(recordSet.getInt("id"), recordSet.getString("canceled"));
+                }
+            }
+
             // 分部编码 - id map
             recordSet.executeQuery("select SUBCOMPANYCODE, ID from HRMSUBCOMPANY");
             Map<String, String> subIdMap = new HashMap<String, String>(recordSet.getCounts() + 10);
@@ -243,6 +252,13 @@ public class CbConsumer extends BaseCronJob {
                     continue;
                 }
 
+                if ("1".equals(idCanceledMap.get(depId)) && personFormalStatus.equals(sapStatus)) {
+                    // 部门已封存
+                    hrmResource.setErrMessage("人员【部门】已封存,不得导入部门及人员！ 部门编码: " + sapDepCode + " ,人员编码： " + workCode + ", 姓名: " + lastName);
+                    errHrmResourceList.add(hrmResource);
+                    continue;
+                }
+
                 //岗位id
                 if (!jobIdList.contains(sapJobTitleId) && personFormalStatus.equals(sapStatus)) {
                     //所属岗位不存在
@@ -301,6 +317,8 @@ public class CbConsumer extends BaseCronJob {
                 if (codeIdMap.get(workCode) == null) {
                     baseBean.writeLog("新增==========");
                     String newId = String.valueOf(CbUtils.getHrmMaxid());
+                    // 显示顺序
+                    hrmResource.setDsporder(newId);
                     hrmResource.setId(newId);
                     hrmResource.setNormalMessage("人员新增成功, 部门code: " + sapDepCode + " ,人员编码: " + workCode + ", 姓名: " + hrmResource.getLastname()
                             + ", 人员状态： " + sapStatus);
@@ -346,7 +364,7 @@ public class CbConsumer extends BaseCronJob {
             insertTxt(insertHrmResourceList, updateHrmResourceList, errHrmResourceList);
             baseBean.writeLog("输出txt结束================");
 
-            clearMap(codeIdMap, codeLoginMap, depIdMap, subIdMap);
+            clearMap(codeIdMap, codeLoginMap, depIdMap, subIdMap, idCanceledMap);
             jobIdList.clear();
             // 结束时间戳
             long end = System.currentTimeMillis();

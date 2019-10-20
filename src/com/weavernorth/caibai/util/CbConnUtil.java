@@ -192,10 +192,9 @@ public class CbConnUtil {
 
         ConnStatement statement = new ConnStatement();
         try {
-            String sql = "update hrmresource set lastname = ?, status = ?, sex = ?, locationid = ?, mobile = ?,"
-                    + " managerid = ?, joblevel = ?, departmentid = ?, subcompanyid1 = ?, jobtitle = ?,"
-                    + " birthday = ?, startdate = ?, dsporder = ?, folk = ?, enddate = ?, "
-                    + "certificatenum = ?, email = ?, loginid = ?, seclevel = ? where workcode = ?";
+            String sql = "update hrmresource set lastname = ?, status = ?, sex = ?, locationid = ?, mobile = ?," +
+                    " managerid = ?,  departmentid = ?, subcompanyid1 = ?, jobtitle = ?, birthday = ?, " +
+                    " certificatenum = ?, email = ?, loginid = ?, seclevel = ? where workcode = ?";
             statement.setStatementSql(sql);
             int stnCount = 0;
             for (CbHrmResource hrmResource : updateHrmResourceList) {
@@ -211,22 +210,16 @@ public class CbConnUtil {
                 statement.setString(5, hrmResource.getMobile());
 
                 statement.setString(6, hrmResource.getManagerIdReal());
-                statement.setString(7, hrmResource.getJoblevel());
-                statement.setString(8, hrmResource.getDepId());
-                statement.setString(9, hrmResource.getSubId());
-                statement.setString(10, hrmResource.getJobtitleId());
+                statement.setString(7, hrmResource.getDepId());
+                statement.setString(8, hrmResource.getSubId());
+                statement.setString(9, hrmResource.getJobtitleId());
+                statement.setString(10, hrmResource.getBirthday());
 
-                statement.setString(11, hrmResource.getBirthday());
-                statement.setString(12, hrmResource.getStartdate());
-                statement.setString(13, hrmResource.getDsporder());
-                statement.setString(14, hrmResource.getFolk());
-
-                statement.setString(15, hrmResource.getEnddate());
-                statement.setString(16, hrmResource.getCertificatenum());
-                statement.setString(17, hrmResource.getEmail());
-                statement.setString(18, hrmResource.getLoginid());
-                statement.setString(19, hrmResource.getSeclevel());
-                statement.setString(20, hrmResource.getWorkcode());
+                statement.setString(11, hrmResource.getCertificatenum());
+                statement.setString(12, hrmResource.getEmail());
+                statement.setString(13, hrmResource.getLoginid());
+                statement.setString(14, hrmResource.getSeclevel());
+                statement.setString(15, hrmResource.getWorkcode());
                 statement.executeUpdate();
                 stnCount++;
             }
