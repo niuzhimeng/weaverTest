@@ -38,6 +38,8 @@ public class GdHrmDepartment extends BaseBean {
      */
     private String supdepid;
 
+    private String errMessage;
+
     @Override
     public String toString() {
         return "GdHrmDepartment{" +
@@ -50,6 +52,14 @@ public class GdHrmDepartment extends BaseBean {
                 ", supsubid='" + supsubid + '\'' +
                 ", supdepid='" + supdepid + '\'' +
                 '}';
+    }
+
+    public String getErrMessage() {
+        return errMessage;
+    }
+
+    public void setErrMessage(String errMessage) {
+        this.errMessage = errMessage;
     }
 
     public String getStatusOa() {

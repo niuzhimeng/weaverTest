@@ -44,33 +44,7 @@ public class GdHrmResource {
     private String sexOa;
     private String locationId;
 
-    public boolean deleteHrmResource5(String hrmid, String status) {
-        if (null == hrmid || "".equals(hrmid)) {
-            return false;
-        }
-
-        if (null == status || "".equals(status)) {
-            return false;
-        }
-
-        if ("0".equals(status) || "1".equals(status) || "2".equals(status) || "3".equals(status)) {
-            return false;
-        }
-
-        try {
-            RecordSet rs = new RecordSet();
-            rs.executeSql("delete from hrmrolemembers where resourceid= " + hrmid);
-            rs.executeSql("delete from PluginLicenseUser where plugintype='mobile' and sharetype='0' and sharevalue='" + hrmid + "'");
-            rs.executeSql("update HrmResource set status = " + status + ", loginid='',password='' ,account='' where id = " + hrmid);
-            rs.executeSql("delete hrmgroupmembers where userid= " + hrmid);
-            rs.executeSql("select max(id) from HrmStatusHistory");
-            rs.next();
-            rs.executeSql("update HrmStatusHistory set isdispose = 1 where id= " + rs.getInt(1));
-        } catch (Exception e) {
-            baseBean.writeLog("update HrmResource canceled Exception :" + e);
-        }
-        return true;
-    }
+    private String errMessage;
 
     /**
      * 获取所有上级String
@@ -140,6 +114,14 @@ public class GdHrmResource {
         } catch (Exception e) {
             baseBean.writeLog("update rights Exception :" + e);
         }
+    }
+
+    public String getErrMessage() {
+        return errMessage;
+    }
+
+    public void setErrMessage(String errMessage) {
+        this.errMessage = errMessage;
     }
 
     public String getLocationId() {
