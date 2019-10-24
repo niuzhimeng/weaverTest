@@ -35,8 +35,8 @@ public class CbConnUtil {
     public static void insertTimedLog(String tableName, String logStr, int nums, String tbzt, String bm) {
         String currentTimeString = TimeUtil.getCurrentTimeString();
         ConnStatement statement = new ConnStatement();
-        String insertSql = "insert into uf_org_log(tableName, logTxt, logNum, tbzt, bm, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
-                "values (?,?,?,?,?,  ?,?,?,?,?)";
+        String insertSql = "insert into uf_org_log(tableName, logTxt, logNum, tbzt, bm, logType, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
+                "values (?,?,?,?,?,?,  ?,?,?,?,?)";
         try {
             statement.setStatementSql(insertSql);
             // 表名
@@ -49,15 +49,17 @@ public class CbConnUtil {
             statement.setString(4, tbzt);
             // 编码
             statement.setString(5, bm);
+            // 日志类型
+            statement.setString(6, "人员同步");
 
             //模块id
-            statement.setInt(6, LOG_MODE_ID);
+            statement.setInt(7, LOG_MODE_ID);
             //创建人id
-            statement.setString(7, "1");
+            statement.setString(8, "1");
             //一个默认值0
-            statement.setString(8, "0");
-            statement.setString(9, com.weaver.general.TimeUtil.getCurrentTimeString().substring(0, 10));
-            statement.setString(10, com.weaver.general.TimeUtil.getCurrentTimeString().substring(11));
+            statement.setString(9, "0");
+            statement.setString(10, com.weaver.general.TimeUtil.getCurrentTimeString().substring(0, 10));
+            statement.setString(11, com.weaver.general.TimeUtil.getCurrentTimeString().substring(11));
             statement.executeUpdate();
         } catch (Exception e) {
             baseBean.writeLog("插入定时任务日志, insertTimedLog 异常： " + e);
