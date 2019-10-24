@@ -389,7 +389,7 @@ public class CbConsumer extends BaseCronJob {
         String currentTimeString = com.weaver.general.TimeUtil.getCurrentTimeString().replace(":", "");
         BufferedWriter bufferedWriter = null;
         try {
-            String outTxtPath = File.separator + "usr" + File.separator + "weavercs" + File.separator + "ecology"
+            String outTxtPath = File.separator + "usr" + File.separator + "weaver" + File.separator + "ecology"
                     + File.separator + "orgLog" + File.separator + currentTimeString + ".txt";
             baseBean.writeLog("输出路径： " + outTxtPath);
             File file = new File(outTxtPath);

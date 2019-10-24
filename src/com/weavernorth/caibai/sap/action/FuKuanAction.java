@@ -31,7 +31,9 @@ public class FuKuanAction extends BaseAction {
     private String tjsj;
     private String fksxms;
     private String yzr;
+    private String cjrq; // 流程创建日期
 
+    private String fkrq; // 付款日期
     @Override
     public String execute(RequestInfo requestInfo) {
         String operatetype = requestInfo.getRequestManager().getSrc();
@@ -74,7 +76,8 @@ public class FuKuanAction extends BaseAction {
             fksxms = recordSet.getString("fksxms");
             // 收款公司名称
             skgsmc = recordSet.getString("skgsmc");
-
+            cjrq = recordSet.getString("sap_cjrq");
+            fkrq = recordSet.getString("sap_fkrq");
             JCoDestination jCoDestination = CaiBaiPoolThree.getJCoDestination();
             JCoFunction function = jCoDestination.getRepository().getFunction("ZOAIF0010_RFC");
             this.writeLog("获取函数完成===== " + function);
@@ -88,6 +91,10 @@ public class FuKuanAction extends BaseAction {
                 table.appendRow();
                 table.setRow(i);
 
+                // 流程创建日期
+                table.setValue("ZCJRQ_OA", cjrq);
+                // 付款日期
+                table.setValue("ZFKRQ_OA", fkrq);
                 // 流程id
                 table.setValue("ZID", requestId);
                 // 会计凭证编号
@@ -145,7 +152,7 @@ public class FuKuanAction extends BaseAction {
                 // 分配编号
                 table.setValue("ZFP", recordSetDetail.getString("fp"));
                 // 商品名称
-                table.setValue("ZSPMC", depName + recordSetDetail.getString("spmc"));
+                table.setValue("ZSPMC", depName + "支付" + recordSetDetail.getString("spmc"));
                 // 凭证抬头文本
                 table.setValue("ZFKSXMS", fksxms);
 
@@ -201,6 +208,10 @@ public class FuKuanAction extends BaseAction {
         table.appendRow();
         table.setRow(i);
 
+        // 流程创建日期
+        table.setValue("ZCJRQ_OA", cjrq);
+        // 付款日期
+        table.setValue("ZFKRQ_OA", fkrq);
         // 会计凭证编号
         table.setValue("ZID", requestId);
         // 会计凭证编号

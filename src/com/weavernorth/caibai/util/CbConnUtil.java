@@ -17,11 +17,11 @@ public class CbConnUtil {
     /**
      * 定时任务模块id
      */
-    private static final Integer LOG_MODE_ID = 181;
+    private static final Integer LOG_MODE_ID = 162;
     /**
      * 错误信息模块id
      */
-    private static final Integer ERR_LOG_MODE_ID = 182;
+    private static final Integer ERR_LOG_MODE_ID = 163;
 
     /**
      * 插入定时任务日志

@@ -31,6 +31,9 @@ public class ShangShaAction extends BaseAction {
     private String tjsj;
     private String fksxms;
     private String yzr;
+    private String cjrq; // 流程创建日期
+
+    private String fkrq; // 付款日期
 
 
     @Override
@@ -58,6 +61,14 @@ public class ShangShaAction extends BaseAction {
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
 
+            // 业务类别
+            String ywlb = recordSet.getString("ywlb");
+            if ("0".equals(ywlb)) {
+                // 如果是收款，不推送
+                this.writeLog("业务类别为收款，不推送sap=========");
+                return "1";
+            }
+
             int mainId = recordSet.getInt("id");
             // 流程编号
             lcbh = recordSet.getString("lcbh");
@@ -75,6 +86,8 @@ public class ShangShaAction extends BaseAction {
             fksxms = recordSet.getString("fksxms");
             // 收款公司名称
             skgsmc = recordSet.getString("skgsmc");
+            cjrq = recordSet.getString("sap_cjrq");
+            fkrq = recordSet.getString("sap_fkrq");
 
             JCoDestination jCoDestination = CaiBaiPoolThree.getJCoDestination();
             JCoFunction function = jCoDestination.getRepository().getFunction("ZOAIF0010_RFC");
@@ -88,6 +101,11 @@ public class ShangShaAction extends BaseAction {
             while (recordSetDetail.next()) {
                 table.appendRow();
                 table.setRow(i);
+
+                // 流程创建日期
+                table.setValue("ZCJRQ_OA", cjrq);
+                // 付款日期
+                table.setValue("ZFKRQ_OA", fkrq);
 
                 // 流程id
                 table.setValue("ZID", requestId);
@@ -146,7 +164,7 @@ public class ShangShaAction extends BaseAction {
                 table.setValue("ZFP", recordSetDetail.getString("fp"));
 
                 // 商品名称
-                table.setValue("ZSPMC", depName + recordSetDetail.getString("spmc"));
+                table.setValue("ZSPMC", depName + "支付" + recordSetDetail.getString("spmc"));
                 // 付款事项描述
                 table.setValue("ZFKSXMS", fksxms);
                 // 实际支付方式
@@ -200,6 +218,11 @@ public class ShangShaAction extends BaseAction {
         this.writeLog("代码自增行==== " + i);
         table.appendRow();
         table.setRow(i);
+
+        // 流程创建日期
+        table.setValue("ZCJRQ_OA", cjrq);
+        // 付款日期
+        table.setValue("ZFKRQ_OA", fkrq);
 
         // 会计凭证编号
         table.setValue("ZID", requestId);

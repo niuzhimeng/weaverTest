@@ -26,9 +26,9 @@ public class CaiBaiPoolThreeFormal {
         // 客户端编号
         properties.setProperty(DestinationDataProvider.JCO_CLIENT, "800");
         // 用户名
-        properties.setProperty(DestinationDataProvider.JCO_USER, "25659");
+        properties.setProperty(DestinationDataProvider.JCO_USER, "OA_RFC");
         // 密码
-        properties.setProperty(DestinationDataProvider.JCO_PASSWD, "caibai1");
+        properties.setProperty(DestinationDataProvider.JCO_PASSWD, "POARFC1020");
         // 语言
         properties.setProperty(DestinationDataProvider.JCO_LANG, "zh");
 
