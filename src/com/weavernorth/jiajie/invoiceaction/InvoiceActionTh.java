@@ -29,7 +29,9 @@ public class InvoiceActionTh extends BaseAction {
         this.writeLog("发票验证接口退回Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             RecordSet fpSet = new RecordSet();
-            fpSet.executeUpdate("delete from uf_fpyc where fprequestid = '" + requestId + "'");
+            String deleteSql = "delete from uf_fpyc where fprequestid = '" + requestId + "'";
+            this.writeLog("发票退回接口删除sql： " + deleteSql);
+            fpSet.executeUpdate(deleteSql);
 
             this.writeLog("发票验证接口退回End ===============");
         } catch (Exception e) {

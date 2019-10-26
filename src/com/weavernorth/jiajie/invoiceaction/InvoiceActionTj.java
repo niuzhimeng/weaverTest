@@ -52,10 +52,11 @@ public class InvoiceActionTj extends BaseAction {
                 String trim = Util.null2String(recordSet.getString(fpzd)).replaceAll("\\s*", "");
                 // 过滤空的发票号码
                 if (trim.length() > 0) {
-                    fpBuilder.append(trim).append(",");
+                    fpBuilder.append("'").append(trim).append("',");
                 }
             }
 
+            this.writeLog("fpBuilder: " + fpBuilder.toString());
             if (fpBuilder.length() <= 0) {
                 this.writeLog("表单未填写发票号");
                 return "1";
@@ -66,11 +67,14 @@ public class InvoiceActionTj extends BaseAction {
 
             RecordSet fpSet = new RecordSet();
             StringBuilder errBuilder = new StringBuilder();
-            fpSet.executeQuery("select fph from uf_fpyc where fph in (" + fpStr + ")");
+            String fpycSql = "select fph from uf_fpyc where fph in (" + fpStr + ")";
+            this.writeLog("发票验重sql： " + fpycSql);
+            fpSet.executeQuery(fpycSql);
             while (fpSet.next()) {
                 errBuilder.append(fpSet.getString("fph")).append(", ");
             }
 
+            this.writeLog("重复发票号： " + errBuilder.toString());
             if (errBuilder.length() > 0) {
                 errBuilder.deleteCharAt(errBuilder.length() - 2);
                 requestInfo.getRequestManager().setMessageid("110000");
@@ -79,6 +83,7 @@ public class InvoiceActionTj extends BaseAction {
             }
 
             // 插入发票表
+            fpStr = fpStr.replace("'", "");
             String[] split = fpStr.split(",");
             insertInvoiceTable(split, requestId);
 
