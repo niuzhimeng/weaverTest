@@ -18,29 +18,29 @@ import java.util.Map;
 public class TriggerSonFlowHtdq extends BaseCronJob {
 
     // 管理员id
-    private static final String SYSADMIN = "1";
+    private static final String SYSADMIN = "5907";
     // 分部id
     private static final String FEN_BU_ID = "41";
     // 合同到期到期提醒流程id
-    private static final String SON_FLOW_ID = "19002";
+    private static final String SON_FLOW_ID = "13503";
     // 调入岗位名称
-    private static final String GWMC_FIELD = "field86";
+    private static final String GWMC_FIELD = "field12";
     // 调入岗位地图
-    private static final String GWDT_FIELD = "field89";
+    private static final String GWDT_FIELD = "field9";
     // 调入岗位类别
-    private static final String GWLB_FIELD = "field88";
+    private static final String GWLB_FIELD = "field10";
     // 调入岗位级别
-    private static final String GWJB_FIELD = "field87";
+    private static final String GWJB_FIELD = "field11";
     // 入职日期
-    private static final String RZ_FIELD = "field59";
-    // 试用结束日期
-    private static final String JS_DATA_FIELD = "field85";
+    private static final String RZ_FIELD = "field21";
+    // 合同签约结束日期
+    private static final String JS_DATA_FIELD = "field69";
     // 法人体
-    private static final String FRT_FIELD = "field90";
+    private static final String FRT_FIELD = "field8";
     // 记录建模表名
     private static final String UF_TABLE_NAME = "uf_triggered";
     // 记录建模-模块id
-    private static final String UF_TABLE_ID = "22064";
+    private static final String UF_TABLE_ID = "20564";
 
     private BaseBean baseBean = new BaseBean();
     private RecordSet recordSet = new RecordSet();
