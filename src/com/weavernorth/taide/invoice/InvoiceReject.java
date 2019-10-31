@@ -11,12 +11,23 @@ import weaver.workflow.action.BaseAction;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * 发票验重并变更发票状态
+ * 发票退回并变更发票状态
  */
-public class InvoiceCheckAndSubmit extends BaseAction {
+public class InvoiceReject extends BaseAction {
+
+    /**
+     * 明细表名 （例：_dt1）
+     */
+    private String mxbName;
+    /**
+     * 发票字段名
+     */
+    private String fpName;
 
     @Override
     public String execute(RequestInfo requestInfo) {
@@ -30,7 +41,7 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        this.writeLog("发票验重并变更发票状态 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
+        this.writeLog("发票退回并变更发票状态 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
@@ -39,14 +50,10 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             String fpName = recordSet.getString("fpName"); // 发票字段名
             String mainId = recordSet.getString("id");
             String lcbh = recordSet.getString("lcbh");
-
-            this.writeLog("mxbName: " + mxbName + ", fpName: " + fpName);
             // String workCode = recordSet.getString("workCode");
             String workCode = "1111";
             // 查询明细表
-            String mxSql = "select " + fpName + " from " + tableName + mxbName + " where mainid = " + mainId;
-            this.writeLog("明细表查询sql：" + mxSql);
-            recordSet.executeQuery(mxSql);
+            recordSet.executeQuery("select " + fpName + " from " + tableName + mxbName + " where mainid = " + mainId);
             List<String> bhList = new ArrayList<String>();
             while (recordSet.next()) {
                 if (!"".equals(recordSet.getString(fpName))) {
@@ -56,21 +63,12 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             }
             this.writeLog("所有发票主表编号： " + JSONObject.toJSONString(bhList));
 
-            // 验重
-            StringBuilder stringBuilder = check(bhList);
-            if (stringBuilder.length() > 0) {
-                this.writeLog("重复发票号： " + stringBuilder.toString());
-                requestInfo.getRequestManager().setMessageid("110000");
-                requestInfo.getRequestManager().setMessagecontent("发票号重复： " + stringBuilder.toString());
-                return "0";
-            }
-
             // 变更发票状态
             String getInvoiceUrl = ConfigInfo.InvoiceUrl.getValue();
             String appSecId = ConfigInfo.appSecId.getValue();
             String appSecKey = ConfigInfo.appSecKey.getValue();
             String appId = ConfigInfo.appId.getValue();
-            this.writeLog("更新发票信息开始========================");
+            this.writeLog("流程退回更新发票信息开始========================");
 
             String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
             JSONArray dataArrayObject = new JSONArray();
@@ -81,7 +79,7 @@ public class InvoiceCheckAndSubmit extends BaseAction {
                     dataObject.put("uuid", invoice);
                     dataObject.put("reimburseSerialNo", lcbh); // 流程编号
                     dataObject.put("reimburseSource", "2"); // 单据来源
-                    dataObject.put("reimburseState", "2"); // 0：未报销 2：报销中 3：已报销
+                    dataObject.put("reimburseState", "0"); // 0：未报销 2：报销中 3：已报销
                     dataObject.put("userId", workCode);
 
                     dataObject.put("certificateNumber", "0");
@@ -133,40 +131,35 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             JSONObject returnObject = JSONObject.parseObject(returnInvoice);
             JSONObject returnInfo = returnObject.getJSONObject("returnInfo");
             if (!"9995".equals(returnInfo.getString("returnCode"))) {
-                this.writeLog("发票验重并变更发票状态InvoiceCheckAndSubmit异常： " + returnInvoice);
+                this.writeLog("发票退回并变更发票状态： " + returnInvoice);
                 requestInfo.getRequestManager().setMessageid("110000");
-                requestInfo.getRequestManager().setMessagecontent("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + returnInvoice);
+                requestInfo.getRequestManager().setMessagecontent("发票退回并变更发票状态 异常： " + returnInvoice);
                 return "0";
             }
             this.writeLog("发票验重InvoiceCheckAction End ===============");
         } catch (Exception e) {
-            this.writeLog("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + e);
+            this.writeLog("发票退回并变更发票状态 异常： " + e);
             requestInfo.getRequestManager().setMessageid("110000");
-            requestInfo.getRequestManager().setMessagecontent("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + e);
+            requestInfo.getRequestManager().setMessagecontent("发票退回并变更发票状态 异常： " + e);
             return "0";
         }
 
         return "1";
     }
 
+    public String getMxbName() {
+        return mxbName;
+    }
 
-    private StringBuilder check(List<String> bhList) {
-        Map<String, Integer> map = new HashMap<String, Integer>();
-        for (String s : bhList) {
-            if (map.containsKey(s)) {
-                map.put(s, map.get(s) + 1);
-            } else {
-                map.put(s, 1);
-            }
-        }
+    public void setMxbName(String mxbName) {
+        this.mxbName = mxbName;
+    }
 
-        this.writeLog("各明细表编号次数： " + JSONObject.toJSONString(map));
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            if (entry.getValue() > 1) {
-                stringBuilder.append(entry.getKey()).append(", ");
-            }
-        }
-        return stringBuilder;
+    public String getFpName() {
+        return fpName;
+    }
+
+    public void setFpName(String fpName) {
+        this.fpName = fpName;
     }
 }
