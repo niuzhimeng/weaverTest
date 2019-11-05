@@ -50,8 +50,7 @@ public class InvoiceReject extends BaseAction {
             String fpName = recordSet.getString("fpName"); // 发票字段名
             String mainId = recordSet.getString("id");
             String lcbh = recordSet.getString("lcbh");
-            // String workCode = recordSet.getString("workCode");
-            String workCode = "1111";
+            String workCode = recordSet.getString("workcode");
             // 查询明细表
             recordSet.executeQuery("select " + fpName + " from " + tableName + mxbName + " where mainid = " + mainId);
             List<String> bhList = new ArrayList<String>();
@@ -69,24 +68,28 @@ public class InvoiceReject extends BaseAction {
             String appSecKey = ConfigInfo.appSecKey.getValue();
             String appId = ConfigInfo.appId.getValue();
             this.writeLog("流程退回更新发票信息开始========================");
-
+            String sfdk = "N";
             String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
             JSONArray dataArrayObject = new JSONArray();
             for (String invoice : bhList) {
-                recordSet.executeQuery("select isDeductible from uf_fpinfo where uuid = '" + invoice + "'");
-                if (recordSet.next()) {
-                    JSONObject dataObject = new JSONObject(true);
-                    dataObject.put("uuid", invoice);
-                    dataObject.put("reimburseSerialNo", lcbh); // 流程编号
-                    dataObject.put("reimburseSource", "2"); // 单据来源
-                    dataObject.put("reimburseState", "0"); // 0：未报销 2：报销中 3：已报销
-                    dataObject.put("userId", workCode);
+//                recordSet.executeQuery("select isDeductible from uf_fpinfo where uuid = '" + invoice + "'");
+//                if (recordSet.next()) {
+                JSONObject dataObject = new JSONObject(true);
+                dataObject.put("uuid", invoice);
+                dataObject.put("reimburseSerialNo", lcbh); // 流程编号
+                dataObject.put("reimburseSource", "2"); // 单据来源
+                dataObject.put("reimburseState", "0"); // 0：未报销 2：报销中 3：已报销
+                dataObject.put("userId", workCode);
 
-                    dataObject.put("certificateNumber", "0");
-                    dataObject.put("isDeductible", recordSet.getString("isDeductible")); //  是否可抵扣
-                    dataObject.put("reimburseDate", currentDate);
-                    dataArrayObject.add(dataObject);
+                dataObject.put("certificateNumber", "0");
+                String isDeductible = recordSet.getString("isDeductible");
+                if (!"".equalsIgnoreCase(isDeductible)) {
+                    sfdk = isDeductible;
                 }
+                dataObject.put("isDeductible", sfdk); //  是否可抵扣
+                dataObject.put("reimburseDate", currentDate);
+                dataArrayObject.add(dataObject);
+                // }
             }
 
             String myDataStr = dataArrayObject.toJSONString().replaceAll("\\s*", "");
@@ -130,7 +133,7 @@ public class InvoiceReject extends BaseAction {
 
             JSONObject returnObject = JSONObject.parseObject(returnInvoice);
             JSONObject returnInfo = returnObject.getJSONObject("returnInfo");
-            if (!"9995".equals(returnInfo.getString("returnCode"))) {
+            if (!"0000".equals(returnInfo.getString("returnCode"))) {
                 this.writeLog("发票退回并变更发票状态： " + returnInvoice);
                 requestInfo.getRequestManager().setMessageid("110000");
                 requestInfo.getRequestManager().setMessagecontent("发票退回并变更发票状态 异常： " + returnInvoice);

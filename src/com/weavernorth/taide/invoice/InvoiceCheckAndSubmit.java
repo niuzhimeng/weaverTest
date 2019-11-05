@@ -40,9 +40,9 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             String mainId = recordSet.getString("id");
             String lcbh = recordSet.getString("lcbh");
 
-            this.writeLog("mxbName: " + mxbName + ", fpName: " + fpName);
-            // String workCode = recordSet.getString("workCode");
-            String workCode = "1111";
+            this.writeLog("mxbName: " + mxbName + ", fpName: " + fpName + ", lcbh: " + lcbh);
+            String workCode = recordSet.getString("workcode");
+
             // 查询明细表
             String mxSql = "select " + fpName + " from " + tableName + mxbName + " where mainid = " + mainId;
             this.writeLog("明细表查询sql：" + mxSql);
@@ -71,7 +71,7 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             String appSecKey = ConfigInfo.appSecKey.getValue();
             String appId = ConfigInfo.appId.getValue();
             this.writeLog("更新发票信息开始========================");
-
+            String sfdk = "N";
             String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
             JSONArray dataArrayObject = new JSONArray();
             for (String invoice : bhList) {
@@ -85,7 +85,11 @@ public class InvoiceCheckAndSubmit extends BaseAction {
                     dataObject.put("userId", workCode);
 
                     dataObject.put("certificateNumber", "0");
-                    dataObject.put("isDeductible", recordSet.getString("isDeductible")); //  是否可抵扣
+                    String isDeductible = recordSet.getString("isDeductible");
+                    if (!"".equalsIgnoreCase(isDeductible)) {
+                        sfdk = isDeductible;
+                    }
+                    dataObject.put("isDeductible", sfdk); //  是否可抵扣
                     dataObject.put("reimburseDate", currentDate);
                     dataArrayObject.add(dataObject);
                 }
@@ -132,12 +136,16 @@ public class InvoiceCheckAndSubmit extends BaseAction {
 
             JSONObject returnObject = JSONObject.parseObject(returnInvoice);
             JSONObject returnInfo = returnObject.getJSONObject("returnInfo");
-            if (!"9995".equals(returnInfo.getString("returnCode"))) {
+            if (!"0000".equals(returnInfo.getString("returnCode"))) {
                 this.writeLog("发票验重并变更发票状态InvoiceCheckAndSubmit异常： " + returnInvoice);
                 requestInfo.getRequestManager().setMessageid("110000");
                 requestInfo.getRequestManager().setMessagecontent("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + returnInvoice);
                 return "0";
             }
+
+            // 删除旧信息
+            recordSet.executeUpdate("delete from uf_fpinfo where userId = '" + workCode + "' and enterpriseId = '" + ConfigInfo.enterpriseId.getValue() + "'");
+            recordSet.executeUpdate("delete from uf_fpseinfo where userId = '" + workCode + "' and enterpriseId = '" + ConfigInfo.enterpriseId.getValue() + "'");
             this.writeLog("发票验重InvoiceCheckAction End ===============");
         } catch (Exception e) {
             this.writeLog("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + e);
