@@ -71,6 +71,9 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             String appSecKey = ConfigInfo.appSecKey.getValue();
             String appId = ConfigInfo.appId.getValue();
             this.writeLog("更新发票信息开始========================");
+            // 发票uuid - 是否抵扣
+            Map<String, String> uuidSfdkMap = new HashMap<String, String>();
+
             String sfdk = "N";
             String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
             JSONArray dataArrayObject = new JSONArray();
@@ -84,7 +87,7 @@ public class InvoiceCheckAndSubmit extends BaseAction {
                     dataObject.put("reimburseState", "2"); // 0：未报销 2：报销中 3：已报销
                     dataObject.put("userId", workCode);
 
-                    dataObject.put("certificateNumber", "0");
+                    dataObject.put("certificateNumber", "");
                     String isDeductible = recordSet.getString("isDeductible");
                     if (!"".equalsIgnoreCase(isDeductible)) {
                         sfdk = isDeductible;
@@ -92,6 +95,8 @@ public class InvoiceCheckAndSubmit extends BaseAction {
                     dataObject.put("isDeductible", sfdk); //  是否可抵扣
                     dataObject.put("reimburseDate", currentDate);
                     dataArrayObject.add(dataObject);
+
+                    uuidSfdkMap.put(invoice, sfdk);
                 }
             }
 
@@ -141,6 +146,13 @@ public class InvoiceCheckAndSubmit extends BaseAction {
                 requestInfo.getRequestManager().setMessageid("110000");
                 requestInfo.getRequestManager().setMessagecontent("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + returnInvoice);
                 return "0";
+            }
+
+            // 记录发票的【是否抵扣】字段
+            recordSet.executeUpdate("delete from uf_fpdk_log where fprequestid = '" + requestId + "'");
+            for (String invoice : bhList) {
+                recordSet.executeUpdate("insert into uf_fpdk_log(fprequestid, uuid, isDeductible) values(?,?,?)",
+                        requestId, invoice, uuidSfdkMap.get(invoice));
             }
 
             // 删除旧信息

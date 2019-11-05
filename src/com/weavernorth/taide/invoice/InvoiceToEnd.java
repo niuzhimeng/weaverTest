@@ -11,9 +11,7 @@ import weaver.workflow.action.BaseAction;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * 发票归档并变更发票状态
@@ -32,7 +30,7 @@ public class InvoiceToEnd extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        this.writeLog("发票退回并变更发票状态 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
+        this.writeLog("发票归档并变更发票状态 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
@@ -61,12 +59,16 @@ public class InvoiceToEnd extends BaseAction {
             String appId = ConfigInfo.appId.getValue();
             this.writeLog("流程归档更新发票信息开始========================");
 
-            String sfdk = "N";
+            // 查询【是否抵扣】
+            // 发票uuid - 是否抵扣
+            Map<String, String> uuidSfdkMap = new HashMap<String, String>();
+            recordSet.executeQuery("select uuid, isDeductible from uf_fpdk_log where fprequestid = '" + requestId + "'");
+            while (recordSet.next()) {
+                uuidSfdkMap.put(recordSet.getString("uuid"), recordSet.getString("isDeductible"));
+            }
             String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
             JSONArray dataArrayObject = new JSONArray();
             for (String invoice : bhList) {
-//                recordSet.executeQuery("select isDeductible from uf_fpinfo where uuid = '" + invoice + "'");
-//                if (recordSet.next()) {
                 JSONObject dataObject = new JSONObject(true);
                 dataObject.put("uuid", invoice);
                 dataObject.put("reimburseSerialNo", lcbh); // 流程编号
@@ -74,15 +76,10 @@ public class InvoiceToEnd extends BaseAction {
                 dataObject.put("reimburseState", "3"); // 0：未报销 2：报销中 3：已报销
                 dataObject.put("userId", workCode);
 
-                dataObject.put("certificateNumber", "0");
-                String isDeductible = recordSet.getString("isDeductible");
-                if (!"".equalsIgnoreCase(isDeductible)) {
-                    sfdk = isDeductible;
-                }
-                dataObject.put("isDeductible", sfdk); //  是否可抵扣
+                dataObject.put("certificateNumber", "");
+                dataObject.put("isDeductible", uuidSfdkMap.get(invoice)); //  是否可抵扣
                 dataObject.put("reimburseDate", currentDate);
                 dataArrayObject.add(dataObject);
-                // }
             }
 
             String myDataStr = dataArrayObject.toJSONString().replaceAll("\\s*", "");
@@ -132,7 +129,7 @@ public class InvoiceToEnd extends BaseAction {
                 requestInfo.getRequestManager().setMessagecontent("流程归档变更发票状态 异常： " + returnInvoice);
                 return "0";
             }
-            this.writeLog("发票验重InvoiceCheckAction End ===============");
+            this.writeLog("发票归档并变更发票状态 End ===============");
         } catch (Exception e) {
             this.writeLog("流程归档变更发票状态 异常： " + e);
             requestInfo.getRequestManager().setMessageid("110000");
