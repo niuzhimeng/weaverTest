@@ -48,7 +48,6 @@ public class GaoDengFilter extends BaseBean implements Filter {
         // 登录名
         String loginName = AssertionHolder.getAssertion().getPrincipal().getName();
 
-
         // 默认url 登录主页
         String workFlowUrl = "/wui/main.jsp?templateId=1";
         String forwardUrl = request.getParameter("forwardUrl");
@@ -88,92 +87,87 @@ public class GaoDengFilter extends BaseBean implements Filter {
 
         User userNew;
         if (rs.next()) {
+            writeLog("清除session============");
+            request.getSession().invalidate();
             // OA有相关人员
             User user = (User) request.getSession(true).getAttribute("weaver_user@bean");
-            // 用户session不存在 或者 用户session中的用户名和此次登录的用户名不一致，要重启构造用户session
-            if (user == null || !user.getLoginid().equals(loginName)) {
-                //用户登录
-                writeLog("授权执行============");
-                userNew = new User();
-                userNew.setUid(rs.getInt("id"));
-                userNew.setLoginid(rs.getString("loginid"));
-                userNew.setFirstname(rs.getString("firstname"));
-                userNew.setLastname(rs.getString("lastname"));
-                userNew.setAliasname(rs.getString("aliasname"));
-                userNew.setTitle(rs.getString("title"));
-                userNew.setTitlelocation(rs.getString("titlelocation"));
-                userNew.setSex(rs.getString("sex"));
-                userNew.setPwd(rs.getString("password"));
-                String languageidweaver = rs.getString("systemlanguage");
-                userNew.setLanguage(Util.getIntValue(languageidweaver, 0));
-                userNew.setTelephone(rs.getString("telephone"));
-                userNew.setMobile(rs.getString("mobile"));
-                userNew.setMobilecall(rs.getString("mobilecall"));
-                userNew.setEmail(rs.getString("email"));
-                userNew.setCountryid(rs.getString("countryid"));
-                userNew.setLocationid(rs.getString("locationid"));
-                userNew.setResourcetype(rs.getString("resourcetype"));
-                userNew.setStartdate(rs.getString("startdate"));
-                userNew.setEnddate(rs.getString("enddate"));
-                userNew.setContractdate(rs.getString("contractdate"));
-                userNew.setJobtitle(rs.getString("jobtitle"));
-                userNew.setJobgroup(rs.getString("jobgroup"));
-                userNew.setJobactivity(rs.getString("jobactivity"));
-                userNew.setJoblevel(rs.getString("joblevel"));
-                userNew.setSeclevel(rs.getString("seclevel"));
-                userNew.setUserDepartment(Util.getIntValue(rs.getString("departmentid"), 0));
-                userNew.setUserSubCompany1(Util.getIntValue(rs.getString("subcompanyid1"), 0));
-                userNew.setUserSubCompany2(Util.getIntValue(rs.getString("subcompanyid2"), 0));
-                userNew.setUserSubCompany3(Util.getIntValue(rs.getString("subcompanyid3"), 0));
-                userNew.setUserSubCompany4(Util.getIntValue(rs.getString("subcompanyid4"), 0));
-                userNew.setManagerid(rs.getString("managerid"));
-                userNew.setAssistantid(rs.getString("assistantid"));
-                userNew.setPurchaselimit(rs.getString("purchaselimit"));
-                userNew.setCurrencyid(rs.getString("currencyid"));
-                userNew.setLastlogindate(rs.getString("currentdate"));
-                userNew.setLogintype("1");
-                userNew.setAccount(rs.getString("account"));
+            //用户登录
+            writeLog("授权执行============");
+            userNew = new User();
+            userNew.setUid(rs.getInt("id"));
+            userNew.setLoginid(rs.getString("loginid"));
+            userNew.setFirstname(rs.getString("firstname"));
+            userNew.setLastname(rs.getString("lastname"));
+            userNew.setAliasname(rs.getString("aliasname"));
+            userNew.setTitle(rs.getString("title"));
+            userNew.setTitlelocation(rs.getString("titlelocation"));
+            userNew.setSex(rs.getString("sex"));
+            userNew.setPwd(rs.getString("password"));
+            String languageidweaver = rs.getString("systemlanguage");
+            userNew.setLanguage(Util.getIntValue(languageidweaver, 0));
+            userNew.setTelephone(rs.getString("telephone"));
+            userNew.setMobile(rs.getString("mobile"));
+            userNew.setMobilecall(rs.getString("mobilecall"));
+            userNew.setEmail(rs.getString("email"));
+            userNew.setCountryid(rs.getString("countryid"));
+            userNew.setLocationid(rs.getString("locationid"));
+            userNew.setResourcetype(rs.getString("resourcetype"));
+            userNew.setStartdate(rs.getString("startdate"));
+            userNew.setEnddate(rs.getString("enddate"));
+            userNew.setContractdate(rs.getString("contractdate"));
+            userNew.setJobtitle(rs.getString("jobtitle"));
+            userNew.setJobgroup(rs.getString("jobgroup"));
+            userNew.setJobactivity(rs.getString("jobactivity"));
+            userNew.setJoblevel(rs.getString("joblevel"));
+            userNew.setSeclevel(rs.getString("seclevel"));
+            userNew.setUserDepartment(Util.getIntValue(rs.getString("departmentid"), 0));
+            userNew.setUserSubCompany1(Util.getIntValue(rs.getString("subcompanyid1"), 0));
+            userNew.setUserSubCompany2(Util.getIntValue(rs.getString("subcompanyid2"), 0));
+            userNew.setUserSubCompany3(Util.getIntValue(rs.getString("subcompanyid3"), 0));
+            userNew.setUserSubCompany4(Util.getIntValue(rs.getString("subcompanyid4"), 0));
+            userNew.setManagerid(rs.getString("managerid"));
+            userNew.setAssistantid(rs.getString("assistantid"));
+            userNew.setPurchaselimit(rs.getString("purchaselimit"));
+            userNew.setCurrencyid(rs.getString("currencyid"));
+            userNew.setLastlogindate(rs.getString("currentdate"));
+            userNew.setLogintype("1");
+            userNew.setAccount(rs.getString("account"));
 
-                userNew.setLoginip(request.getRemoteAddr());
-                List<Account> childAccountList = getChildAccountList(userNew);//子账号相关设置
-                request.getSession(true).setMaxInactiveInterval(60 * 60 * 24);
-                request.getSession(true).setAttribute("weaver_user@bean", userNew);
-                request.getSession(true).setAttribute("accounts", childAccountList);
-                request.getSession(true).setAttribute("browser_isie", getisIE(request));
+            userNew.setLoginip(request.getRemoteAddr());
+            List<Account> childAccountList = getChildAccountList(userNew);//子账号相关设置
+            request.getSession(true).setMaxInactiveInterval(60 * 60 * 24);
+            request.getSession(true).setAttribute("weaver_user@bean", userNew);
+            request.getSession(true).setAttribute("accounts", childAccountList);
+            request.getSession(true).setAttribute("browser_isie", getisIE(request));
 
-                request.getSession(true).setAttribute("moniter", new OnLineMonitor("" + userNew.getUID(), userNew.getLoginip()));
-                Util.setCookie(response, "loginfileweaver", "/main.jsp", 172800);
-                Util.setCookie(response, "loginidweaver", "" + userNew.getUID(), 172800);
-                Util.setCookie(response, "languageidweaver", languageidweaver, 172800);
+            request.getSession(true).setAttribute("moniter", new OnLineMonitor("" + userNew.getUID(), userNew.getLoginip()));
+            Util.setCookie(response, "loginfileweaver", "/main.jsp", 172800);
+            Util.setCookie(response, "loginidweaver", "" + userNew.getUID(), 172800);
+            Util.setCookie(response, "languageidweaver", languageidweaver, 172800);
 
-                Map logmessages = (Map) application.getAttribute("logmessages");
-                if (logmessages == null) {
-                    logmessages = new HashMap();
-                    logmessages.put(String.valueOf(userNew.getUID()), "");
-                    application.setAttribute("logmessages", logmessages);
-                }
+            Map logmessages = (Map) application.getAttribute("logmessages");
+            if (logmessages == null) {
+                logmessages = new HashMap();
+                logmessages.put(String.valueOf(userNew.getUID()), "");
+                application.setAttribute("logmessages", logmessages);
+            }
 
-                request.getSession(true).setAttribute("logmessage", getLogMessage(String.valueOf(userNew.getUID())));
+            request.getSession(true).setAttribute("logmessage", getLogMessage(String.valueOf(userNew.getUID())));
 
-                // 登录日志
-                SysMaintenanceLog log1 = new SysMaintenanceLog();
-                log1.resetParameter();
-                log1.setRelatedId(rs.getInt("id"));
-                log1.setRelatedName((rs.getString("firstname") + " " + rs.getString("lastname")).trim());
-                log1.setOperateType("6");
-                log1.setOperateDesc("");
-                log1.setOperateItem("60");
-                log1.setOperateUserid(rs.getInt("id"));
-                log1.setClientAddress(request.getRemoteAddr());
-                try {
-                    log1.setSysLogInfo();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                writeLog("直接赋值=======");
-                userNew = user;
+            // 登录日志
+            SysMaintenanceLog log1 = new SysMaintenanceLog();
+            log1.resetParameter();
+            log1.setRelatedId(rs.getInt("id"));
+            log1.setRelatedName((rs.getString("firstname") + " " + rs.getString("lastname")).trim());
+            log1.setOperateType("6");
+            log1.setOperateDesc("");
+            log1.setOperateItem("60");
+            log1.setOperateUserid(rs.getInt("id"));
+            log1.setClientAddress(request.getRemoteAddr());
+            try {
+                log1.setSysLogInfo();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             this.writeLog("执行转发===： " + workFlowUrl);
