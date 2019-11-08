@@ -130,6 +130,12 @@ public class InvoiceReject extends BaseAction {
                 requestInfo.getRequestManager().setMessagecontent("发票退回并变更发票状态 异常： " + returnInvoice);
                 return "0";
             }
+
+            // 变更发票状态 ( 0：未报销 2：报销中 3：已报销)
+            for (String invoice : bhList) {
+                recordSet.executeUpdate("update uf_fpinfo set reimburseState = 0 where uuid = '" + invoice + "'");
+            }
+
             this.writeLog("发票退回并变更发票状态 End ===============");
         } catch (Exception e) {
             this.writeLog("发票退回并变更发票状态 异常： " + e);

@@ -44,7 +44,7 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             String workCode = recordSet.getString("workcode");
 
             // 查询明细表
-            String mxSql = "select " + fpName + " from " + tableName + mxbName + " where mainid = " + mainId;
+            String mxSql = "select id, " + fpName + " from " + tableName + mxbName + " where mainid = " + mainId;
             this.writeLog("明细表查询sql：" + mxSql);
             recordSet.executeQuery(mxSql);
             List<String> bhList = new ArrayList<String>();
@@ -63,6 +63,26 @@ public class InvoiceCheckAndSubmit extends BaseAction {
                 requestInfo.getRequestManager().setMessageid("110000");
                 requestInfo.getRequestManager().setMessagecontent("发票号重复： " + stringBuilder.toString());
                 return "0";
+            }
+
+            // 更新明细表，将浏览按钮字段赋值给文本
+            Map<String, String> uidNo = new HashMap<String, String>();
+            recordSet.executeQuery("select uuid, invoiceNo from uf_fpinfo where userId = '" + workCode + "'");
+            while (recordSet.next()) {
+                uidNo.put(recordSet.getString("uuid"), recordSet.getString("invoiceNo"));
+            }
+
+            RecordSet updateSet = new RecordSet();
+            recordSet.executeQuery(mxSql);
+            StringBuilder pjCode = new StringBuilder();
+            while (recordSet.next()) {
+                String[] strings = recordSet.getString(fpName).split(",");
+                for (String fpbh : strings) {
+                    pjCode.append(uidNo.get(fpbh)).append(",");
+                }
+                pjCode.deleteCharAt(pjCode.length() - 1);
+                updateSet.executeUpdate("update " + tableName + mxbName + " set fpxz = '" + pjCode.toString() + "' where id = '" + recordSet.getString("id") + "'");
+                pjCode.delete(0, pjCode.length());
             }
 
             // 变更发票状态
@@ -155,9 +175,14 @@ public class InvoiceCheckAndSubmit extends BaseAction {
                         requestId, invoice, uuidSfdkMap.get(invoice));
             }
 
-            // 删除旧信息
-            recordSet.executeUpdate("delete from uf_fpinfo where userId = '" + workCode + "' and enterpriseId = '" + ConfigInfo.enterpriseId.getValue() + "'");
-            recordSet.executeUpdate("delete from uf_fpseinfo where userId = '" + workCode + "' and enterpriseId = '" + ConfigInfo.enterpriseId.getValue() + "'");
+            // 变更发票状态 ( 0：未报销 2：报销中 3：已报销)
+            for (String invoice : bhList) {
+                recordSet.executeUpdate("update uf_fpinfo set reimburseState = 2 where uuid = '" + invoice + "'");
+            }
+
+            // 删除未报销的
+            recordSet.executeUpdate("delete from uf_fpinfo where userId = '" + workCode + "' and enterpriseId = '" + ConfigInfo.enterpriseId.getValue() + "' and reimburseState = 0");
+            recordSet.executeUpdate("delete from uf_fpseinfo where userId = '" + workCode + "' and enterpriseId = '" + ConfigInfo.enterpriseId.getValue() + "' and reimburseState = 0");
             this.writeLog("发票验重InvoiceCheckAction End ===============");
         } catch (Exception e) {
             this.writeLog("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + e);

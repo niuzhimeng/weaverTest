@@ -129,6 +129,12 @@ public class InvoiceToEnd extends BaseAction {
                 requestInfo.getRequestManager().setMessagecontent("流程归档变更发票状态 异常： " + returnInvoice);
                 return "0";
             }
+
+            // 变更发票状态 ( 0：未报销 2：报销中 3：已报销)
+            for (String invoice : bhList) {
+                recordSet.executeUpdate("update uf_fpinfo set reimburseState = 3 where uuid = '" + invoice + "'");
+            }
+
             this.writeLog("发票归档并变更发票状态 End ===============");
         } catch (Exception e) {
             this.writeLog("流程归档变更发票状态 异常： " + e);

@@ -15,6 +15,7 @@ import com.weaver.general.TimeUtil;
 import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.commons.codec.binary.Base64;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -22,9 +23,15 @@ import org.dom4j.Element;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import weaver.conn.RecordSet;
+import weaver.general.MD5;
+import weaver.integration.util.HTTPUtil;
 
 import java.awt.*;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
@@ -504,9 +511,247 @@ public class TestMain {
 
     @Test
     public void test19() {
-        String myJson = "{\"gwjb\":\"0\",\"mxData\":[{\"myNumber\":1,\"cctsVal\":\"2.0\",\"mddVal\":\"0\",\"zsfVal\":\"9999.00\",\"cfVal\":\"0.00\",\"jtbtVal\":\"0.00\"}]}";
-        JSONObject jsonObject = JSONObject.parseObject(myJson);
-        System.out.println(jsonObject.getString("gwjb"));
+        JSONObject jsonObjectAll = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        for (int i = 0; i < 5; i++) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("1", 1);
+            jsonObject.put("2", 2);
+            jsonArray.add(jsonObject);
+        }
+
+        jsonObjectAll.put("count", 12);
+        jsonObjectAll.put("flowInfo", jsonArray);
+        System.out.println(jsonObjectAll.toJSONString());
+    }
+
+    @Test
+    public void test20() {
+        String loginId = "zhangrw";
+        String flowStr = "OA_DONE_FLOW";
+        long currentTime = System.currentTimeMillis() / 1000;
+        MD5 md5 = new MD5();
+        String md5ofStr = md5.getMD5ofStr(currentTime + flowStr + loginId);
+        String url = "http://10.1.11.30/workflow/request/gaodeng/GetFlowDone.jsp?loginId="
+                + loginId + "&token=" + md5ofStr + "&currentTime=" + currentTime + "&getCounts=5";
+        System.out.println(url);
+        String s = HTTPUtil.doGet(url);
+        System.out.println(s);
+    }
+
+    @Test
+    public void test21() {
+        String loginId = "zhangrw";
+        String flowStr = "OA_TODO_FLOW";
+        long currentTime = System.currentTimeMillis() / 1000;
+        MD5 md5 = new MD5();
+        String md5ofStr = md5.getMD5ofStr(currentTime + flowStr + loginId);
+        String url = "http://10.1.11.30/workflow/request/gaodeng/GetFlowToDo.jsp?loginId="
+                + loginId + "&token=" + md5ofStr + "&currentTime=" + currentTime + "&getCounts=5";
+        System.out.println(url);
+        String s = HTTPUtil.doGet(url);
+        System.out.println(s);
+    }
+
+    @Test
+    public void test22() {
+        String loginId = "zhangrw";
+        String flowStr = "OA_PORTAL_FLOW";
+        long currentTime = System.currentTimeMillis() / 1000;
+        MD5 md5 = new MD5();
+        String md5ofStr = md5.getMD5ofStr(currentTime + flowStr + loginId);
+        String url = "http://10.1.11.30/workflow/request/gaodeng/GetFlowPortal.jsp?loginId="
+                + loginId + "&token=" + md5ofStr + "&currentTime=" + currentTime + "&getCounts=10";
+        System.out.println(url);
+        String s = HTTPUtil.doGet(url);
+        System.out.println(s);
+    }
+
+    @Test
+    public void test24() {
+        String[] splits = {""};
+        List<String> muIdList = new ArrayList<String>();
+        Collections.addAll(muIdList, splits);
+        System.out.println(JSONObject.toJSONString(muIdList));
+    }
+
+    @Test
+    public void test26() {
+        // 获取文档
+        String loginId = "zhangrw";
+        String flowStr = "OA_DOC";
+        String documentType = "002"; // 文档类型(最新文件 002, 社内要闻 003, 部门动态 004)
+        long currentTime = System.currentTimeMillis() / 1000;
+        MD5 md5 = new MD5();
+        String md5ofStr = md5.getMD5ofStr(currentTime + flowStr + loginId);
+        String url = "http://10.1.11.30/workflow/request/gaodeng/GetDoc.jsp?loginId="
+                + loginId + "&token=" + md5ofStr + "&currentTime=" + currentTime + "&documentType=" + documentType + "&getCounts=10";
+        System.out.println(url);
+        String s = HTTPUtil.doGet(url);
+        System.out.println(s);
+    }
+
+    @Test
+    public void test27() {
+        // 获取文档byId
+        String loginId = "zhangrw";
+        String flowStr = "OA_DOC_BYID";
+        String seccategoryId = "778"; // OA中目录id（工程 778   现代化779），多个目录中间用英文逗号分隔，不得有空格
+        long currentTime = System.currentTimeMillis() / 1000;
+        MD5 md5 = new MD5();
+        System.out.println(currentTime + flowStr + loginId);
+        String md5ofStr = md5.getMD5ofStr(currentTime + flowStr + loginId);
+        String url = "http://10.1.11.30/workflow/request/gaodeng/GetDocById.jsp?loginId="
+                + loginId + "&token=" + md5ofStr + "&currentTime=" + currentTime + "&seccategoryId=" + seccategoryId + "&getCounts=10";
+        System.out.println(url);
+        String s = HTTPUtil.doGet(url);
+        System.out.println(s);
+    }
+
+    @Test
+    public void test28() throws UnsupportedEncodingException {
+        String str = "{\"appSecId\":\"d4bf814c02abb801a2a2b6742a6d140a\",\"userId\":\"1111\",\"enterpriseId\":\"000001\"}";
+        Base64 base64 = new Base64();
+        String s = base64.encodeToString("测试22222222222".getBytes());
+
+        System.out.println(s);
+
+    }
+
+    @Test
+    public void test29() throws UnsupportedEncodingException {
+        //String str = "http://sso.ceshi113.com/sign/redirect";
+        String str = "http://124.205.140.201/sign/redirect";
+        String code = "{\"timeStamp\":1571229945520,\"appId\":\"FSAID_1314644\",\"sign\":\"8D562971D0988E3725A979B5007B7036E79E27A586794555DDBACC3557281C75A608AE10624B41B4B6EA761D89A20485\",\"account\":\"13680227842\"}";
+        String ea = "61126";
+        System.out.println(sendPost(str, ea, code));
+    }
+
+    private String sendPost(String url, String ea, String code) {
+        BufferedReader reader = null;
+        StringBuilder response = new StringBuilder();
+        try {
+            URL httpUrl = new URL(url);
+            //建立连接
+            HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setUseCaches(false);//设置不要缓存
+            conn.setInstanceFollowRedirects(true);
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+            String content = "ea=" + URLEncoder.encode(ea, "UTF-8");
+            content += "&code=" + URLEncoder.encode(code, "UTF-8");
+
+            out.writeBytes(content);
+
+            out.flush();
+            out.close();
+
+            conn.connect();
+            //读取响应
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String lines;
+            while ((lines = reader.readLine()) != null) {
+                lines = new String(lines.getBytes(), "utf-8");
+                response.append(lines);
+            }
+            // 断开连接
+            conn.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return response.toString();
+    }
+
+    @Test
+    public void test30() {
+        String currentTimeString = TimeUtil.getCurrentTimeString().replace(":", "");
+        BufferedWriter bufferedWriter = null;
+        String str = null;
+        try {
+            File file = new File("d:" + File.separator + "orgLog" + File.separator + currentTimeString + ".txt");
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            bufferedWriter = new BufferedWriter(new FileWriter(file));
+            for (int i = 0; i < 100; i++) {
+                bufferedWriter.write(str);
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (bufferedWriter != null) {
+                    bufferedWriter.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Test
+    public void test31() throws UnsupportedEncodingException {
+        String encode = "{\"returnInfo\":{\"returnCode\":\"0000\",\"returnMessage\":\"处理成功\"},\"invoice\":[{\"invoiceTypeCode\":\"92\",\"goodsName\":\"\",\"invoiceDate\":\"20190505\",\"totalAmount\":\"255.50\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"e90fc4815edd4a83bbf5de6f7496aaa0\",\"invoiceCount\":\"1\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"\",\"invoiceNo\":\"\",\"invoiceAmount\":\"255.50\",\"verifyCode\":\"\",\"dataSourceCode\":\"\",\"departCity\":\"运城\",\"arriveCity\":\"天津\",\"trainNumber\":\"K866\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"/bx/bxftp/image/pic/000001/1111/2019/e90fc4815edd4a83bbf5de6f7496aaa0.zip\",\"passenger\":\"谷宏毅\",\"seatLevel\":\"\",\"identityNumber\":\"\",\"electronicTicketNumber\":\"\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"\",\"caacDevelopmentFund\":\"\",\"fuelSurcharge\":\"\",\"detailList\":null},{\"invoiceTypeCode\":\"94\",\"goodsName\":\"\",\"invoiceDate\":\"20190126\",\"totalAmount\":\"20.00\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"50c1d3bebc394371a2c88473ef439c34\",\"invoiceCount\":\"1\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"141001920092\",\"invoiceNo\":\"13725022\",\"invoiceAmount\":\"0\",\"verifyCode\":\"\",\"dataSourceCode\":\"\",\"departCity\":\"洛阳站\",\"arriveCity\":\"汝阳\",\"trainNumber\":\"\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"/bx/bxftp/image/pic/000001/1111/2019/50c1d3bebc394371a2c88473ef439c34.zip\",\"passenger\":\"\",\"seatLevel\":\"\",\"identityNumber\":\"\",\"electronicTicketNumber\":\"\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"\",\"caacDevelopmentFund\":\"\",\"fuelSurcharge\":\"\",\"detailList\":[{\"goodsName\":\"\",\"model\":\"\",\"unit\":\"\",\"invoiceNo\":\"\",\"invoiceCode\":\"\",\"num\":\"0.0\",\"unitPrice\":\"\",\"noTaxAmount\":\"\",\"taxRate\":\"\",\"taxAmount\":\"\",\"detailNo\":\"\",\"expenseItem\":\"\",\"plateNo\":\"\",\"type\":\"\",\"trafficDateStart\":\"\",\"trafficDateEnd\":\"\"}]},{\"invoiceTypeCode\":\"91\",\"goodsName\":\"\",\"invoiceDate\":\"20171023\",\"totalAmount\":\"62.00\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"e8cc9c14a9ac46fdb6f6e6e2c4b9262f\",\"invoiceCount\":\"\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"\",\"invoiceNo\":\"34940057\",\"invoiceAmount\":\"\",\"verifyCode\":\"\",\"dataSourceCode\":\"\",\"departCity\":\"\",\"arriveCity\":\"\",\"trainNumber\":\"\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"/bx/bxftp/image/pic/000001/1111/2019/e8cc9c14a9ac46fdb6f6e6e2c4b9262f.zip\",\"passenger\":\"\",\"seatLevel\":\"\",\"identityNumber\":\"\",\"electronicTicketNumber\":\"\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"\",\"caacDevelopmentFund\":\"\",\"fuelSurcharge\":\"\",\"detailList\":[{\"goodsName\":\"\",\"model\":\"\",\"unit\":\"\",\"invoiceNo\":\"\",\"invoiceCode\":\"\",\"num\":\"0.0\",\"unitPrice\":\"\",\"noTaxAmount\":\"\",\"taxRate\":\"\",\"taxAmount\":\"\",\"detailNo\":\"\",\"expenseItem\":\"\",\"plateNo\":\"\",\"type\":\"\",\"trafficDateStart\":\"\",\"trafficDateEnd\":\"\"}]},{\"invoiceTypeCode\":\"91\",\"goodsName\":\"\",\"invoiceDate\":\"20171031\",\"totalAmount\":\"65.00\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"1b8388f2cd874c76a7f2a7016ce220ab\",\"invoiceCount\":\"\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"\",\"invoiceNo\":\"64123594\",\"invoiceAmount\":\"\",\"verifyCode\":\"\",\"dataSourceCode\":\"\",\"departCity\":\"\",\"arriveCity\":\"\",\"trainNumber\":\"\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"/bx/bxftp/image/pic/000001/1111/2019/1b8388f2cd874c76a7f2a7016ce220ab.zip\",\"passenger\":\"\",\"seatLevel\":\"\",\"identityNumber\":\"\",\"electronicTicketNumber\":\"\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"\",\"caacDevelopmentFund\":\"\",\"fuelSurcharge\":\"\",\"detailList\":[{\"goodsName\":\"\",\"model\":\"\",\"unit\":\"\",\"invoiceNo\":\"\",\"invoiceCode\":\"\",\"num\":\"0.0\",\"unitPrice\":\"\",\"noTaxAmount\":\"\",\"taxRate\":\"\",\"taxAmount\":\"\",\"detailNo\":\"\",\"expenseItem\":\"\",\"plateNo\":\"\",\"type\":\"\",\"trafficDateStart\":\"\",\"trafficDateEnd\":\"\"}]},{\"invoiceTypeCode\":\"94\",\"goodsName\":\"\",\"invoiceDate\":\"20190126\",\"totalAmount\":\"20.00\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"0c497e41cd064906a09401f223be9f00\",\"invoiceCount\":\"1\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"141001920092\",\"invoiceNo\":\"13725022\",\"invoiceAmount\":\"0.00\",\"verifyCode\":\"\",\"dataSourceCode\":\"\",\"departCity\":\"洛阳站\",\"arriveCity\":\"汝阳\",\"trainNumber\":\"\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"/bx/bxftp/image/pic/000001/1111/2019/0c497e41cd064906a09401f223be9f00.zip\",\"passenger\":\"\",\"seatLevel\":\"\",\"identityNumber\":\"\",\"electronicTicketNumber\":\"\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"\",\"caacDevelopmentFund\":\"\",\"fuelSurcharge\":\"\",\"detailList\":null},{\"invoiceTypeCode\":\"94\",\"goodsName\":\"\",\"invoiceDate\":\"20190126\",\"totalAmount\":\"20.00\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"140aab49258b45ea9338273f5c3fadf6\",\"invoiceCount\":\"1\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"141001920092\",\"invoiceNo\":\"13725022\",\"invoiceAmount\":\"0.00\",\"verifyCode\":\"\",\"dataSourceCode\":\"\",\"departCity\":\"洛阳站\",\"arriveCity\":\"汝阳\",\"trainNumber\":\"\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"/bx/bxftp/image/pic/000001/1111/2019/140aab49258b45ea9338273f5c3fadf6.zip\",\"passenger\":\"\",\"seatLevel\":\"\",\"identityNumber\":\"\",\"electronicTicketNumber\":\"\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"\",\"caacDevelopmentFund\":\"\",\"fuelSurcharge\":\"\",\"detailList\":null},{\"invoiceTypeCode\":\"90\",\"goodsName\":\"\",\"invoiceDate\":\"20191009\",\"totalAmount\":\"860.00\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"0d12c318830c427191f232e9e5f898eb\",\"invoiceCount\":\"1\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"\",\"invoiceNo\":\"\",\"invoiceAmount\":\"760\",\"verifyCode\":\"1053\",\"dataSourceCode\":\"\",\"departCity\":\"T2北京\",\"arriveCity\":\"上海虹桥\",\"trainNumber\":\"11\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"/bx/bxftp/image/pic/000001/1111/2019/0d12c318830c427191f232e9e5f898eb.zip\",\"passenger\":\"孔慧婷\",\"seatLevel\":\"\",\"identityNumber\":\"32128419910817522X\",\"electronicTicketNumber\":\"78131675771054\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"760.00\",\"caacDevelopmentFund\":\"50.00\",\"fuelSurcharge\":\"50.00\",\"detailList\":null},{\"invoiceTypeCode\":\"00\",\"goodsName\":\"\",\"invoiceDate\":\"20191010\",\"totalAmount\":\"123.00\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"0\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"undefined\",\"invoiceCount\":\"\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"\",\"invoiceNo\":\"123456\",\"invoiceAmount\":\"\",\"verifyCode\":\"\",\"dataSourceCode\":\"\",\"departCity\":\"\",\"arriveCity\":\"\",\"trainNumber\":\"\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"\",\"passenger\":\"\",\"seatLevel\":\"\",\"identityNumber\":\"\",\"electronicTicketNumber\":\"\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"\",\"caacDevelopmentFund\":\"\",\"fuelSurcharge\":\"\",\"detailList\":null},{\"invoiceTypeCode\":\"91\",\"goodsName\":\"\",\"invoiceDate\":\"20190926\",\"totalAmount\":\"27.00\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"417160501c0c4182b34ccb0fb66b192c\",\"invoiceCount\":\"\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"\",\"invoiceNo\":\"01096034\",\"invoiceAmount\":\"\",\"verifyCode\":\"\",\"dataSourceCode\":\"\",\"departCity\":\"\",\"arriveCity\":\"\",\"trainNumber\":\"\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"/bx/bxftp/image/pic/000001/1111/2019/417160501c0c4182b34ccb0fb66b192c.zip\",\"passenger\":\"\",\"seatLevel\":\"\",\"identityNumber\":\"\",\"electronicTicketNumber\":\"\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"\",\"caacDevelopmentFund\":\"\",\"fuelSurcharge\":\"\",\"detailList\":[{\"goodsName\":\"\",\"model\":\"\",\"unit\":\"\",\"invoiceNo\":\"\",\"invoiceCode\":\"\",\"num\":\"0.0\",\"unitPrice\":\"\",\"noTaxAmount\":\"\",\"taxRate\":\"\",\"taxAmount\":\"\",\"detailNo\":\"\",\"expenseItem\":\"\",\"plateNo\":\"\",\"type\":\"\",\"trafficDateStart\":\"\",\"trafficDateEnd\":\"\"}]},{\"invoiceTypeCode\":\"91\",\"goodsName\":\"\",\"invoiceDate\":\"20190926\",\"totalAmount\":\"27.00\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"ebe0d9c2403e4de9855b1905d83a1c84\",\"invoiceCount\":\"\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"\",\"invoiceNo\":\"01096034\",\"invoiceAmount\":\"\",\"verifyCode\":\"\",\"dataSourceCode\":\"\",\"departCity\":\"\",\"arriveCity\":\"\",\"trainNumber\":\"\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"/bx/bxftp/image/pic/000001/1111/2019/ebe0d9c2403e4de9855b1905d83a1c84.zip\",\"passenger\":\"\",\"seatLevel\":\"\",\"identityNumber\":\"\",\"electronicTicketNumber\":\"\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"\",\"caacDevelopmentFund\":\"\",\"fuelSurcharge\":\"\",\"detailList\":[{\"goodsName\":\"\",\"model\":\"\",\"unit\":\"\",\"invoiceNo\":\"\",\"invoiceCode\":\"\",\"num\":\"0.0\",\"unitPrice\":\"\",\"noTaxAmount\":\"\",\"taxRate\":\"\",\"taxAmount\":\"\",\"detailNo\":\"\",\"expenseItem\":\"\",\"plateNo\":\"\",\"type\":\"\",\"trafficDateStart\":\"\",\"trafficDateEnd\":\"\"}]},{\"invoiceTypeCode\":\"91\",\"goodsName\":\"\",\"invoiceDate\":\"20190926\",\"totalAmount\":\"27.00\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"98adb9010d0649308679a9d39c10086c\",\"invoiceCount\":\"\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"\",\"invoiceNo\":\"01096034\",\"invoiceAmount\":\"\",\"verifyCode\":\"\",\"dataSourceCode\":\"\",\"departCity\":\"\",\"arriveCity\":\"\",\"trainNumber\":\"\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"/bx/bxftp/image/pic/000001/1111/2019/98adb9010d0649308679a9d39c10086c.zip\",\"passenger\":\"\",\"seatLevel\":\"\",\"identityNumber\":\"\",\"electronicTicketNumber\":\"\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"\",\"caacDevelopmentFund\":\"\",\"fuelSurcharge\":\"\",\"detailList\":[{\"goodsName\":\"\",\"model\":\"\",\"unit\":\"\",\"invoiceNo\":\"\",\"invoiceCode\":\"\",\"num\":\"0.0\",\"unitPrice\":\"\",\"noTaxAmount\":\"\",\"taxRate\":\"\",\"taxAmount\":\"\",\"detailNo\":\"\",\"expenseItem\":\"\",\"plateNo\":\"\",\"type\":\"\",\"trafficDateStart\":\"\",\"trafficDateEnd\":\"\"}]},{\"invoiceTypeCode\":\"91\",\"goodsName\":\"\",\"invoiceDate\":\"20190926\",\"totalAmount\":\"27.00\",\"kplx\":\"\",\"isCanceled\":\"\",\"isBlush\":\"\",\"reimburseState\":\"0\",\"reimburseSerialNo\":\"\",\"reimburseUserId\":\"\",\"checkState\":\"0\",\"isException\":\"\",\"uuid\":\"51cf9e29d9744cf9ac4fa55cb4e60935\",\"invoiceCount\":\"\",\"taxAmount\":\"0.00\",\"buyerName\":\"\",\"buyerTaxNo\":\"\",\"buyerAddressTel\":\"\",\"buyerBankAccount\":\"\",\"salerName\":\"\",\"salerTaxNo\":\"\",\"salerAddressTel\":\"\",\"salerBankAccount\":\"\",\"invoiceCode\":\"\",\"invoiceNo\":\"01096034\",\"invoiceAmount\":\"\",\"verifyCode\":\"\",\"dataSourceCode\":\"\",\"departCity\":\"\",\"arriveCity\":\"\",\"trainNumber\":\"\",\"startDate\":\"\",\"endDate\":\"\",\"userId\":\"1111\",\"imagePath\":\"/bx/bxftp/image/pic/000001/1111/2019/51cf9e29d9744cf9ac4fa55cb4e60935.zip\",\"passenger\":\"\",\"seatLevel\":\"\",\"identityNumber\":\"\",\"electronicTicketNumber\":\"\",\"issueBy\":\"\",\"dateOfIssue\":\"\",\"flightNumber\":\"\",\"isDeductible\":\"\",\"billName\":\"\",\"expenseType\":\"\",\"fare\":\"\",\"caacDevelopmentFund\":\"\",\"fuelSurcharge\":\"\",\"detailList\":[{\"goodsName\":\"\",\"model\":\"\",\"unit\":\"\",\"invoiceNo\":\"\",\"invoiceCode\":\"\",\"num\":\"0.0\",\"unitPrice\":\"\",\"noTaxAmount\":\"\",\"taxRate\":\"\",\"taxAmount\":\"\",\"detailNo\":\"\",\"expenseItem\":\"\",\"plateNo\":\"\",\"type\":\"\",\"trafficDateStart\":\"\",\"trafficDateEnd\":\"\"}]}],\"total\":\"207\"}";
+        JSONObject returnObject = JSONObject.parseObject(encode);
+
+        JSONArray jsonArray = returnObject.getJSONArray("invoice");
+        int size = jsonArray.size();
+        for (int i = 0; i < size; i++) {
+            JSONArray detailList = jsonArray.getJSONObject(i).getJSONArray("detailList");
+            System.out.println(detailList);
+        }
+
+
+    }
+
+    @Test
+    public void test32() throws UnsupportedEncodingException, DocumentException {
+        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "\n" +
+                "<ReturnModel>        \n" +
+                "  <Result>         \n" +
+                "    <IDCodeName>           \n" +
+                "      <Remark>1001009140300002</Remark>           \n" +
+                "      <M_iD>1002005263216753</M_iD>        \n" +
+                "    </IDCodeName>         \n" +
+                "    <IDCodeName>           \n" +
+                "      <Remark>1001009140300002</Remark>           \n" +
+                "      <M_iD>1002005263216762</M_iD>        \n" +
+                "    </IDCodeName>       \n" +
+                "  </Result>        \n" +
+                "  <State>SUCCESS</State>        \n" +
+                "  <IsApproved>false</IsApproved>        \n" +
+                "  <Msg>凭证创建成功 m_voucherID:1002005263216753 sOB:1001009140200035 voucherCategory:1001009140300002m_voucherID:1002005263216762 sOB:1001009140200035 voucherCategory:1001009140300002</Msg>   \n" +
+                "</ReturnModel>\n";
+        Document doc = DocumentHelper.parseText(xml);
+        Element rootElt = doc.getRootElement();
+        String state = rootElt.elementTextTrim("State");
+        String msg = rootElt.elementTextTrim("Msg");
+        System.out.println(state);
+        System.out.println(msg);
+    }
+
+    @Test
+    public void test33() throws Exception {
+        String encode = URLEncoder.encode("http://www.baidu.com", "utf-8");
+        System.out.println(encode);
+
+        String decode = URLDecoder.decode(encode, "utf-8");
+        System.out.println(decode);
 
     }
 
