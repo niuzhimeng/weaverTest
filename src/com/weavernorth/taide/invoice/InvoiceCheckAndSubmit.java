@@ -180,9 +180,6 @@ public class InvoiceCheckAndSubmit extends BaseAction {
                 recordSet.executeUpdate("update uf_fpinfo set reimburseState = 2 where uuid = '" + invoice + "'");
             }
 
-            // 删除未报销的
-            recordSet.executeUpdate("delete from uf_fpinfo where userId = '" + workCode + "' and enterpriseId = '" + ConfigInfo.enterpriseId.getValue() + "' and reimburseState = 0");
-            recordSet.executeUpdate("delete from uf_fpseinfo where userId = '" + workCode + "' and enterpriseId = '" + ConfigInfo.enterpriseId.getValue() + "' and reimburseState = 0");
             this.writeLog("发票验重InvoiceCheckAction End ===============");
         } catch (Exception e) {
             this.writeLog("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + e);
