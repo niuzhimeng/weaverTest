@@ -6,6 +6,7 @@ import com.weavernorth.taide.util.TaiDeOkHttpUtils;
 import org.apache.commons.codec.binary.Base64;
 import weaver.conn.RecordSet;
 import weaver.general.TimeUtil;
+import weaver.general.Util;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
@@ -38,13 +39,21 @@ public class InvoiceToEnd extends BaseAction {
             String mxbName = recordSet.getString("mxbName"); // 发票所在明细表名称(_dt1)
             String fpName = recordSet.getString("fpName"); // 发票字段名
             String mainId = recordSet.getString("id");
-            String lcbh = recordSet.getString("lcbh");
+            String sappzh = recordSet.getString("sappzh");
             String workCode = recordSet.getString("workcode");
 
+            this.writeLog("发票所在明细表名称(_dt1)============ " + mxbName);
+            this.writeLog("发票字段名============ " + fpName);
+            this.writeLog("凭证号============ " + sappzh);
+            this.writeLog("workCode============ " + workCode);
+
+            // 发票uuid - 是否抵扣
+            Map<String, String> uuidSfdkMap = new HashMap<String, String>();
             // 查询明细表
             recordSet.executeQuery("select " + fpName + " from " + tableName + mxbName + " where mainid = " + mainId);
             List<String> bhList = new ArrayList<String>();
             while (recordSet.next()) {
+                uuidSfdkMap.put(recordSet.getString("uuid"), recordSet.getString("sffp"));
                 if (!"".equals(recordSet.getString(fpName))) {
                     String[] split = recordSet.getString(fpName).split(",");
                     bhList.addAll(Arrays.asList(split));
@@ -59,25 +68,18 @@ public class InvoiceToEnd extends BaseAction {
             String appId = ConfigInfo.appId.getValue();
             this.writeLog("流程归档更新发票信息开始========================");
 
-            // 查询【是否抵扣】
-            // 发票uuid - 是否抵扣
-            Map<String, String> uuidSfdkMap = new HashMap<String, String>();
-            recordSet.executeQuery("select uuid, isDeductible from uf_fpdk_log where fprequestid = '" + requestId + "'");
-            while (recordSet.next()) {
-                uuidSfdkMap.put(recordSet.getString("uuid"), recordSet.getString("isDeductible"));
-            }
             String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
             JSONArray dataArrayObject = new JSONArray();
             for (String invoice : bhList) {
                 JSONObject dataObject = new JSONObject(true);
                 dataObject.put("uuid", invoice);
-                dataObject.put("reimburseSerialNo", lcbh); // 流程编号
+                dataObject.put("certificateNumber", sappzh); // 凭证号
+                dataObject.put("reimburseSerialNo", requestId); // 流程编号
                 dataObject.put("reimburseSource", "2"); // 单据来源
                 dataObject.put("reimburseState", "3"); // 0：未报销 2：报销中 3：已报销
                 dataObject.put("userId", workCode);
 
-                dataObject.put("certificateNumber", "");
-                dataObject.put("isDeductible", uuidSfdkMap.get(invoice)); //  是否可抵扣
+                dataObject.put("isDeductible", ConnUtil.sfdkChange(Util.null2String(uuidSfdkMap.get(invoice)))); //  是否可抵扣
                 dataObject.put("reimburseDate", currentDate);
                 dataArrayObject.add(dataObject);
             }

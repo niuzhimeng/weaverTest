@@ -15,7 +15,7 @@ public class RhConnUtil {
     /**
      * 日志模块id
      */
-    private static final Integer LOG_MODE_ID = 34;
+    private static final Integer LOG_MODE_ID = 39;
 
     /**
      * 发票信息插入建模表

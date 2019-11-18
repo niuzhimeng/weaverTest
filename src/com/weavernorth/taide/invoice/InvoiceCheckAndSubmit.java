@@ -102,7 +102,7 @@ public class InvoiceCheckAndSubmit extends BaseAction {
                 if (recordSet.next()) {
                     JSONObject dataObject = new JSONObject(true);
                     dataObject.put("uuid", invoice);
-                    dataObject.put("reimburseSerialNo", lcbh); // 流程编号
+                    dataObject.put("reimburseSerialNo", requestId); // 流程编号
                     dataObject.put("reimburseSource", "2"); // 单据来源
                     dataObject.put("reimburseState", "2"); // 0：未报销 2：报销中 3：已报销
                     dataObject.put("userId", workCode);
@@ -166,13 +166,6 @@ public class InvoiceCheckAndSubmit extends BaseAction {
                 requestInfo.getRequestManager().setMessageid("110000");
                 requestInfo.getRequestManager().setMessagecontent("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + returnInvoice);
                 return "0";
-            }
-
-            // 记录发票的【是否抵扣】字段
-            recordSet.executeUpdate("delete from uf_fpdk_log where fprequestid = '" + requestId + "'");
-            for (String invoice : bhList) {
-                recordSet.executeUpdate("insert into uf_fpdk_log(fprequestid, uuid, isDeductible) values(?,?,?)",
-                        requestId, invoice, uuidSfdkMap.get(invoice));
             }
 
             // 变更发票状态 ( 0：未报销 2：报销中 3：已报销)
