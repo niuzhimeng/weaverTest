@@ -142,13 +142,9 @@ public class CbConsumer extends BaseCronJob {
                 String lastName = Util.null2String(otReturn.getString("LASTNAME")).trim();
                 // 员工状态
                 String sapStatus = Util.null2String(otReturn.getString("STATUS")).trim();
-
                 // 性别
-                String sapSex = Util.null2String(otReturn.getString("SEX")).trim();
-                String sex = "0";
-                if ("2".equalsIgnoreCase(sapSex)) {
-                    sex = "1";
-                }
+                String sex = Util.null2String(otReturn.getString("SEX")).trim();
+
                 // 工作地点
                 String sapLocation = Util.null2String(otReturn.getString("LOCATION")).trim();
                 if ("".equalsIgnoreCase(sapLocation)) {
@@ -197,7 +193,7 @@ public class CbConsumer extends BaseCronJob {
                 baseBean.writeLog("人员上级code: " + managerCode);
                 baseBean.writeLog("sap所属部门编码: " + sapDepCode);
                 baseBean.writeLog("sap所属岗位id: " + sapJobTitleId);
-                baseBean.writeLog("sapStatus: " + sapStatus);
+                baseBean.writeLog("sapStatus: " + sapStatus + ", 性别: " + sex);
                 baseBean.writeLog("sap工作地点: " + sapLocation + ", oa工作地点: " + location);
                 baseBean.writeLog("---------------------------");
 

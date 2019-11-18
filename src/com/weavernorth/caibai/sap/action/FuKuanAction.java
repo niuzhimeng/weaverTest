@@ -4,7 +4,7 @@ import com.sap.conn.jco.JCoDestination;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoTable;
 import com.weaver.general.TimeUtil;
-import com.weavernorth.caibai.sap.CaiBaiPoolThree;
+import com.weavernorth.caibai.sap.CaiBaiPoolThreeFormal;
 import weaver.conn.RecordSet;
 import weaver.hrm.User;
 import weaver.soa.workflow.request.RequestInfo;
@@ -34,6 +34,7 @@ public class FuKuanAction extends BaseAction {
     private String cjrq; // 流程创建日期
 
     private String fkrq; // 付款日期
+
     @Override
     public String execute(RequestInfo requestInfo) {
         String operatetype = requestInfo.getRequestManager().getSrc();
@@ -78,7 +79,7 @@ public class FuKuanAction extends BaseAction {
             skgsmc = recordSet.getString("skgsmc");
             cjrq = recordSet.getString("sap_cjrq");
             fkrq = recordSet.getString("sap_fkrq");
-            JCoDestination jCoDestination = CaiBaiPoolThree.getJCoDestination();
+            JCoDestination jCoDestination = CaiBaiPoolThreeFormal.getJCoDestination();
             JCoFunction function = jCoDestination.getRepository().getFunction("ZOAIF0010_RFC");
             this.writeLog("获取函数完成===== " + function);
 
