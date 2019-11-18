@@ -21,6 +21,7 @@ public class InvoiceReject extends BaseAction {
 
     @Override
     public String execute(RequestInfo requestInfo) {
+        String fpName = "xzfpz"; // 发票字段名
         String requestId = requestInfo.getRequestid();
         String operateType = requestInfo.getRequestManager().getSrc();
         int formId = requestInfo.getRequestManager().getFormid();
@@ -37,19 +38,17 @@ public class InvoiceReject extends BaseAction {
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
             String mxbName = recordSet.getString("mxbName"); // 发票所在明细表名称(_dt1)
-            String fpName = recordSet.getString("fpName"); // 发票字段名
             String mainId = recordSet.getString("id");
-            String lcbh = recordSet.getString("lcbh");
             String workCode = recordSet.getString("workcode");
 
             // 发票uuid - 是否抵扣
             Map<String, String> uuidSfdkMap = new HashMap<String, String>();
 
             // 查询明细表
-            recordSet.executeQuery("select " + fpName + " from " + tableName + mxbName + " where mainid = " + mainId);
+            recordSet.executeQuery("select * from " + tableName + mxbName + " where mainid = " + mainId);
             List<String> bhList = new ArrayList<String>();
             while (recordSet.next()) {
-                uuidSfdkMap.put(recordSet.getString("uuid"), recordSet.getString("sffp"));
+                uuidSfdkMap.put(recordSet.getString("fpid"), recordSet.getString("sffp"));
                 if (!"".equals(recordSet.getString(fpName))) {
                     String[] split = recordSet.getString(fpName).split(",");
                     bhList.addAll(Arrays.asList(split));

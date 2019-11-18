@@ -1,7 +1,8 @@
-package com.weavernorth.taide.invoice;
+package com.weavernorth.taide.invoice.fentan;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.weavernorth.taide.invoice.ConfigInfo;
 import com.weavernorth.taide.util.TaiDeOkHttpUtils;
 import org.apache.commons.codec.binary.Base64;
 import weaver.conn.RecordSet;
@@ -14,13 +15,13 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.*;
 
 /**
- * 发票验重并变更发票状态
+ * 发票验重并变更发票状态 - 分摊
  */
-public class InvoiceCheckAndSubmit extends BaseAction {
+public class InvoiceCheckAndSubmitFentan extends BaseAction {
 
     @Override
     public String execute(RequestInfo requestInfo) {
-        String fpName = "xzfpz"; // 发票字段名
+        String fpName = "xzfp"; // 发票字段名
         String requestId = requestInfo.getRequestid();
         String operateType = requestInfo.getRequestManager().getSrc();
         int formId = requestInfo.getRequestManager().getFormid();
@@ -31,41 +32,22 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        this.writeLog("发票验重并变更发票状态 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
+        this.writeLog("发票验重并变更发票状态-分摊 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
             String mxbName = recordSet.getString("mxbName"); // 发票所在明细表名称(_dt1)
-            String mainId = recordSet.getString("id");
             String lcbh = recordSet.getString("lcbh");
-
-            this.writeLog("mxbName: " + mxbName + ", fpName: " + fpName + ", lcbh: " + lcbh);
             String workCode = recordSet.getString("workcode");
 
-            // 查询明细表
-            String mxSql = "select id, " + fpName + " from " + tableName + mxbName + " where mainid = " + mainId;
-            this.writeLog("明细表查询sql：" + mxSql);
-            recordSet.executeQuery(mxSql);
-            List<String> bhList = new ArrayList<String>();
-            while (recordSet.next()) {
-                if (!"".equals(recordSet.getString(fpName))) {
-                    String[] split = recordSet.getString(fpName).split(",");
-                    bhList.addAll(Arrays.asList(split));
-                }
-            }
-            this.writeLog("所有发票主表编号： " + JSONObject.toJSONString(bhList));
+            this.writeLog("mxbName: " + mxbName + ", fpName: " + fpName + ", lcbh: " + lcbh + ", workCode: " + workCode);
 
-            // 验重
-            StringBuilder stringBuilder = check(bhList);
-            if (stringBuilder.length() > 0) {
-                this.writeLog("重复发票号： " + stringBuilder.toString());
-                requestInfo.getRequestManager().setMessageid("110000");
-                requestInfo.getRequestManager().setMessagecontent("发票号重复： " + stringBuilder.toString());
-                return "0";
-            }
+            String fpStr = recordSet.getString(fpName); // 主表发票字段
+            String[] split = fpStr.split(",");
+            this.writeLog("所有主表发票号： " + JSONObject.toJSONString(split));
 
-            // 更新明细表，将浏览按钮字段赋值给文本
+            // 更新主表，将浏览按钮字段赋值给文本
             Map<String, String> uidNo = new HashMap<String, String>();
             recordSet.executeQuery("select uuid, invoiceNo from uf_fpinfo where userId = '" + workCode + "'");
             while (recordSet.next()) {
@@ -73,17 +55,14 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             }
 
             RecordSet updateSet = new RecordSet();
-            recordSet.executeQuery(mxSql);
             StringBuilder pjCode = new StringBuilder();
-            while (recordSet.next()) {
-                String[] strings = recordSet.getString(fpName).split(",");
-                for (String fpbh : strings) {
-                    pjCode.append(uidNo.get(fpbh)).append(",");
-                }
-                pjCode.deleteCharAt(pjCode.length() - 1);
-                updateSet.executeUpdate("update " + tableName + mxbName + " set fpxz = '" + pjCode.toString() + "' where id = '" + recordSet.getString("id") + "'");
-                pjCode.delete(0, pjCode.length());
+            for (String fpbh : split) {
+                pjCode.append(uidNo.get(fpbh)).append(",");
             }
+            pjCode.deleteCharAt(pjCode.length() - 1);
+            updateSet.executeUpdate("update " + tableName + " set fpxz = '" + pjCode.toString() + "' where requestid = '" + requestId + "'");
+            pjCode.delete(0, pjCode.length());
+
 
             // 变更发票状态
             String getInvoiceUrl = ConfigInfo.InvoiceUrl.getValue();
@@ -95,7 +74,7 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             String sfdk = "N";
             String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
             JSONArray dataArrayObject = new JSONArray();
-            for (String invoice : bhList) {
+            for (String invoice : split) {
                 recordSet.executeQuery("select isDeductible from uf_fpinfo where uuid = '" + invoice + "'");
                 if (recordSet.next()) {
                     JSONObject dataObject = new JSONObject(true);
@@ -158,22 +137,22 @@ public class InvoiceCheckAndSubmit extends BaseAction {
             JSONObject returnObject = JSONObject.parseObject(returnInvoice);
             JSONObject returnInfo = returnObject.getJSONObject("returnInfo");
             if (!"0000".equals(returnInfo.getString("returnCode"))) {
-                this.writeLog("发票验重并变更发票状态InvoiceCheckAndSubmit异常： " + returnInvoice);
+                this.writeLog("发票验重并变更发票状态-分摊InvoiceCheckAndSubmit异常： " + returnInvoice);
                 requestInfo.getRequestManager().setMessageid("110000");
-                requestInfo.getRequestManager().setMessagecontent("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + returnInvoice);
+                requestInfo.getRequestManager().setMessagecontent("发票验重并变更发票状态-分摊InvoiceCheckAndSubmit 异常： " + returnInvoice);
                 return "0";
             }
 
             // 变更发票状态 ( 0：未报销 2：报销中 3：已报销)
-            for (String invoice : bhList) {
+            for (String invoice : split) {
                 recordSet.executeUpdate("update uf_fpinfo set reimburseState = 2 where uuid = '" + invoice + "'");
             }
 
-            this.writeLog("发票验重InvoiceCheckAction End ===============");
+            this.writeLog("发票验重并变更发票状态-分摊 End ===============");
         } catch (Exception e) {
-            this.writeLog("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + e);
+            this.writeLog("发票验重并变更发票状态-分摊InvoiceCheckAndSubmit 异常： " + e);
             requestInfo.getRequestManager().setMessageid("110000");
-            requestInfo.getRequestManager().setMessagecontent("发票验重并变更发票状态InvoiceCheckAndSubmit 异常： " + e);
+            requestInfo.getRequestManager().setMessagecontent("发票验重并变更发票状态-分摊InvoiceCheckAndSubmit 异常： " + e);
             return "0";
         }
 

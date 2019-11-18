@@ -1,7 +1,9 @@
-package com.weavernorth.taide.invoice;
+package com.weavernorth.taide.invoice.fentan;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.weavernorth.taide.invoice.ConfigInfo;
+import com.weavernorth.taide.invoice.ConnUtil;
 import com.weavernorth.taide.util.TaiDeOkHttpUtils;
 import org.apache.commons.codec.binary.Base64;
 import weaver.conn.RecordSet;
@@ -15,13 +17,13 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.*;
 
 /**
- * 发票归档并变更发票状态
+ * 发票归档并变更发票状态-分摊
  */
-public class InvoiceToEnd extends BaseAction {
+public class InvoiceToEndFentan extends BaseAction {
 
     @Override
     public String execute(RequestInfo requestInfo) {
-        String fpName = "xzfpz"; // 发票字段名
+        String fpName = "xzfp"; // 发票字段名
         String requestId = requestInfo.getRequestid();
         String operateType = requestInfo.getRequestManager().getSrc();
         int formId = requestInfo.getRequestManager().getFormid();
@@ -32,7 +34,7 @@ public class InvoiceToEnd extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        this.writeLog("发票归档并变更发票状态 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
+        this.writeLog("发票归档并变更发票状态-分摊 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
@@ -41,9 +43,10 @@ public class InvoiceToEnd extends BaseAction {
             String mainId = recordSet.getString("id");
             String sappzh = recordSet.getString("sappzh");
             String workCode = recordSet.getString("workcode");
+            String fpStr = recordSet.getString(fpName); // 主表发票字段
+            String[] split = fpStr.split(",");
 
             this.writeLog("发票所在明细表名称(_dt1)============ " + mxbName);
-            this.writeLog("发票字段名============ " + fpName);
             this.writeLog("凭证号============ " + sappzh);
             this.writeLog("workCode============ " + workCode);
 
@@ -51,15 +54,9 @@ public class InvoiceToEnd extends BaseAction {
             Map<String, String> uuidSfdkMap = new HashMap<String, String>();
             // 查询明细表
             recordSet.executeQuery("select * from " + tableName + mxbName + " where mainid = " + mainId);
-            List<String> bhList = new ArrayList<String>();
             while (recordSet.next()) {
                 uuidSfdkMap.put(recordSet.getString("fpid"), recordSet.getString("sffp"));
-                if (!"".equals(recordSet.getString(fpName))) {
-                    String[] split = recordSet.getString(fpName).split(",");
-                    bhList.addAll(Arrays.asList(split));
-                }
             }
-            this.writeLog("所有发票主表编号： " + JSONObject.toJSONString(bhList));
 
             // 变更发票状态
             String getInvoiceUrl = ConfigInfo.InvoiceUrl.getValue();
@@ -70,7 +67,7 @@ public class InvoiceToEnd extends BaseAction {
 
             String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
             JSONArray dataArrayObject = new JSONArray();
-            for (String invoice : bhList) {
+            for (String invoice : split) {
                 JSONObject dataObject = new JSONObject(true);
                 dataObject.put("uuid", invoice);
                 dataObject.put("certificateNumber", sappzh); // 凭证号
@@ -133,13 +130,13 @@ public class InvoiceToEnd extends BaseAction {
             }
 
             // 变更发票状态 ( 0：未报销 2：报销中 3：已报销)
-            for (String invoice : bhList) {
+            for (String invoice : split) {
                 recordSet.executeUpdate("update uf_fpinfo set reimburseState = 3 where uuid = '" + invoice + "'");
             }
 
-            this.writeLog("发票归档并变更发票状态 End ===============");
+            this.writeLog("发票归档并变更发票状态-分摊 End ===============");
         } catch (Exception e) {
-            this.writeLog("流程归档变更发票状态 异常： " + e);
+            this.writeLog("流程归档变更发票状态-分摊 异常： " + e);
             requestInfo.getRequestManager().setMessageid("110000");
             requestInfo.getRequestManager().setMessagecontent("流程归档变更发票状态 异常： " + e);
             return "0";
