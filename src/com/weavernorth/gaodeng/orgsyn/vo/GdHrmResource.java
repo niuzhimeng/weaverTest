@@ -14,6 +14,8 @@ public class GdHrmResource {
 
     private BaseBean baseBean = new BaseBean();
 
+    private String telephone; // 座机
+
     private String workcode;//员工编号
     private String lastname;//姓名
     private String loginid;//系统登陆帐号
@@ -114,6 +116,14 @@ public class GdHrmResource {
         } catch (Exception e) {
             baseBean.writeLog("update rights Exception :" + e);
         }
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 
     public String getErrMessage() {

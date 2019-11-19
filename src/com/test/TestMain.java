@@ -30,7 +30,6 @@ import java.awt.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -747,11 +746,15 @@ public class TestMain {
 
     @Test
     public void test33() throws Exception {
-        String encode = URLEncoder.encode("http://www.baidu.com", "utf-8");
-        System.out.println(encode);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date bdate = simpleDateFormat.parse("2019-11-23");
 
-        String decode = URLDecoder.decode(encode, "utf-8");
-        System.out.println(decode);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(bdate);
+        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            System.out.println("双休日");
+        } else
+            System.out.println("工作日");
 
     }
 
