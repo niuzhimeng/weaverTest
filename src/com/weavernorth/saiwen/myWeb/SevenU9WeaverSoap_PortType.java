@@ -38,4 +38,34 @@ public interface SevenU9WeaverSoap_PortType extends java.rmi.Remote {
      * 凭证创建
      */
     public java.lang.String createVoucherFromXML(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+
+    /**
+     * 创建文件 --分步1 返回文件id
+     */
+    public java.lang.String u9FileCreate(java.lang.String fileName) throws java.rmi.RemoteException;
+
+    /**
+     * 上传文件--分步2
+     */
+    public boolean u9FileAppend(java.lang.String fileName, byte[] buffer, java.lang.String fileDbID) throws java.rmi.RemoteException;
+
+    /**
+     * 上传验证--分步3
+     */
+    public boolean u9FileVerify(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+
+    /**
+     * 创建客户银行账号
+     */
+    public java.lang.String createCustomerBankAccountFromXML(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+
+    /**
+     * 创建地址
+     */
+    public java.lang.String createAddressFromXML(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+
+    /**
+     * 创建联系对象
+     */
+    public java.lang.String createContanctFromXML(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
 }

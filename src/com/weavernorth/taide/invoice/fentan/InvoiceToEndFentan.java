@@ -14,7 +14,8 @@ import weaver.workflow.action.BaseAction;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 发票归档并变更发票状态-分摊
@@ -34,14 +35,14 @@ public class InvoiceToEndFentan extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        this.writeLog("发票归档并变更发票状态-分摊 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
+        this.writeLog("发票归档并变更发票状态-分摊 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
             String mxbName = recordSet.getString("mxbName"); // 发票所在明细表名称(_dt1)
             String mainId = recordSet.getString("id");
-            String sappzh = recordSet.getString("sappzh");
+            String sappzh = Util.null2String(recordSet.getString("sappzh")).trim();
             String workCode = recordSet.getString("workcode");
             String fpStr = recordSet.getString(fpName); // 主表发票字段
             String[] split = fpStr.split(",");
@@ -49,6 +50,13 @@ public class InvoiceToEndFentan extends BaseAction {
             this.writeLog("发票所在明细表名称(_dt1)============ " + mxbName);
             this.writeLog("凭证号============ " + sappzh);
             this.writeLog("workCode============ " + workCode);
+
+            if ("".equals(sappzh)) {
+                this.writeLog("凭证号不能为空： " + sappzh);
+                requestInfo.getRequestManager().setMessageid("110000");
+                requestInfo.getRequestManager().setMessagecontent("凭证号不能为空： " + sappzh);
+                return "0";
+            }
 
             // 发票uuid - 是否抵扣
             Map<String, String> uuidSfdkMap = new HashMap<String, String>();

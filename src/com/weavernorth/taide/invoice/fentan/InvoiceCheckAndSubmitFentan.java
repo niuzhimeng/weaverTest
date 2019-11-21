@@ -32,7 +32,7 @@ public class InvoiceCheckAndSubmitFentan extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        this.writeLog("发票验重并变更发票状态-分摊 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
+        this.writeLog("发票验重并变更发票状态-分摊 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");

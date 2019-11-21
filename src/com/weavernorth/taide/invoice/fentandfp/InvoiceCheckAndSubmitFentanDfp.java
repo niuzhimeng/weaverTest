@@ -1,27 +1,28 @@
-package com.weavernorth.taide.invoice;
+package com.weavernorth.taide.invoice.fentandfp;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.weavernorth.taide.invoice.ConfigInfo;
 import com.weavernorth.taide.util.TaiDeOkHttpUtils;
 import org.apache.commons.codec.binary.Base64;
 import weaver.conn.RecordSet;
 import weaver.general.TimeUtil;
-import weaver.general.Util;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 发票退回并变更发票状态
+ * 发票验重并变更发票状态 - 分摊带发票
  */
-public class InvoiceReject extends BaseAction {
+public class InvoiceCheckAndSubmitFentanDfp extends BaseAction {
 
     @Override
     public String execute(RequestInfo requestInfo) {
-        String fpName = "xzfpz"; // 发票字段名
+        String fpName = "xzfp"; // 发票字段名
         String requestId = requestInfo.getRequestid();
         String operateType = requestInfo.getRequestManager().getSrc();
         int formId = requestInfo.getRequestManager().getFormid();
@@ -32,52 +33,67 @@ public class InvoiceReject extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        this.writeLog("发票退回并变更发票状态 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
+        this.writeLog("发票验重并变更发票状态-分摊带发票 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
             String mxbName = recordSet.getString("mxbName"); // 发票所在明细表名称(_dt1)
-            String mainId = recordSet.getString("id");
+            String lcbh = recordSet.getString("lcbh");
             String workCode = recordSet.getString("workcode");
 
-            // 发票uuid - 是否抵扣
-            Map<String, String> uuidSfdkMap = new HashMap<String, String>();
+            this.writeLog("mxbName: " + mxbName + ", fpName: " + fpName + ", lcbh: " + lcbh + ", workCode: " + workCode);
 
-            // 查询明细表
-            recordSet.executeQuery("select * from " + tableName + mxbName + " where mainid = " + mainId);
-            List<String> bhList = new ArrayList<String>();
+            String fpStr = recordSet.getString(fpName); // 主表发票字段
+            String[] split = fpStr.split(",");
+            this.writeLog("所有主表发票号： " + JSONObject.toJSONString(split));
+
+            // 更新主表，将浏览按钮字段赋值给文本
+            Map<String, String> uidNo = new HashMap<String, String>();
+            recordSet.executeQuery("select uuid, invoiceNo from uf_fpinfo where userId = '" + workCode + "'");
             while (recordSet.next()) {
-                uuidSfdkMap.put(recordSet.getString("fpid"), recordSet.getString("sffp"));
-                if (!"".equals(recordSet.getString(fpName))) {
-                    String[] split = recordSet.getString(fpName).split(",");
-                    bhList.addAll(Arrays.asList(split));
-                }
+                uidNo.put(recordSet.getString("uuid"), recordSet.getString("invoiceNo"));
             }
-            this.writeLog("所有发票主表编号： " + JSONObject.toJSONString(bhList));
+
+            RecordSet updateSet = new RecordSet();
+            StringBuilder pjCode = new StringBuilder();
+            for (String fpbh : split) {
+                pjCode.append(uidNo.get(fpbh)).append(",");
+            }
+            pjCode.deleteCharAt(pjCode.length() - 1);
+            updateSet.executeUpdate("update " + tableName + " set fpxz = '" + pjCode.toString() + "' where requestid = '" + requestId + "'");
+            pjCode.delete(0, pjCode.length());
+
 
             // 变更发票状态
             String getInvoiceUrl = ConfigInfo.InvoiceUrl.getValue();
             String appSecId = ConfigInfo.appSecId.getValue();
             String appSecKey = ConfigInfo.appSecKey.getValue();
             String appId = ConfigInfo.appId.getValue();
-            this.writeLog("流程退回更新发票信息开始========================");
+            this.writeLog("更新发票信息开始========================");
 
+            String sfdk = "N";
             String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
             JSONArray dataArrayObject = new JSONArray();
-            for (String invoice : bhList) {
-                JSONObject dataObject = new JSONObject(true);
-                dataObject.put("uuid", invoice);
-                dataObject.put("reimburseSerialNo", requestId); // 流程编号
-                dataObject.put("reimburseSource", "2"); // 单据来源
-                dataObject.put("reimburseState", "0"); // 0：未报销 2：报销中 3：已报销
-                dataObject.put("userId", workCode);
+            for (String invoice : split) {
+                recordSet.executeQuery("select isDeductible from uf_fpinfo where uuid = '" + invoice + "'");
+                if (recordSet.next()) {
+                    JSONObject dataObject = new JSONObject(true);
+                    dataObject.put("uuid", invoice);
+                    dataObject.put("reimburseSerialNo", requestId); // 流程编号
+                    dataObject.put("reimburseSource", "2"); // 单据来源
+                    dataObject.put("reimburseState", "2"); // 0：未报销 2：报销中 3：已报销
+                    dataObject.put("userId", workCode);
 
-                dataObject.put("certificateNumber", "");
-                dataObject.put("isDeductible", ConnUtil.sfdkChange(Util.null2String(uuidSfdkMap.get(invoice)))); //  是否可抵扣
-                dataObject.put("reimburseDate", currentDate);
-                dataArrayObject.add(dataObject);
-
+                    dataObject.put("certificateNumber", "");
+                    String isDeductible = recordSet.getString("isDeductible");
+                    if (!"".equalsIgnoreCase(isDeductible)) {
+                        sfdk = isDeductible;
+                    }
+                    dataObject.put("isDeductible", sfdk); //  是否可抵扣
+                    dataObject.put("reimburseDate", currentDate);
+                    dataArrayObject.add(dataObject);
+                }
             }
 
             String myDataStr = dataArrayObject.toJSONString().replaceAll("\\s*", "");
@@ -122,26 +138,25 @@ public class InvoiceReject extends BaseAction {
             JSONObject returnObject = JSONObject.parseObject(returnInvoice);
             JSONObject returnInfo = returnObject.getJSONObject("returnInfo");
             if (!"0000".equals(returnInfo.getString("returnCode"))) {
-                this.writeLog("发票退回并变更发票状态： " + returnInvoice);
+                this.writeLog("发票验重并变更发票状态-分摊带发票InvoiceCheckAndSubmit异常： " + returnInvoice);
                 requestInfo.getRequestManager().setMessageid("110000");
-                requestInfo.getRequestManager().setMessagecontent("发票退回并变更发票状态 异常： " + returnInvoice);
+                requestInfo.getRequestManager().setMessagecontent("发票验重并变更发票状态-分摊带发票InvoiceCheckAndSubmit 异常： " + returnInvoice);
                 return "0";
             }
 
             // 变更发票状态 ( 0：未报销 2：报销中 3：已报销)
-            for (String invoice : bhList) {
-                recordSet.executeUpdate("update uf_fpinfo set reimburseState = 0 where uuid = '" + invoice + "'");
+            for (String invoice : split) {
+                recordSet.executeUpdate("update uf_fpinfo set reimburseState = 2 where uuid = '" + invoice + "'");
             }
 
-            this.writeLog("发票退回并变更发票状态 End ===============");
+            this.writeLog("发票验重并变更发票状态-分摊带发票 End ===============");
         } catch (Exception e) {
-            this.writeLog("发票退回并变更发票状态 异常： " + e);
+            this.writeLog("发票验重并变更发票状态-分摊带发票InvoiceCheckAndSubmit 异常： " + e);
             requestInfo.getRequestManager().setMessageid("110000");
-            requestInfo.getRequestManager().setMessagecontent("发票退回并变更发票状态 异常： " + e);
+            requestInfo.getRequestManager().setMessagecontent("发票验重并变更发票状态-分摊带发票InvoiceCheckAndSubmit 异常： " + e);
             return "0";
         }
 
         return "1";
     }
-
 }

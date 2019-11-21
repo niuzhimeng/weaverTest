@@ -3,6 +3,15 @@ package com.weavernorth.saiwen.myWeb;
 import weaver.conn.RecordSet;
 
 public class WebUtil {
+    /**
+     * 创建凭证
+     */
+    public static String createVoucher(String myXml, String orgId) throws Exception {
+        String[] userInfo = getUserInfo();
+        SevenU9WeaverLocator locator = new SevenU9WeaverLocator();
+        SevenU9WeaverSoap_PortType soap = locator.getSevenU9WeaverSoap();
+        return soap.createVoucherFromXML(myXml, userInfo[0], userInfo[1], orgId);
+    }
 
     /**
      * 获取所有科目信息
@@ -43,6 +52,45 @@ public class WebUtil {
         SevenU9WeaverLocator locator = new SevenU9WeaverLocator();
         SevenU9WeaverSoap_PortType soap = locator.getSevenU9WeaverSoap();
         return soap.createCustomerFromXML(myXml, userInfo[0], userInfo[1], orgId);
+    }
+
+    /**
+     * 创建客户银行账号
+     *
+     * @param myXml 客户银行账号
+     * @param orgId 组织编码
+     */
+    public static String createCustomerBank(String myXml, String orgId) throws Exception {
+        String[] userInfo = getUserInfo();
+        SevenU9WeaverLocator locator = new SevenU9WeaverLocator();
+        SevenU9WeaverSoap_PortType soap = locator.getSevenU9WeaverSoap();
+        return soap.createCustomerBankAccountFromXML(myXml, userInfo[0], userInfo[1], orgId);
+    }
+
+    /**
+     * 创建客户地点信息
+     *
+     * @param myXml 客户银行账号
+     * @param orgId 组织编码
+     */
+    public static String createAddress(String myXml, String orgId) throws Exception {
+        String[] userInfo = getUserInfo();
+        SevenU9WeaverLocator locator = new SevenU9WeaverLocator();
+        SevenU9WeaverSoap_PortType soap = locator.getSevenU9WeaverSoap();
+        return soap.createAddressFromXML(myXml, userInfo[0], userInfo[1], orgId);
+    }
+
+    /**
+     * 创建客户联系对象
+     *
+     * @param myXml 客户银联系对象
+     * @param orgId 组织编码
+     */
+    public static String createContanct(String myXml, String orgId) throws Exception {
+        String[] userInfo = getUserInfo();
+        SevenU9WeaverLocator locator = new SevenU9WeaverLocator();
+        SevenU9WeaverSoap_PortType soap = locator.getSevenU9WeaverSoap();
+        return soap.createContanctFromXML(myXml, userInfo[0], userInfo[1], orgId);
     }
 
     /**

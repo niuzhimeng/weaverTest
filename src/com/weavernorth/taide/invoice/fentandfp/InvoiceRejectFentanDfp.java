@@ -1,7 +1,8 @@
-package com.weavernorth.taide.invoice;
+package com.weavernorth.taide.invoice.fentandfp;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.weavernorth.taide.invoice.ConfigInfo;
 import com.weavernorth.taide.util.TaiDeOkHttpUtils;
 import org.apache.commons.codec.binary.Base64;
 import weaver.conn.RecordSet;
@@ -12,16 +13,17 @@ import weaver.workflow.action.BaseAction;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 发票退回并变更发票状态
+ * 发票退回并变更发票状态-分摊带发票 - 分摊
  */
-public class InvoiceReject extends BaseAction {
+public class InvoiceRejectFentanDfp extends BaseAction {
 
     @Override
     public String execute(RequestInfo requestInfo) {
-        String fpName = "xzfpz"; // 发票字段名
+        String fpName = "xzfp"; // 发票字段名
         String requestId = requestInfo.getRequestid();
         String operateType = requestInfo.getRequestManager().getSrc();
         int formId = requestInfo.getRequestManager().getFormid();
@@ -32,7 +34,7 @@ public class InvoiceReject extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        this.writeLog("发票退回并变更发票状态 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
+        this.writeLog("发票退回并变更发票状态-分摊带发票 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
@@ -40,21 +42,18 @@ public class InvoiceReject extends BaseAction {
             String mxbName = recordSet.getString("mxbName"); // 发票所在明细表名称(_dt1)
             String mainId = recordSet.getString("id");
             String workCode = recordSet.getString("workcode");
+            String fpStr = recordSet.getString(fpName); // 主表发票字段
+
+            String[] split = fpStr.split(",");
+            this.writeLog("所有主表发票号： " + JSONObject.toJSONString(split));
 
             // 发票uuid - 是否抵扣
             Map<String, String> uuidSfdkMap = new HashMap<String, String>();
-
             // 查询明细表
             recordSet.executeQuery("select * from " + tableName + mxbName + " where mainid = " + mainId);
-            List<String> bhList = new ArrayList<String>();
             while (recordSet.next()) {
-                uuidSfdkMap.put(recordSet.getString("fpid"), recordSet.getString("sffp"));
-                if (!"".equals(recordSet.getString(fpName))) {
-                    String[] split = recordSet.getString(fpName).split(",");
-                    bhList.addAll(Arrays.asList(split));
-                }
+                uuidSfdkMap.put(recordSet.getString("uuid"), recordSet.getString("ISDEDUCTIBLE"));
             }
-            this.writeLog("所有发票主表编号： " + JSONObject.toJSONString(bhList));
 
             // 变更发票状态
             String getInvoiceUrl = ConfigInfo.InvoiceUrl.getValue();
@@ -65,7 +64,7 @@ public class InvoiceReject extends BaseAction {
 
             String currentDate = TimeUtil.getCurrentDateString().replace("-", "");
             JSONArray dataArrayObject = new JSONArray();
-            for (String invoice : bhList) {
+            for (String invoice : split) {
                 JSONObject dataObject = new JSONObject(true);
                 dataObject.put("uuid", invoice);
                 dataObject.put("reimburseSerialNo", requestId); // 流程编号
@@ -74,7 +73,7 @@ public class InvoiceReject extends BaseAction {
                 dataObject.put("userId", workCode);
 
                 dataObject.put("certificateNumber", "");
-                dataObject.put("isDeductible", ConnUtil.sfdkChange(Util.null2String(uuidSfdkMap.get(invoice)))); //  是否可抵扣
+                dataObject.put("isDeductible", Util.null2String(uuidSfdkMap.get(invoice))); //  是否可抵扣
                 dataObject.put("reimburseDate", currentDate);
                 dataArrayObject.add(dataObject);
 
@@ -122,22 +121,22 @@ public class InvoiceReject extends BaseAction {
             JSONObject returnObject = JSONObject.parseObject(returnInvoice);
             JSONObject returnInfo = returnObject.getJSONObject("returnInfo");
             if (!"0000".equals(returnInfo.getString("returnCode"))) {
-                this.writeLog("发票退回并变更发票状态： " + returnInvoice);
+                this.writeLog("发票退回并变更发票状态-分摊带发票： " + returnInvoice);
                 requestInfo.getRequestManager().setMessageid("110000");
-                requestInfo.getRequestManager().setMessagecontent("发票退回并变更发票状态 异常： " + returnInvoice);
+                requestInfo.getRequestManager().setMessagecontent("发票退回并变更发票状态-分摊带发票 异常： " + returnInvoice);
                 return "0";
             }
 
             // 变更发票状态 ( 0：未报销 2：报销中 3：已报销)
-            for (String invoice : bhList) {
+            for (String invoice : split) {
                 recordSet.executeUpdate("update uf_fpinfo set reimburseState = 0 where uuid = '" + invoice + "'");
             }
 
-            this.writeLog("发票退回并变更发票状态 End ===============");
+            this.writeLog("发票退回并变更发票状态-分摊带发票 End ===============");
         } catch (Exception e) {
-            this.writeLog("发票退回并变更发票状态 异常： " + e);
+            this.writeLog("发票退回并变更发票状态-分摊带发票 异常： " + e);
             requestInfo.getRequestManager().setMessageid("110000");
-            requestInfo.getRequestManager().setMessagecontent("发票退回并变更发票状态 异常： " + e);
+            requestInfo.getRequestManager().setMessagecontent("发票退回并变更发票状态-分摊带发票 异常： " + e);
             return "0";
         }
 
