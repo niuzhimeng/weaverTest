@@ -31,6 +31,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
@@ -747,14 +748,33 @@ public class TestMain {
     @Test
     public void test33() throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date bdate = simpleDateFormat.parse("2019-11-23");
+        Date bdate = simpleDateFormat.parse("2019-11-24");
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(bdate);
         if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
             System.out.println("双休日");
-        } else
+        } else {
             System.out.println("工作日");
+        }
+
+    }
+
+
+    @Test
+    public void test34() throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        // 检测双休日
+        Date bdate = simpleDateFormat.parse("");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(bdate);
+        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            // 是休息日
+            System.out.println("休息日");
+        } else {
+            System.out.println("工作日");
+        }
 
     }
 

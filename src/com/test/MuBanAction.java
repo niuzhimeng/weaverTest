@@ -21,7 +21,7 @@ public class MuBanAction extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        this.writeLog("费用报销 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
+        this.writeLog("费用报销 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
