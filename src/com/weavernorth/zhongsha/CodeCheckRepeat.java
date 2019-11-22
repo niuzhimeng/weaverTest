@@ -28,26 +28,26 @@ public class CodeCheckRepeat extends BaseAction {
             recordSet.executeQuery("select Application_Number, bhcf from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
             // 申请编号
-            String applicationNumber = recordSet.getString("Application_Number");
+            String applicationNumber = Util.null2String(recordSet.getString("Application_Number")).replaceAll("\\s*", "");
             String bhcf = Util.null2String(recordSet.getString("bhcf")).replaceAll("\\s*", "");
             this.writeLog("系统编号： " + applicationNumber + ", 代码生成编号： " + bhcf);
-            if (!"".equals(bhcf)) {
+            if (!"".equals(applicationNumber)) {
                 this.writeLog("已生成过编号，不做操作。");
                 return "1";
             }
 
             // 查询历史编号
-            recordSet.executeQuery("select Application_Number from " + tableName + " where Application_Number = '" + applicationNumber + "'");
+            recordSet.executeQuery("select bhcf from " + tableName + " where bhcf = '" + bhcf + "'");
             recordSet.next();
             int counts = recordSet.getCounts();
             String alterNum;
             if (counts <= 1) {
-                alterNum = applicationNumber;
+                alterNum = bhcf;
             } else {
-                alterNum = applicationNumber + "-" + (counts - 1);
+                alterNum = bhcf + "-" + (counts - 1);
             }
 
-            String updateSql = "update " + tableName + " set bhcf = '" + alterNum + "'";
+            String updateSql = "update " + tableName + " set Application_Number = '" + alterNum + "' where requestid = '" + requestId + "'";
             this.writeLog("更新编号sql: " + updateSql);
             recordSet.executeUpdate(updateSql);
 

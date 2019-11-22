@@ -560,7 +560,7 @@ public class TestMain {
         long currentTime = System.currentTimeMillis() / 1000;
         MD5 md5 = new MD5();
         String md5ofStr = md5.getMD5ofStr(currentTime + flowStr + loginId);
-        String url = "http://10.1.11.30/workflow/request/gaodeng/GetFlowPortal.jsp?loginId="
+        String url = "http://10.1.11.27/workflow/request/gaodeng/GetFlowPortal.jsp?loginId="
                 + loginId + "&token=" + md5ofStr + "&currentTime=" + currentTime + "&getCounts=10";
         System.out.println(url);
         String s = HTTPUtil.doGet(url);
