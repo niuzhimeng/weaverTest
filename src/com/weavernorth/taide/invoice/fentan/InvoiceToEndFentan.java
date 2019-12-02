@@ -51,12 +51,12 @@ public class InvoiceToEndFentan extends BaseAction {
             this.writeLog("凭证号============ " + sappzh);
             this.writeLog("workCode============ " + workCode);
 
-            if ("".equals(sappzh)) {
-                this.writeLog("凭证号不能为空： " + sappzh);
-                requestInfo.getRequestManager().setMessageid("110000");
-                requestInfo.getRequestManager().setMessagecontent("凭证号不能为空： " + sappzh);
-                return "0";
-            }
+//            if ("".equals(sappzh)) {
+//                this.writeLog("凭证号不能为空： " + sappzh);
+//                requestInfo.getRequestManager().setMessageid("110000");
+//                requestInfo.getRequestManager().setMessagecontent("凭证号不能为空： " + sappzh);
+//                return "0";
+//            }
 
             // 发票uuid - 是否抵扣
             Map<String, String> uuidSfdkMap = new HashMap<String, String>();
