@@ -135,14 +135,20 @@ public class GetGdtz extends BaseCronJob {
     }
 
     private void fuQuan(String currentTimeString, String tableName, int modeId) {
-        ModeRightInfo moderightinfo = new ModeRightInfo();
-        moderightinfo.setNewRight(true);
-        RecordSet maxSet = new RecordSet();
-        maxSet.executeSql("select id from " + tableName + " where MODEDATACREATEDATE + ' ' + MODEDATACREATETIME >= '" + currentTimeString + "'");
+        try {
 
-        while (maxSet.next()) {
-            int maxId = maxSet.getInt("id");
-            moderightinfo.editModeDataShare(1, modeId, maxId);
+            ModeRightInfo moderightinfo = new ModeRightInfo();
+            moderightinfo.setNewRight(true);
+            RecordSet maxSet = new RecordSet();
+            maxSet.executeSql("select id from " + tableName + " where MODEDATACREATEDATE + ' ' + MODEDATACREATETIME >= '" + currentTimeString + "'");
+
+            while (maxSet.next()) {
+                int maxId = maxSet.getInt("id");
+                moderightinfo.rebuildModeDataShareByEdit(1, modeId, maxId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            new BaseBean().writeLog("GetGdtz数据授权异常： " + e);
         }
 
     }
