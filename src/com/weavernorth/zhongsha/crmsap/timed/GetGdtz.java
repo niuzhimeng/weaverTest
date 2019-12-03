@@ -1,5 +1,6 @@
 package com.weavernorth.zhongsha.crmsap.timed;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sap.conn.jco.JCoDestination;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
@@ -8,6 +9,7 @@ import com.weaver.general.BaseBean;
 import com.weavernorth.zhongsha.crmsap.ZhsPoolThree;
 import com.weavernorth.zhongsha.util.ZsConnUtil;
 import weaver.conn.RecordSet;
+import weaver.formmode.setup.ModeRightInfo;
 import weaver.general.TimeUtil;
 import weaver.interfaces.schedule.BaseCronJob;
 
@@ -17,6 +19,8 @@ import java.util.List;
 public class GetGdtz extends BaseCronJob {
 
     private BaseBean baseBean = new BaseBean();
+    private static final Integer mainModeId = 67;
+    private static final Integer detailModeId = 68;
 
     @Override
     public void execute() {
@@ -55,9 +59,11 @@ public class GetGdtz extends BaseCronJob {
 
             String mainSql = "insert into uf_gdtz(gdh, bbh, gdms, xtzt, xttj, " +
                     "pmzylx, zz, sgkssj, sgjssj, gsfy, " +
-                    "jhhm) values(?,?,?,?,?, ?,?,?,?,?, ?)";
-            Object[] mains = new String[11];
+                    "jhhm, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
+                    " values(?,?,?,?,?, ?,?,?,?,?, ?, ?,?,?,?,?)";
+            Object[] mains = new String[16];
             RecordSet insertSet = new RecordSet();
+            String mainCurrentTimeString = TimeUtil.getCurrentTimeString();
             for (int i = 0; i < numRows; i++) {
                 headList.setRow(i);
                 if (mainList.contains(headList.getString("AUFPL"))) {
@@ -76,15 +82,21 @@ public class GetGdtz extends BaseCronJob {
                 mains[9] = headList.getString("WRT04"); // 估算费用
 
                 mains[10] = (headList.getString("AUFPL")); // 计划工艺路线号-关联键
-
+                mains[11] = String.valueOf(mainModeId);
+                mains[12] = "1";
+                mains[13] = "0";
+                mains[14] = mainCurrentTimeString.substring(0, 10);
+                mains[15] = mainCurrentTimeString.substring(11);
                 insertSet.executeUpdate(mainSql, mains);
             }
 
+            this.fuQuan(mainCurrentTimeString, "uf_gdtz", mainModeId);
             baseBean.writeLog("明细数据开始====================");
             String detailSql = "insert into uf_gdtzmxb(jhgylx, js, gxh, gxms, jhfy, " +
-                    "jbksrq, jbjsrq ) values(?,?,?,?,?, ?,?)";
-            Object[] details = new String[7];
-
+                    "jbksrq, jbjsrq, gdh," +
+                    "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime ) values(?,?,?,?,?, ?,?,?, ?,?,?,?,?)";
+            Object[] details = new String[13];
+            String detailCurrentTimeString = TimeUtil.getCurrentTimeString();
             for (int i = 0; i < tableRows; i++) {
                 tableList.setRow(i);
                 String aufpl = tableList.getString("AUFPL");
@@ -100,9 +112,18 @@ public class GetGdtz extends BaseCronJob {
 
                 details[5] = tableList.getString("SSAVD"); // 基本开始日期
                 details[6] = tableList.getString("SSEDD"); // 基本结束日期
+                details[7] = tableList.getString("AUFNR"); // 工单号
+
+                details[8] = String.valueOf(detailModeId);
+                details[9] = "1";
+                details[10] = "0";
+                details[11] = detailCurrentTimeString.substring(0, 10);
+                details[12] = detailCurrentTimeString.substring(11);
+                baseBean.writeLog("details=======" + JSONObject.toJSONString(details));
                 insertSet.executeUpdate(detailSql, details);
             }
 
+            this.fuQuan(detailCurrentTimeString, "uf_gdtzmxb", detailModeId);
             // 插入日志表
             ZsConnUtil.insertTimedLog("uf_gdtz", "获取工单台账主表数据更新成功，共计 " + numRows + "条", numRows, "工单台账主表数据");
             ZsConnUtil.insertTimedLog("uf_gdtzmxb", "获取工单台账明细表数据更新成功，共计 " + tableRows + "条", tableRows, "工单台账明细表数据");
@@ -112,4 +133,18 @@ public class GetGdtz extends BaseCronJob {
 
         baseBean.writeLog("GetGdtz获取工单台账执行End=========== " + TimeUtil.getCurrentTimeString());
     }
+
+    private void fuQuan(String currentTimeString, String tableName, int modeId) {
+        ModeRightInfo moderightinfo = new ModeRightInfo();
+        moderightinfo.setNewRight(true);
+        RecordSet maxSet = new RecordSet();
+        maxSet.executeSql("select id from " + tableName + " where MODEDATACREATEDATE + ' ' + MODEDATACREATETIME >= '" + currentTimeString + "'");
+
+        while (maxSet.next()) {
+            int maxId = maxSet.getInt("id");
+            moderightinfo.editModeDataShare(1, modeId, maxId);
+        }
+
+    }
+
 }
