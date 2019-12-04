@@ -35,13 +35,16 @@ public class ZhuanZhengWorkFlow extends BaseAction {
                 String zzrq = recordSet.getString("zzrq");
                 this.writeLog("转正日期: " + zzrq);
 
+                // 查询字段原值
+                String oldZzrq = JiaJieConnUtil.getCusById(xm, JiaJieConfigInfo.zzrq.getValue()); // 原始【转正日期】
+
                 // 插入自定义表三条数据的基本字段
                 JiaJieConnUtil.insertBaseCus(Integer.parseInt(xm));
                 // 更新此流程中字段
                 recordSet.executeUpdate("update CUS_FIELDDATA set " + JiaJieConfigInfo.zzrq.getValue() + " = ? where id = ?", zzrq, xm);
 
                 // 插入日志
-                JiaJieConnUtil.insertPerCord(xm, requestId, "转正日期", "", zzrq);
+                JiaJieConnUtil.insertPerCord(xm, requestId, "转正日期", oldZzrq, zzrq);
 
                 // 变更人员状态
                 recordSet.executeUpdate("update hrmresource set status = 1 where id = '" + xm + "'");
