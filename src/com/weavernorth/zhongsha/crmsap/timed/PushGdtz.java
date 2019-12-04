@@ -14,14 +14,24 @@ import weaver.interfaces.schedule.BaseCronJob;
 public class PushGdtz extends BaseCronJob {
 
     private BaseBean baseBean = new BaseBean();
+    private String exeDate = "";
+
+    public PushGdtz(String exeDate) {
+        this.exeDate = exeDate;
+    }
 
     @Override
     public void execute() {
         baseBean.writeLog("PushGdtz推送工单台账Start=========== " + TimeUtil.getCurrentTimeString());
         RecordSet recordSet = new RecordSet();
         try {
-            String currentDateString = TimeUtil.getCurrentDateString();
-            String dateAdd = TimeUtil.dateAdd(currentDateString, -1);
+            String selectDate = "";
+            if (!"".equals(exeDate)) {
+                selectDate = exeDate;
+            } else {
+                String currentDateString = TimeUtil.getCurrentDateString();
+                selectDate = TimeUtil.dateAdd(currentDateString, -1);
+            }
 
             JCoDestination jCoDestination = ZhsPoolThree.getJCoDestination();
             jCoDestination.ping();
@@ -31,9 +41,9 @@ public class PushGdtz extends BaseCronJob {
             // 获取输入表
             JCoTable insertTable = function.getTableParameterList().getTable("IT_PMORD_R");
 
-            recordSet.executeQuery("select * from uf_gdtzmxb where rq = '" + dateAdd + "'");
+            recordSet.executeQuery("select * from uf_gdtzmxb where rq = '" + selectDate + "'");
             int counts = recordSet.getCounts();
-            baseBean.writeLog("工单台账推送数据数量： " + counts + ", 数据日期： " + dateAdd);
+            baseBean.writeLog("工单台账推送数据数量： " + counts + ", 数据日期： " + selectDate);
 
             int i = 0;
             while (recordSet.next()) {
@@ -76,5 +86,13 @@ public class PushGdtz extends BaseCronJob {
         }
 
         baseBean.writeLog("PushGdtz推送工单台账执行End=========== " + TimeUtil.getCurrentTimeString());
+    }
+
+    public String getExeDate() {
+        return exeDate;
+    }
+
+    public void setExeDate(String exeDate) {
+        this.exeDate = exeDate;
     }
 }
