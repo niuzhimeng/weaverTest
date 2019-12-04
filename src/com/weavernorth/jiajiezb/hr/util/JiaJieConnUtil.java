@@ -67,9 +67,11 @@ public class JiaJieConnUtil {
      * 是否下拉框转换为文字
      */
     public static String yesOrNoChange(String sf) {
-        String shiFouStr = "否";
+        String shiFouStr = "";
         if ("0".equals(sf)) {
             shiFouStr = "是";
+        } else if ("1".equals(sf)) {
+            shiFouStr = "否";
         }
         return shiFouStr;
     }

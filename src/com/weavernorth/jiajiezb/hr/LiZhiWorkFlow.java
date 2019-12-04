@@ -36,7 +36,11 @@ public class LiZhiWorkFlow extends BaseAction {
                 String gzjsr = recordSet.getString("gzjsr");
                 this.writeLog("是否有经济补偿金: " + jjbcjm + ", 离职日期（工资结算日）: " + gzjsr);
 
-                jjbcjm = JiaJieConnUtil.yesOrNoChange(jjbcjm);
+                String jjbcjmStr = JiaJieConnUtil.yesOrNoChange(jjbcjm);
+
+                // 查询字段原值
+                String oldSfyjjbc = JiaJieConnUtil.yesOrNoChange(JiaJieConnUtil.getCusById(xm, JiaJieConfigInfo.sfyjjbc.getValue())); // 原始【否有经济补偿金】
+                String oldlzrq = JiaJieConnUtil.getCusById(xm, JiaJieConfigInfo.lzrq.getValue()); // 原始【离职日期】
 
                 // 插入自定义表三条数据的基本字段
                 JiaJieConnUtil.insertBaseCus(Integer.parseInt(xm));
@@ -45,8 +49,8 @@ public class LiZhiWorkFlow extends BaseAction {
                         JiaJieConfigInfo.lzrq.getValue() + " = ? where id = ?", jjbcjm, gzjsr, xm);
 
                 // 插入日志
-                JiaJieConnUtil.insertPerCord(xm, requestId, "离职日期", "", gzjsr);
-                JiaJieConnUtil.insertPerCord(xm, requestId, "是否有经济补偿金", "", jjbcjm);
+                JiaJieConnUtil.insertPerCord(xm, requestId, "离职日期", oldlzrq, gzjsr);
+                JiaJieConnUtil.insertPerCord(xm, requestId, "是否有经济补偿金", oldSfyjjbc, jjbcjmStr);
             }
             this.writeLog("离职流程 End ===============");
         } catch (Exception e) {
