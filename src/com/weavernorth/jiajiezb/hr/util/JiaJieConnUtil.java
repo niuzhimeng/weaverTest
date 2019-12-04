@@ -4,12 +4,21 @@ import weaver.conn.RecordSet;
 import weaver.formmode.setup.ModeRightInfo;
 import weaver.general.TimeUtil;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class JiaJieConnUtil {
     private static RecordSet updateSet = new RecordSet();
+    public static Map<String, String> zjMap = new HashMap<String, String>();
+
+    static {
+        zjMap.put("0", "A");
+        zjMap.put("1", "B");
+        zjMap.put("2", "C");
+        zjMap.put("3", "D");
+        zjMap.put("4", "E");
+        zjMap.put("5", "F");
+        zjMap.put("6", "G");
+    }
 
     /**
      * 查询人员自定义的某个字段
