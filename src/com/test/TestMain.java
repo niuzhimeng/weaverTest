@@ -778,6 +778,27 @@ public class TestMain {
 
     }
 
+    @Test
+    public void test35() {
+        String[] indexs = {"-1", "1", "3"};
+        Set<String> allSet = new HashSet<String>(Arrays.asList(indexs));
+        allSet.add("3");
+        Set<String> bfSet = new HashSet<String>();
+        //bfSet.add("-1");
+        bfSet.add("1");
+        bfSet.add("3");
+        bfSet.add("");
+        allSet.removeAll(bfSet);
+
+        System.out.println(JSONObject.toJSONString(allSet));
+    }
+
+    @Test
+    public void test36() {
+        System.out.println(UUID.randomUUID().toString().replace("-", ""));
+    }
+
+
 }
 
 

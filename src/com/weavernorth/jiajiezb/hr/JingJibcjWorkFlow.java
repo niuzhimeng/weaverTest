@@ -41,19 +41,23 @@ public class JingJibcjWorkFlow extends BaseAction {
             String lzrq = recordSet.getString("lzrq");
             this.writeLog("补偿金: " + bcje + ", 离职日期（工资结算日）: " + lzrq);
 
+            String oldLzrq = JiaJieConnUtil.getCusById(xm, JiaJieConfigInfo.lzrq.getValue()); // 原始离职日期
+            this.writeLog("原离职日期： " + oldLzrq);
             // 插入自定义表三条数据的基本字段
             JiaJieConnUtil.insertBaseCus(Integer.parseInt(xm));
             // 更新此流程中字段
             recordSet.executeUpdate("update CUS_FIELDDATA set " + JiaJieConfigInfo.lzrq.getValue() + " = ? where id = ?", lzrq, xm);
 
             // 更新建模表
-            recordSet.executeQuery("select 1 from uf_jtxz where xm = '" + xm + "'");
+            String bcj = ""; // 补偿金
+            recordSet.executeQuery("select * from uf_jtxz where xm = '" + xm + "'");
             RecordSet updateSet = new RecordSet();
             if (recordSet.next()) {
-                // 更新
+                this.writeLog("更新建模========");
+                bcj = recordSet.getString("jjbcjje");
                 updateSet.executeUpdate("update uf_jtxz set jjbcjje = ? where xm = ?", bcje, xm);
             } else {
-                // 新增
+                this.writeLog("新增建模========");
                 updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jjbcjje," +
                                 "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
                                 " values(?,?,?,?, ?,?,?,?,?)",
@@ -63,8 +67,8 @@ public class JingJibcjWorkFlow extends BaseAction {
             }
 
             // 插入日志
-            JiaJieConnUtil.insertPerCord(xm, requestId, "离职日期", "", lzrq);
-            JiaJieConnUtil.insertPerCord(xm, requestId, "补偿金", "", bcje);
+            JiaJieConnUtil.insertPerCord(xm, requestId, "离职日期", oldLzrq, lzrq);
+            JiaJieConnUtil.insertPerCord(xm, requestId, "补偿金", bcj, bcje);
 
             this.writeLog("经济补偿金流程 End ===============");
         } catch (Exception e) {
@@ -76,4 +80,5 @@ public class JingJibcjWorkFlow extends BaseAction {
 
         return "1";
     }
+
 }

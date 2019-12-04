@@ -11,16 +11,40 @@ import java.util.Set;
 public class JiaJieConnUtil {
     private static RecordSet updateSet = new RecordSet();
 
+    /**
+     * 查询人员自定义的某个字段
+     *
+     * @param userId 人员id
+     * @param fileId 自定义字段id
+     */
+    public static String getCusById(String userId, String fileId) {
+        if (userId == null || "".equals(userId) || fileId == null || "".equals(fileId)) {
+            return "";
+        }
+        RecordSet recordSet = new RecordSet();
+        String returnStr = "";
+        recordSet.executeQuery("select " + fileId + " from CUS_FIELDDATA where id = '" + userId + "'");
+        while (recordSet.next()) {
+            if (!"".equals(recordSet.getString(fileId))) {
+                returnStr = recordSet.getString(fileId);
+            }
+        }
+        return returnStr;
+    }
+
+    /**
+     * 建模赋权
+     */
     public static void fuQuan(String currentTimeString, String tableName, int modeId) {
         ModeRightInfo moderightinfo = new ModeRightInfo();
         moderightinfo.setNewRight(true);
         RecordSet maxSet = new RecordSet();
-        maxSet.executeSql("select id from " + tableName + " where MODEDATACREATEDATE + ' ' + MODEDATACREATETIME >= '" + currentTimeString + "'");
+        maxSet.executeSql("select id from " + tableName + " where MODEDATACREATEDATE || ' ' || MODEDATACREATETIME >= '" + currentTimeString + "'");
 
         int maxId;
         while (maxSet.next()) {
             maxId = maxSet.getInt("id");
-            moderightinfo.editModeDataShare(1, modeId, maxId);//创建人id， 模块id， 该条数据id
+            moderightinfo.rebuildModeDataShareByEdit(1, modeId, maxId); //创建人id， 模块id， 该条数据id
         }
     }
 
