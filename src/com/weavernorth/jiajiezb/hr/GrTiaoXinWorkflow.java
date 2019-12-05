@@ -7,12 +7,12 @@ import weaver.general.TimeUtil;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
-import java.util.Map;
-
 /**
  * 个人调薪流程
  */
 public class GrTiaoXinWorkflow extends BaseAction {
+
+    private RecordSet connSet = new RecordSet();
 
     @Override
     public String execute(RequestInfo requestInfo) {
@@ -28,7 +28,7 @@ public class GrTiaoXinWorkflow extends BaseAction {
         String detailCurrentTimeString = TimeUtil.getCurrentTimeString();
         this.writeLog("个人调薪流程 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
-            Map<String, String> zjMap = JiaJieConnUtil.zjMap;
+
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
@@ -79,7 +79,8 @@ public class GrTiaoXinWorkflow extends BaseAction {
             this.writeLog("基本工资原值: " + jbgz + ", 现值： " + hjbgz);
 
             // 插入日志
-            JiaJieConnUtil.insertPerCord(xm, requestId, "职级", zjMap.get(oldZhiJi), zjMap.get(hzj));
+            JiaJieConnUtil.insertPerCord(xm, requestId, "职级", getGgxzk(JiaJieConfigInfo.ZHI_JI_SEL.getValue(), oldZhiJi),
+                    getGgxzk(JiaJieConfigInfo.ZHI_JI_SEL.getValue(), hzj));
             JiaJieConnUtil.insertPerCord(xm, requestId, "调整日期", oldTiaoZRQ, sxrq);
             JiaJieConnUtil.insertPerCord(xm, requestId, "基本工资", jbgz, hjbgz);
             this.writeLog("个人调薪流程 End ===============");
@@ -91,5 +92,20 @@ public class GrTiaoXinWorkflow extends BaseAction {
         }
 
         return "1";
+    }
+
+    /**
+     * 查询公共选择框的汉字显示
+     *
+     * @param mainId   公共选择框id
+     * @param disorder 选项id
+     */
+    private String getGgxzk(String mainId, String disorder) {
+        String returnStr = "";
+        connSet.executeQuery(" SELECT NAME FROM MODE_SELECTITEMPAGEDETAIL WHERE MAINID = '" + mainId + "' and DISORDER = '" + disorder + "'");
+        if (connSet.next()) {
+            returnStr = connSet.getString("NAME");
+        }
+        return returnStr;
     }
 }

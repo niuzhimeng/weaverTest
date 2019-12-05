@@ -1,23 +1,67 @@
 package com.weavernorth.jiajiezb.hr.util;
 
+import com.weavernorth.jiajiezb.hr.vo.JtDifferent;
 import weaver.conn.RecordSet;
 import weaver.formmode.setup.ModeRightInfo;
 import weaver.general.TimeUtil;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class JiaJieConnUtil {
-    private static RecordSet updateSet = new RecordSet();
-    public static Map<String, String> zjMap = new HashMap<String, String>();
+    public static Map<String, String> zdMap = new HashMap<String, String>();
 
     static {
-        zjMap.put("0", "A");
-        zjMap.put("1", "B");
-        zjMap.put("2", "C");
-        zjMap.put("3", "D");
-        zjMap.put("4", "E");
-        zjMap.put("5", "F");
-        zjMap.put("6", "G");
+        zdMap.put("bm", "部门");
+        zdMap.put("gw", "岗位");
+        zdMap.put("ddrq", "调动日期");
+        zdMap.put("gwlx", "岗位类型");
+        zdMap.put("zz", "职级");
+
+        zdMap.put("bgdd", "办公地点");
+        zdMap.put("wxyj", "五险一金缴纳地");
+        zdMap.put("ldhtqs", "劳动合同签署主体");
+        zdMap.put("bps", "BPS审批人");
+        zdMap.put("cwou", "财务OU");
+    }
+
+    /**
+     * 对比找出两对象不同字段
+     *
+     * @param beforeObj 旧对象
+     * @param afterObj  新对象
+     * @throws Exception
+     */
+    public static List<JtDifferent> compareObj(Object beforeObj, Object afterObj) throws Exception {
+        List<JtDifferent> differentList = new ArrayList<JtDifferent>();
+
+        if (!beforeObj.getClass().isAssignableFrom(afterObj.getClass())) {
+            throw new Exception("两个对象不相同，无法比较");
+        }
+
+        //取出属性
+        Field[] beforeFields = beforeObj.getClass().getDeclaredFields();
+        Field[] afterFields = afterObj.getClass().getDeclaredFields();
+        Field.setAccessible(beforeFields, true);
+        Field.setAccessible(afterFields, true);
+
+        //遍历取出差异值
+        for (int i = 0; i < beforeFields.length; i++) {
+            String beforeValue = String.valueOf(beforeFields[i].get(beforeObj));
+            String afterValue = String.valueOf(afterFields[i].get(afterObj));
+            // 有值 ->
+            boolean a = (beforeValue != null && !"".equals(beforeValue)) && !beforeValue.equals(afterValue);
+            // 无值 ->
+            boolean b = (beforeValue == null || "".equals(beforeValue)) && (afterValue != null && !"".equals(afterValue));
+            if (a || b) {
+                JtDifferent different = new JtDifferent();
+                different.setFieldId(beforeFields[i].getName());
+                different.setBeforeValue(beforeValue);
+                different.setAlterValue(afterValue);
+                differentList.add(different);
+            }
+        }
+        return differentList;
     }
 
     /**
@@ -68,6 +112,7 @@ public class JiaJieConnUtil {
      */
     public static void insertPerCord(String bgr, String bglc, String zdmc, String yz, String xz) throws Exception {
         String currentDateString = TimeUtil.getCurrentDateString();
+        RecordSet updateSet = new RecordSet();
         updateSet.executeUpdate("insert into UF_RYKPBG(bgr, bglc, sxrq, zdmc, yz, xz) values(?,?,?,?,?, ?)",
                 bgr, bglc, currentDateString, zdmc, yz, xz);
     }

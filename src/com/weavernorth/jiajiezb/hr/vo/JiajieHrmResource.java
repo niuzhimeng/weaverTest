@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * 人员信息
  */
-public class ZsHrmResource {
+public class JiajieHrmResource {
 
     private BaseBean baseBean = new BaseBean();
 
