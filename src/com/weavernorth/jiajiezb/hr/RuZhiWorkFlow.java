@@ -57,7 +57,7 @@ public class RuZhiWorkFlow extends BaseAction {
             jiajieHrmResource.setLoginid("");
             jiajieHrmResource.setEmail("");
             jiajieHrmResource.setMobile("");
-            jiajieHrmResource.setManagerstr(zsld);
+            jiajieHrmResource.setManagerIdReal(zsld);
             jiajieHrmResource.setJobtitleId(gw);
 
             jiajieHrmResource.setProbationenddate(syjsrq);
@@ -84,7 +84,7 @@ public class RuZhiWorkFlow extends BaseAction {
                 jiajieHrmResource.setId(xm);
                 insertHrmResource(jiajieHrmResource);
             }
-            this.writeLog("操作hrmresource表结束===============");
+            this.writeLog("操作hrmresource表结束===============" + jiajieHrmResource.toString());
 
             // 自定义表部分 ====================
             RecordSet zdySet = new RecordSet();
@@ -99,6 +99,9 @@ public class RuZhiWorkFlow extends BaseAction {
             String qykssj = recordSet.getString("qykssj"); // 劳动合同签约开始时间
             String qyjssj = recordSet.getString("qykssj"); // 劳动合同签约结束时间
             String ypsqb = recordSet.getString("ypsqb"); // 应聘申请表
+            this.writeLog("职级: " + zj + ", 岗位类型: " + gwlx + ", 办公地点: " + bgdd + ", 财务OU: " + cwou + ", 劳动合同签署主体: " + ldhtqszt);
+            this.writeLog("BPS审批人: " + bpsspr + ", 五险一金缴纳地: " + wxyj + ", 劳动合同签约开始时间: " + qykssj +
+                    ", 劳动合同签约结束时间: " + qyjssj + ", 应聘申请表: " + ypsqb);
 
             if ("0".equals(lb)) {
                 // 经营类（业务）
@@ -119,13 +122,13 @@ public class RuZhiWorkFlow extends BaseAction {
             String updateSql = "update CUS_FIELDDATA set " + JiaJieConfigInfo.ZHI_JI.getValue() + " = ?, " + JiaJieConfigInfo.GWLX.getValue() + " = ?, "
                     + JiaJieConfigInfo.BGDD.getValue() + " = ?, " + JiaJieConfigInfo.CWOU.getValue() + " = ?," + JiaJieConfigInfo.LDHT.getValue() + " = ?, "
                     + JiaJieConfigInfo.BPS.getValue() + " = ?, " + JiaJieConfigInfo.WXYJ.getValue() + " = ?, " + JiaJieConfigInfo.QYKSRQ.getValue() + " = ?, "
-                    + JiaJieConfigInfo.QYJSRQ.getValue() + " = ? where id = ?";
+                    + JiaJieConfigInfo.QYJSRQ.getValue() + " = ?, " + JiaJieConfigInfo.YPSQB.getValue() + " = ? where id = ?";
             this.writeLog("入职流程更新自定义表sql: " + updateSql);
             zdySet.executeUpdate(updateSql,
                     zj, gwlx,
                     bgdd, cwou, ldhtqszt,
                     bpsspr, wxyj, qykssj,
-                    qyjssj, xm);
+                    qyjssj, ypsqb, xm);
             this.writeLog("更新自定义表结束============");
 
             //清除缓存
@@ -135,6 +138,8 @@ public class RuZhiWorkFlow extends BaseAction {
             String jbgz1 = recordSet.getString("jbgz1"); // 基本工资
             String jjbl = recordSet.getString("jjbl"); // 奖金比例
             String sbjs = recordSet.getString("sbjs"); // 社保基数
+            this.writeLog("基本工资: " + jbgz1 + ", 奖金比例: " + jjbl + ", 社保基数: " + sbjs);
+
             recordSet.executeQuery("select * from uf_jtxz where xm = '" + xm + "'");
             RecordSet updateSet = new RecordSet();
             if (recordSet.next()) {
@@ -211,7 +216,8 @@ public class RuZhiWorkFlow extends BaseAction {
         ConnStatement statement = new ConnStatement();
         try {
             String sql = "update hrmresource set lastname = ?, status = ?, sex = ?, locationid = ?, mobile = ?, " +
-                    "departmentid = ?, subcompanyid1 = ?, email = ?, workcode = ?, telephone = ? where id = ?";
+                    "departmentid = ?, subcompanyid1 = ?, email = ?, workcode = ?, telephone = ?, " +
+                    "jobtitle = ?, managerid = ?, probationenddate = ? where id = ?";
             statement.setStatementSql(sql);
 
             statement.setString(1, hrmResource.getLastname());
@@ -226,7 +232,10 @@ public class RuZhiWorkFlow extends BaseAction {
             statement.setString(9, hrmResource.getWorkcode());
             statement.setString(10, hrmResource.getTelephone());
 
-            statement.setString(11, hrmResource.getId());
+            statement.setString(11, hrmResource.getJobtitleId());
+            statement.setString(12, hrmResource.getManagerIdReal());
+            statement.setString(13, hrmResource.getProbationenddate());
+            statement.setString(14, hrmResource.getId());
             statement.executeUpdate();
 
         } catch (Exception e) {

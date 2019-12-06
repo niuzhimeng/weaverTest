@@ -113,6 +113,36 @@ public class JiajieHrmResource {
         }
     }
 
+    @Override
+    public String toString() {
+        return "JiajieHrmResource{" +
+                "workcode='" + workcode + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", loginid='" + loginid + '\'' +
+                ", status='" + status + '\'' +
+                ", sex='" + sex + '\'' +
+                ", location='" + location + '\'' +
+                ", email='" + email + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", depId='" + depId + '\'' +
+                ", subId='" + subId + '\'' +
+                ", jobtitleId='" + jobtitleId + '\'' +
+                ", managerIdReal='" + managerIdReal + '\'' +
+                ", managerstr='" + managerstr + '\'' +
+                ", seclevel='" + seclevel + '\'' +
+                ", accounttype='" + accounttype + '\'' +
+                ", belongto='" + belongto + '\'' +
+                ", systemlanguage='" + systemlanguage + '\'' +
+                ", passWord='" + passWord + '\'' +
+                ", id='" + id + '\'' +
+                ", statusOa='" + statusOa + '\'' +
+                ", locationId='" + locationId + '\'' +
+                ", probationenddate='" + probationenddate + '\'' +
+                ", dsporder='" + dsporder + '\'' +
+                ", telephone='" + telephone + '\'' +
+                '}';
+    }
+
     public String getProbationenddate() {
         return probationenddate;
     }
