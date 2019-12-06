@@ -17,6 +17,8 @@ public enum JiaJieConfigInfo {
     BPS("field73"), // BPS审批人
     CWOU("field76"), // 财务OU
     CWOU_SEL("3045"), // 财务OU-公共选择框id
+    QYKSRQ("field76"), // 合同签约开始日期
+    QYJSRQ("field76"), // 合同签约结束日期
     TIAO_ZHENG_RI_QI("field81"); // 调整日期
 
 

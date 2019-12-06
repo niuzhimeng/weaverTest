@@ -22,7 +22,7 @@ public class JiajieHrmResource {
 
     private String location;//工作地点
     private String email;//电子邮件
-    private String phone;//手机
+    private String mobile;//手机
     private String depId;//部门id
     private String subId;//分部id
 
@@ -38,7 +38,10 @@ public class JiajieHrmResource {
     private String id;
     private String statusOa; //员工状态
 
-    private String locationId;
+    private String locationId; // 工作地点
+    private String probationenddate; // 试用期结束日期
+    private String dsporder; // 显示顺序
+    private String telephone; // 座机
 
     /**
      * 获取所有上级String
@@ -110,6 +113,14 @@ public class JiajieHrmResource {
         }
     }
 
+    public String getProbationenddate() {
+        return probationenddate;
+    }
+
+    public void setProbationenddate(String probationenddate) {
+        this.probationenddate = probationenddate;
+    }
+
     public String getWorkcode() {
         return workcode;
     }
@@ -166,12 +177,28 @@ public class JiajieHrmResource {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getDsporder() {
+        return dsporder;
+    }
+
+    public void setDsporder(String dsporder) {
+        this.dsporder = dsporder;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 
     public String getDepId() {
