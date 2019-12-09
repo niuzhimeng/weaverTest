@@ -74,10 +74,10 @@ public class RuZhiWorkFlow extends BaseAction {
             RecordSet sysSet = new RecordSet();
             sysSet.executeQuery("select id from hrmresource where workcode = '" + ygbh + "'");
             if (sysSet.next()) {
-                this.writeLog("更新hrmresource表===============");
-                xm = sysSet.getString("id");
-                jiajieHrmResource.setId(xm);
-                updateHrmResource(jiajieHrmResource);
+                this.writeLog("工号已存在===============" + ygbh);
+                requestInfo.getRequestManager().setMessageid("110000");
+                requestInfo.getRequestManager().setMessagecontent("工号已存在===============" + ygbh);
+                return "0";
             } else {
                 this.writeLog("插入hrmresource表===============");
                 xm = String.valueOf(getHrmMaxId());
@@ -99,10 +99,6 @@ public class RuZhiWorkFlow extends BaseAction {
             String qykssj = recordSet.getString("qykssj"); // 劳动合同签约开始时间
             String qyjssj = recordSet.getString("qykssj"); // 劳动合同签约结束时间
             String ypsqb = recordSet.getString("ypsqb"); // 应聘申请表
-            this.writeLog("职级: " + zj + ", 岗位类型: " + gwlx + ", 办公地点: " + bgdd + ", 财务OU: " + cwou + ", 劳动合同签署主体: " + ldhtqszt);
-            this.writeLog("BPS审批人: " + bpsspr + ", 五险一金缴纳地: " + wxyj + ", 劳动合同签约开始时间: " + qykssj +
-                    ", 劳动合同签约结束时间: " + qyjssj + ", 应聘申请表: " + ypsqb);
-
             if ("0".equals(lb)) {
                 // 经营类（业务）
                 gwlx = recordSet.getString("gwlxyw");
@@ -116,6 +112,10 @@ public class RuZhiWorkFlow extends BaseAction {
                 cwou = recordSet.getString("cwouzn");
                 ldhtqszt = recordSet.getString("ldhtqsztzn");
             }
+            this.writeLog("职级: " + zj + ", 岗位类型: " + gwlx + ", 办公地点: " + bgdd + ", 财务OU: " + cwou + ", 劳动合同签署主体: " + ldhtqszt);
+            this.writeLog("BPS审批人: " + bpsspr + ", 五险一金缴纳地: " + wxyj + ", 劳动合同签约开始时间: " + qykssj +
+                    ", 劳动合同签约结束时间: " + qyjssj + ", 应聘申请表: " + ypsqb);
+
             // 插入自定义表三条数据的基本字段
             JiaJieConnUtil.insertBaseCus(Integer.parseInt(xm));
             // 更新

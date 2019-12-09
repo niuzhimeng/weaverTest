@@ -22,7 +22,9 @@ public enum JiaJieConfigInfo {
     CWOU_SEL("3045"), // 财务OU-公共选择框id
     QYKSRQ("field76"), // 合同签约开始日期
     QYJSRQ("field76"), // 合同签约结束日期
-    YPSQB("fieldxx"), // 应聘申请表
+    RZRQ("field21"), // 入职日期
+    YPSQB("field75"), // 应聘申请表
+
     TIAO_ZHENG_RI_QI("field81"); // 调整日期
 
 
