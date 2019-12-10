@@ -1,9 +1,5 @@
 package com.weavernorth.workflow;
 
-import weaver.conn.RecordSet;
-import weaver.formmode.interfaces.action.BaseAction;
-import weaver.general.Util;
-import weaver.soa.workflow.request.RequestInfo;
 import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
 import com.weaver.general.BaseBean;
@@ -11,6 +7,11 @@ import com.weaver.integration.datesource.SAPInterationOutUtil;
 import com.weaver.integration.log.LogInfo;
 import com.weavernorth.util.LogUtil;
 import com.weavernorth.workflow.payment.SAPUtil;
+import weaver.conn.RecordSet;
+import weaver.formmode.interfaces.action.BaseAction;
+import weaver.general.Util;
+import weaver.hrm.User;
+import weaver.soa.workflow.request.RequestInfo;
 
 /**
  * 节点后附加操作,推送费用报销流程数据,生成会计凭证
@@ -52,11 +53,14 @@ public class WfCost_SAP extends BaseAction {
      */
     /// 如果是项目报销   成本中心不传，传wbs的字段给  PSRNR_Z    公司报销的 单人主表成本中心     多人dt2的成本中心
     public String Voucher_SAP(RequestInfo request) {
+        User usr = request.getRequestManager().getUser();
         RecordSet RsSelectTabel = new RecordSet();
         RecordSet RsStructure = new RecordSet();
         RecordSet RsTable_main = new RecordSet();
         RecordSet RsTable_1 = new RecordSet();
         RecordSet RsTable_2 = new RecordSet();
+        // 当前操作人id
+        String currentLoginId = usr.getLoginid();
         // SAP返回值信息
         String strMsg = "";
         // SAP返回类型
@@ -106,6 +110,7 @@ public class WfCost_SAP extends BaseAction {
             // 凭证抬头文本
             BKTXT = RsStructure.getString("pzttwb");
         }
+        LogUtil.doWriteLog("==当前操作人loginid==" + currentLoginId);
         LogUtil.doWriteLog("==凭证日期==" + BLDAT);
         LogUtil.doWriteLog("==过账日期==" + PSTNG_DATE);
         LogUtil.doWriteLog("==凭证类型==" + BLART);
@@ -128,7 +133,7 @@ public class WfCost_SAP extends BaseAction {
         structure_HEADER.setValue(GJAHR, "GJAHR");
         structure_HEADER.setValue("RMB", "WAERS");
         structure_HEADER.setValue(BKTXT, "BKTXT");
-        structure_HEADER.setValue("V-JJ.XU", "USNAM");
+        structure_HEADER.setValue(currentLoginId, "USNAM");
         // 输入表
         JCO.Table tablein_T_KJPZ = function.getTableParameterList().getTable("T_KJPZ");
         // 查询报销人数
@@ -209,7 +214,7 @@ public class WfCost_SAP extends BaseAction {
                 } else {
                     // 13 成本中心 是项目报销或者是pc项目报销时  不传成本中心  传wbs
                     tablein_T_KJPZ.setValue(Util.null2String(RsTable_main.getString("fykmm")), "HKONT_Z");
-                    if (bxlx.equals("1") || bxlx.equals("2")|| bxlx.equals("3")) {
+                    if (bxlx.equals("1") || bxlx.equals("2") || bxlx.equals("3")) {
                         tablein_T_KJPZ.setValue(Util.null2String(RsTable_main.getString("wbs")), "PSRNR_Z");
                     } else {
                         tablein_T_KJPZ.setValue(Util.null2String(RsTable_main.getString("cbzxm")), "KOSTL_Z");
@@ -532,7 +537,7 @@ public class WfCost_SAP extends BaseAction {
                             // 10 总账科目号   主表
                             tablein_T_KJPZ.setValue(Util.null2String(RsTable_1.getString("fykmm")), "HKONT_Z");
                             // 15 WBS元素
-                            if (bxlx.equals("1") || bxlx.equals("2")|| bxlx.equals("3")) {
+                            if (bxlx.equals("1") || bxlx.equals("2") || bxlx.equals("3")) {
                                 tablein_T_KJPZ.setValue(Util.null2String(RsTable_1.getString("wbs")), "PSRNR_Z");
                             } else {
                                 tablein_T_KJPZ.setValue(Util.null2String(RsTable_1.getString("cbzxm")), "KOSTL_Z");

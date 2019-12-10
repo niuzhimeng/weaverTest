@@ -23,9 +23,13 @@ public enum JiaJieConfigInfo {
     QYKSRQ("field76"), // 合同签约开始日期
     QYJSRQ("field76"), // 合同签约结束日期
     RZRQ("field21"), // 入职日期
-    YPSQB("field75"), // 应聘申请表
+    YPSQB("field93"), // 应聘申请表
 
-    TIAO_ZHENG_RI_QI("field81"); // 调整日期
+    TIAO_ZHENG_RI_QI("field81"), // 调整日期
+    ZONG_BU_ID("21"), // 总部id
+    JT_SYQZZ_FLOW_ID("22001"), // JT_试用期转正提醒*
+    JT_ZZ_FLOW_ID("22002"), // JT_转正提醒*
+    TRIGGER_TABLE_NAME("uf_triggered_zb"); // 定时触发流程，记录表名
 
 
     JiaJieConfigInfo(String value) {

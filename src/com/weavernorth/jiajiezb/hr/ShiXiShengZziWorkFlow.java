@@ -102,7 +102,7 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             // 找出变动的对象
             List<JtDifferent> sysDifferentList = JiaJieConnUtil.compareObj(sysOldInfo, sysNewInfo);
             for (JtDifferent different : sysDifferentList) {
-                JiaJieConnUtil.insertPerCord(xm, requestId, zdMap.get(different.getFieldId()), different.getBeforeValue(), different.getAlterValue());
+                insertPerCord(xm, requestId, zdMap.get(different.getFieldId()), different.getBeforeValue(), different.getAlterValue());
             }
 
             this.writeLog("操作hrmresource表结束===============" + jiajieHrmResource.toString());
@@ -156,7 +156,7 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
 
             List<JtDifferent> zdyDifferentList = JiaJieConnUtil.compareObj(zdyOldInfo, zdyNewInfo);
             for (JtDifferent different : zdyDifferentList) {
-                JiaJieConnUtil.insertPerCord(xm, requestId, zdMap.get(different.getFieldId()), different.getBeforeValue(), different.getAlterValue());
+                insertPerCord(xm, requestId, zdMap.get(different.getFieldId()), different.getBeforeValue(), different.getAlterValue());
             }
             this.writeLog("更新自定义表结束============");
 
@@ -191,7 +191,7 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             modeNewInfo.setSbjs(sbjs);
             List<JtDifferent> differentList = JiaJieConnUtil.compareObj(modeOldInfo, modeNewInfo);
             for (JtDifferent different : differentList) {
-                JiaJieConnUtil.insertPerCord(xm, requestId, zdMap.get(different.getFieldId()), different.getBeforeValue(), different.getAlterValue());
+                insertPerCord(xm, requestId, zdMap.get(different.getFieldId()), different.getBeforeValue(), different.getAlterValue());
             }
             this.writeLog("实习生转正流程 End ===============");
         } catch (Exception e) {
