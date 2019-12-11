@@ -90,7 +90,6 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             jiajieHrmResource.setSubId(fb);
             jiajieHrmResource.setProbationenddate(syqjs);
 
-            updateHrmResource(jiajieHrmResource);
             // 插入变更记录表
             ShiXiShengVo sysOldInfo = getSysOldInfo(xm); // 获取系统表旧字段
             ShiXiShengVo sysNewInfo = new ShiXiShengVo();
@@ -104,7 +103,8 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             for (JtDifferent different : sysDifferentList) {
                 insertPerCord(xm, requestId, zdMap.get(different.getFieldId()), different.getBeforeValue(), different.getAlterValue());
             }
-
+            // 跟新系统表
+            updateHrmResource(jiajieHrmResource);
             this.writeLog("操作hrmresource表结束===============" + jiajieHrmResource.toString());
 
             // 自定义表部分 ====================
@@ -125,20 +125,6 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             this.writeLog("BPS审批人: " + bpsspr + ", 五险一金缴纳地: " + wxyj + ", 劳动合同签约开始时间: " + htksrq +
                     ", 劳动合同签约结束时间: " + htjsrq + ", 入职日期: " + rzrq);
 
-            // 插入自定义表三条数据的基本字段
-            JiaJieConnUtil.insertBaseCus(Integer.parseInt(xm));
-            // 更新
-            String updateSql = "update CUS_FIELDDATA set " + JiaJieConfigInfo.ZHI_JI.getValue() + " = ?, " + JiaJieConfigInfo.GWLX.getValue() + " = ?, "
-                    + JiaJieConfigInfo.BPS.getValue() + " = ?, " + JiaJieConfigInfo.BGDD.getValue() + " = ?," + JiaJieConfigInfo.WXYJ.getValue() + " = ?, "
-                    + JiaJieConfigInfo.CWOU.getValue() + " = ?, " + JiaJieConfigInfo.RZRQ.getValue() + " = ?, " + JiaJieConfigInfo.LDHT.getValue() + " = ?, "
-                    + JiaJieConfigInfo.QYKSRQ.getValue() + " = ?, " + JiaJieConfigInfo.QYJSRQ.getValue() + " = ? where id = ?";
-            this.writeLog("入职流程更新自定义表sql: " + updateSql);
-            zdySet.executeUpdate(updateSql,
-                    zj, gwlx,
-                    bpsspr, bgdd, wxyj,
-                    cwou, rzrq, htqszt,
-                    htksrq, htjsrq, xm);
-
             // 找出变动的对象
             ShiXiShengVo zdyOldInfo = getZdyOldInfo(xm); // 获取自定义表旧字段
             ShiXiShengVo zdyNewInfo = new ShiXiShengVo(); // 自定义新对象
@@ -158,6 +144,20 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             for (JtDifferent different : zdyDifferentList) {
                 insertPerCord(xm, requestId, zdMap.get(different.getFieldId()), different.getBeforeValue(), different.getAlterValue());
             }
+
+            // 插入自定义表三条数据的基本字段
+            JiaJieConnUtil.insertBaseCus(Integer.parseInt(xm));
+            // 更新
+            String updateSql = "update CUS_FIELDDATA set " + JiaJieConfigInfo.ZHI_JI.getValue() + " = ?, " + JiaJieConfigInfo.GWLX.getValue() + " = ?, "
+                    + JiaJieConfigInfo.BPS.getValue() + " = ?, " + JiaJieConfigInfo.BGDD.getValue() + " = ?," + JiaJieConfigInfo.WXYJ.getValue() + " = ?, "
+                    + JiaJieConfigInfo.CWOU.getValue() + " = ?, " + JiaJieConfigInfo.RZRQ.getValue() + " = ?, " + JiaJieConfigInfo.LDHT.getValue() + " = ?, "
+                    + JiaJieConfigInfo.QYKSRQ.getValue() + " = ?, " + JiaJieConfigInfo.QYJSRQ.getValue() + " = ? where id = ?";
+            this.writeLog("入职流程更新自定义表sql: " + updateSql);
+            zdySet.executeUpdate(updateSql,
+                    zj, gwlx,
+                    bpsspr, bgdd, wxyj,
+                    cwou, rzrq, htqszt,
+                    htksrq, htjsrq, xm);
             this.writeLog("更新自定义表结束============");
 
             //清除缓存
@@ -169,20 +169,6 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             String sbjs = recordSet.getString("sbjs"); // 社保基数
             this.writeLog("基本工资: " + xzjbgz + ", 奖金比例: " + jjbl + ", 社保基数: " + sbjs);
 
-            recordSet.executeQuery("select * from uf_jtxz where xm = '" + xm + "'");
-            RecordSet updateSet = new RecordSet();
-            if (recordSet.next()) {
-                this.writeLog("更新建模========");
-                updateSet.executeUpdate("update uf_jtxz set jbgz = ?, jjbl = ?, sbjs = ? where xm = ?", xzjbgz, jjbl, sbjs, xm);
-            } else {
-                this.writeLog("新增建模========");
-                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, xzjbgz, jjbl, sbjs" +
-                                "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
-                                " values(?,?,?,?,?, ?, ?,?,?,?,?)",
-                        xm, ygbh, bm, xzjbgz, jjbl, sbjs,
-                        JiaJieConfigInfo.XZ_MODE_ID.getValue(), "1", "0", detailCurrentTimeString.substring(0, 10), detailCurrentTimeString.substring(11));
-                JiaJieConnUtil.fuQuan(detailCurrentTimeString, "uf_jtxz", Integer.parseInt(JiaJieConfigInfo.XZ_MODE_ID.getValue()));
-            }
             // 找出变动的对象
             ShiXiShengVo modeOldInfo = getModeOldInfo(xm); // 获取建模表旧字段
             ShiXiShengVo modeNewInfo = new ShiXiShengVo(); // 建模新对象
@@ -193,6 +179,22 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             for (JtDifferent different : differentList) {
                 insertPerCord(xm, requestId, zdMap.get(different.getFieldId()), different.getBeforeValue(), different.getAlterValue());
             }
+
+            recordSet.executeQuery("select * from uf_jtxz where xm = '" + xm + "'");
+            RecordSet updateSet = new RecordSet();
+            if (recordSet.next()) {
+                this.writeLog("更新建模========");
+                updateSet.executeUpdate("update uf_jtxz set jbgz = ?, jjbl = ?, sbjs = ? where xm = ?", xzjbgz, jjbl, sbjs, xm);
+            } else {
+                this.writeLog("新增建模========");
+                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, jjbl, sbjs, " +
+                                "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
+                                " values(?,?,?,?,?, ?, ?,?,?,?,?)",
+                        xm, ygbh, bm, xzjbgz, jjbl, sbjs,
+                        JiaJieConfigInfo.XZ_MODE_ID.getValue(), "1", "0", detailCurrentTimeString.substring(0, 10), detailCurrentTimeString.substring(11));
+                JiaJieConnUtil.fuQuan(detailCurrentTimeString, "uf_jtxz", Integer.parseInt(JiaJieConfigInfo.XZ_MODE_ID.getValue()));
+            }
+
             this.writeLog("实习生转正流程 End ===============");
         } catch (Exception e) {
             this.writeLog("实习生转正流程 异常： " + e);

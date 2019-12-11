@@ -213,7 +213,7 @@ public class ZzTriggerFlow extends BaseCronJob {
      */
     private String getSysByFiled(String selField) {
         String returnStr = "";
-        connSet.executeQuery("select JT_BMLB from HrmDepartmentdefined where DEPID = '" + selField + "'");
+        connSet.executeQuery("select JT_BMLB from HrmDepartmentdefined where DEPTID = '" + selField + "'");
         if (connSet.next()) {
             returnStr = connSet.getString("JT_BMLB");
         }

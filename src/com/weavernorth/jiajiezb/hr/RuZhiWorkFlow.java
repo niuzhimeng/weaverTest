@@ -35,7 +35,7 @@ public class RuZhiWorkFlow extends BaseAction {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
-            String lb = recordSet.getString(" lb"); // 类别
+            String lb = recordSet.getString("lb"); // 类别
             // 系统表部分 ====================
             String xmStr = recordSet.getString("xm"); // 姓名
             String ygbh = recordSet.getString("ygbh"); // 员工编号
@@ -147,11 +147,12 @@ public class RuZhiWorkFlow extends BaseAction {
                 updateSet.executeUpdate("update uf_jtxz set jbgz = ?, jjbl = ?, sbjs = ? where xm = ?", jbgz1, jjbl, sbjs, xm);
             } else {
                 this.writeLog("新增建模========");
-                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, jjbl, sbjs" +
+                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, jjbl, sbjs, " +
                                 "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
                                 " values(?,?,?,?,?, ?, ?,?,?,?,?)",
                         xm, ygbh, bm, jbgz1, jjbl, sbjs,
                         JiaJieConfigInfo.XZ_MODE_ID.getValue(), "1", "0", detailCurrentTimeString.substring(0, 10), detailCurrentTimeString.substring(11));
+
                 JiaJieConnUtil.fuQuan(detailCurrentTimeString, "uf_jtxz", Integer.parseInt(JiaJieConfigInfo.XZ_MODE_ID.getValue()));
             }
 

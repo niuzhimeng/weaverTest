@@ -20,8 +20,8 @@ public enum JiaJieConfigInfo {
     CWOU("field76"), // 财务OU
 
     CWOU_SEL("3045"), // 财务OU-公共选择框id
-    QYKSRQ("field76"), // 合同签约开始日期
-    QYJSRQ("field76"), // 合同签约结束日期
+    QYKSRQ("field68"), // 合同签约开始日期
+    QYJSRQ("field69"), // 合同签约结束日期
     RZRQ("field21"), // 入职日期
     YPSQB("field93"), // 应聘申请表
 
