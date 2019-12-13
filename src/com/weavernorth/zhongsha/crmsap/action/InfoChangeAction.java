@@ -7,11 +7,9 @@ import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
 /**
- * 准入流程
+ * 关键信息变更流程
  */
-public class ZhunRuAction extends BaseAction {
-
-    private RecordSet connSet = new RecordSet();
+public class InfoChangeAction extends BaseAction {
 
     @Override
     public String execute(RequestInfo requestInfo) {
@@ -25,25 +23,23 @@ public class ZhunRuAction extends BaseAction {
             tableName = recordSet.getString("tablename");
         }
 
-        this.writeLog("准入流程 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
+        this.writeLog("关键信息变更流程 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             JCoDestination jCoDestination = ZhsPoolThree.getJCoDestination();
             jCoDestination.ping();
             this.writeLog("ping 通=====");
-            JCoFunction function = jCoDestination.getRepository().getFunction("ZFM_CRM_OA_INF_VENDOR_CREATE");
+            JCoFunction function = jCoDestination.getRepository().getFunction("ZFM_CRM_OA_INF_VENDOR_UPDATE");
             JCoStructure insertStructure = function.getImportParameterList().getStructure("IS_DATA");
 
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
-            String mc = recordSet.getString("mc"); // 供应商id
-            String mcStr = getSysByFiled("gysmc", "uf_crm_gysxx", mc); // 供应商名称
 
-            insertStructure.setValue("LIFNR", recordSet.getString("sapdm")); // SAP代码
+            insertStructure.setValue("LIFNR", recordSet.getString("gysdm")); // SAP代码
             insertStructure.setValue("KTOKK", recordSet.getString("zhz")); // 账户组
             insertStructure.setValue("LAND1", recordSet.getString("gj")); // 国家
-            insertStructure.setValue("NAME1", mcStr); // 供应商名称
-            insertStructure.setValue("LIFNR", recordSet.getString("sapdm")); // 供应商帐号
+            insertStructure.setValue("NAME1", recordSet.getString("mc")); // 供应商名称
+            insertStructure.setValue("SPERR", recordSet.getString("sapzt")); // SAP状态
 
             insertStructure.setValue("STCD1", recordSet.getString("sh")); // 税号
             insertStructure.setValue("STRAS", recordSet.getString("dz")); // 地址
@@ -54,34 +50,19 @@ public class ZhunRuAction extends BaseAction {
             insertStructure.setValue("TELF2", recordSet.getString("cwrysj")); // 财务人员电话
             insertStructure.setValue("TELFX", recordSet.getString("gscz")); // 公司传真
             insertStructure.setValue("SMTP_ADDR", recordSet.getString("gsemail")); // 公司email
-            insertStructure.setValue("BANKL", recordSet.getString("khyh")); // 银行代码
+            insertStructure.setValue("BANKL", recordSet.getString("khyh")); // 开户银行
             insertStructure.setValue("BANKN", recordSet.getString("zhh")); // 账户号
 
-            insertStructure.setValue("KOINH", mcStr); // 供应商名称
+            insertStructure.setValue("KOINH", recordSet.getString("mc")); // 账户持有人
             insertStructure.setValue("AKONT", recordSet.getString("tykm")); // 统驭科目
             insertStructure.setValue("FDGRV", recordSet.getString("xjglz")); // 现金管理组
             insertStructure.setValue("MINDK", recordSet.getString("ssbz")); // 少数标志
-            insertStructure.setValue("REPRF", recordSet.getString("jcscfp")); // 检查双重发票
 
-            insertStructure.setValue("ZWELS", recordSet.getString("fkfs")); // 付款方式
-            insertStructure.setValue("ZTERM", "T001"); // 付款条件
-            insertStructure.setValue("EKORG", recordSet.getString("cgzz")); // 采购组织
-
-            this.writeLog("银行代码: " + recordSet.getString("khyh") + " 账户号: " + recordSet.getString("zhh"));
+            this.writeLog("银行代码: " + recordSet.getString("yhdm") + " 账户号: " + recordSet.getString("zhh"));
             this.writeLog("供应商名称: " + recordSet.getString("mc") + " SAP代码: " + recordSet.getString("sapdm"));
-            // 表入参
-            JCoTable itMatkl = function.getTableParameterList().getTable("IT_MATKL");
-            String wlz = recordSet.getString("xgwlz");// 物料组
-            this.writeLog("物料组===== " + wlz);
-            String[] wlzs = wlz.split(",");
-            int wlxLen = wlzs.length;
-            for (int i = 0; i < wlxLen; i++) {
-                itMatkl.appendRow();
-                itMatkl.setRow(i);
-                itMatkl.setValue("MATKL", wlzs[i]);
-            }
+
             this.writeLog("推送结构数据： " + insertStructure.toString());
-            this.writeLog("推送表数据： " + itMatkl.toString());
+
             // 调用sap接口
             function.execute(jCoDestination);
             this.writeLog("调用接口结束===========");
@@ -99,30 +80,14 @@ public class ZhunRuAction extends BaseAction {
                 return "0";
             }
 
-            this.writeLog("准入流程 End ===============");
+            this.writeLog("关键信息变更流程 End ===============");
         } catch (Exception e) {
-            this.writeLog("准入流程 异常： " + e);
+            this.writeLog("关键信息变更流程 异常： " + e);
             requestInfo.getRequestManager().setMessageid("120002");
-            requestInfo.getRequestManager().setMessagecontent("准入流程 异常： " + e);
+            requestInfo.getRequestManager().setMessagecontent("关键信息变更流程 异常： " + e);
             return "0";
         }
 
         return "1";
-    }
-
-    /**
-     * 根据某一字段查另一个字段
-     *
-     * @param resultField 查询的字段名
-     * @param tableName   查询表名
-     * @param selField    条件字段名
-     */
-    private String getSysByFiled(String resultField, String tableName, String selField) {
-        String returnStr = "";
-        connSet.executeQuery("select " + resultField + " from " + tableName + " where id = '" + selField + "'");
-        if (connSet.next()) {
-            returnStr = connSet.getString(resultField);
-        }
-        return returnStr;
     }
 }
