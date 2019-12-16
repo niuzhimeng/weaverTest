@@ -14,7 +14,7 @@ public class ZsConnUtil {
     /**
      * 定时任务模块id
      */
-    private static final Integer LOG_MODE_ID = 69;
+    private static final Integer LOG_MODE_ID = 82;
 
     /**
      * 插入定时任务日志

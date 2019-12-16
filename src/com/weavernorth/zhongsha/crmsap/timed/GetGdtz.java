@@ -11,16 +11,19 @@ import com.weavernorth.zhongsha.util.ZsConnUtil;
 import weaver.conn.RecordSet;
 import weaver.formmode.setup.ModeRightInfo;
 import weaver.general.TimeUtil;
+import weaver.general.Util;
 import weaver.interfaces.schedule.BaseCronJob;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GetGdtz extends BaseCronJob {
 
     private BaseBean baseBean = new BaseBean();
-    private static final Integer mainModeId = 67;
-    private static final Integer detailModeId = 68;
+    private static final Integer mainModeId = 69;
+    private static final Integer detailModeId = 79;
 
     @Override
     public void execute() {
@@ -57,11 +60,19 @@ public class GetGdtz extends BaseCronJob {
                 detailList.add(recordSet.getString("jhgylx") + recordSet.getString("js"));
             }
 
+            recordSet.executeQuery("select loginid, id from hrmresource where loginid != ''");
+            Map<String, String> loginIdMap = new HashMap<String, String>();
+            while (recordSet.next()) {
+                loginIdMap.put(recordSet.getString("loginid"), recordSet.getString("id"));
+            }
+
             String mainSql = "insert into uf_gdtz(gdh, bbh, gdms, xtzt, xttj, " +
-                    "pmzylx, zz, sgkssj, sgjssj, gsfy, " +
-                    "jhhm, formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
-                    " values(?,?,?,?,?, ?,?,?,?,?, ?, ?,?,?,?,?)";
-            Object[] mains = new String[16];
+                    "pmzylx, gnwz, wzms, zz, sbhms, " +
+                    "sgkssj, sgjssj, gsfy, cjr, cjsj, " +
+                    "jhhm, " +
+                    "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
+                    " values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?, ?,?,?,?,?)";
+            Object[] mains = new String[21];
             RecordSet insertSet = new RecordSet();
             String mainCurrentTimeString = TimeUtil.getCurrentTimeString();
             for (int i = 0; i < numRows; i++) {
@@ -76,17 +87,24 @@ public class GetGdtz extends BaseCronJob {
                 mains[4] = headList.getString("ANLZU"); // 系统条件
 
                 mains[5] = headList.getString("ILART"); // PM作业类型
-                mains[6] = headList.getString("EQUNR"); // 设备号
-                mains[7] = headList.getString("GSTRP"); // 施工时间开始
-                mains[8] = headList.getString("GLTRP"); // 施工时间结束
-                mains[9] = headList.getString("WRT04"); // 估算费用
+                mains[6] = headList.getString("TPLNR"); // 功能位置
+                mains[7] = headList.getString("PLTXT"); // 功能位置描述
+                mains[8] = headList.getString("EQUNR"); // 装置
+                mains[9] = headList.getString("EQKTX"); // 设备号描述
 
-                mains[10] = (headList.getString("AUFPL")); // 计划工艺路线号-关联键
-                mains[11] = String.valueOf(mainModeId);
-                mains[12] = "1";
-                mains[13] = "0";
-                mains[14] = mainCurrentTimeString.substring(0, 10);
-                mains[15] = mainCurrentTimeString.substring(11);
+                mains[10] = headList.getString("GSTRP"); // 施工时间开始
+                mains[11] = headList.getString("GLTRP"); // 施工时间结束
+                mains[12] = headList.getString("WRT04"); // 估算费用
+                mains[13] = Util.null2String(loginIdMap.get(headList.getString("ERNAM"))); // 创建人
+                mains[14] = headList.getString("ERDAT"); // 创建时间
+
+                mains[15] = (headList.getString("AUFPL")); // 计划号-关联键
+
+                mains[16] = String.valueOf(mainModeId);
+                mains[17] = "1";
+                mains[18] = "0";
+                mains[19] = mainCurrentTimeString.substring(0, 10);
+                mains[20] = mainCurrentTimeString.substring(11);
                 insertSet.executeUpdate(mainSql, mains);
             }
 
