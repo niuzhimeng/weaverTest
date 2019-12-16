@@ -9,12 +9,17 @@ import com.weavernorth.zhongsha.crmsap.ZhsPoolThree;
 import com.weavernorth.zhongsha.util.ZsConnUtil;
 import weaver.conn.RecordSet;
 import weaver.general.TimeUtil;
+import weaver.general.Util;
 import weaver.interfaces.schedule.BaseCronJob;
 
 public class PushGdtz extends BaseCronJob {
 
+    private RecordSet connSet = new RecordSet();
     private BaseBean baseBean = new BaseBean();
     private String exeDate = "";
+
+    public PushGdtz() {
+    }
 
     public PushGdtz(String exeDate) {
         this.exeDate = exeDate;
@@ -41,7 +46,7 @@ public class PushGdtz extends BaseCronJob {
             // 获取输入表
             JCoTable insertTable = function.getTableParameterList().getTable("IT_PMORD_R");
 
-            recordSet.executeQuery("select * from uf_gdtzmxb where rq = '" + selectDate + "'");
+            recordSet.executeQuery("select * from uf_gdtzmxb where rq = '" + selectDate + "' and tbzt != 'S'");
             int counts = recordSet.getCounts();
             baseBean.writeLog("工单台账推送数据数量： " + counts + ", 数据日期： " + selectDate);
 
@@ -51,12 +56,14 @@ public class PushGdtz extends BaseCronJob {
                 insertTable.setRow(i);
                 insertTable.setValue("AUFNR", recordSet.getString("gdh")); // 工单号
                 insertTable.setValue("VORNR", recordSet.getString("gxh")); // 工序
-                insertTable.setValue("ISDD", recordSet.getString("sjksrq")); // 工作开始
-                insertTable.setValue("IEDD", recordSet.getString("sjjsrq")); // 工作结束
-                insertTable.setValue("ISMNW", recordSet.getString("rgs")); // 人工时
+                insertTable.setValue("LTXA1", recordSet.getString("gxms")); // 工序描述
+                insertTable.setValue("ISDD", recordSet.getString("sjksrq")); // 实际开始日期
+                insertTable.setValue("IEDD", recordSet.getString("sjjsrq")); // 实际结束日期
 
+                insertTable.setValue("ISMNW", recordSet.getString("rgs")); // 人工时
                 insertTable.setValue("IDAUR", recordSet.getString("zgs")); // 总小时
-                insertTable.setValue("LIFNR", recordSet.getString("sgdw")); // 施工单位
+                insertTable.setValue("LIFNR", getSysByFiled("sapdm", "uf_crm_gysxx",
+                        "id", recordSet.getString("sgdw"))); // 施工单位
 
                 i++;
             }
@@ -69,18 +76,27 @@ public class PushGdtz extends BaseCronJob {
 
             int numRows = returnTable.getNumRows();
             baseBean.writeLog("headList返回表行数： " + numRows);
+            RecordSet updateSet = new RecordSet();
+            String updateSq = "update uf_gdtzmxb set tbzt = ?, tbbz = ? where gdh = ?";
+            int successCount = 0;
+            int errorCount = 0;
             for (int j = 0; j < numRows; j++) {
                 returnTable.setRow(j);
-                baseBean.writeLog("订单号：" + returnTable.getString("AUFNR"));
-                baseBean.writeLog("活动编号：" + returnTable.getString("VORNR"));
-                baseBean.writeLog("回写订单状态：" + returnTable.getString("ZSTATE"));
-                baseBean.writeLog("消息文本：" + returnTable.getString("ZMSG"));
-                baseBean.writeLog("回写供应商状态：" + returnTable.getString("ZSTATE_V"));
-                baseBean.writeLog("消息文本：" + returnTable.getString("ZMSG_V"));
+                String ddh = returnTable.getString("AUFNR"); // 订单号
+                String hxzt = Util.null2String(returnTable.getString("ZSTATE")).trim(); // 回写订单状态
+                String xxwb = returnTable.getString("ZMSG"); // 消息文本
+                updateSet.executeUpdate(updateSq, hxzt, xxwb, ddh);
+                if ("S".equalsIgnoreCase(hxzt)) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
             }
 
             // 插入日志表
-            ZsConnUtil.insertTimedLog("uf_gdtzmxb", "工单台账推送给sap执行完成，共计 " + counts + "条", counts, "工单台账明细数据推送");
+            ZsConnUtil.insertTimedLog("uf_gdtzmxb", "工单台账推送给sap执行完成，共计 " + counts + "条, " +
+                            "成功 " + successCount + "条, 失败 " + errorCount + " 条。",
+                    counts, "工单台账明细数据推送");
         } catch (Exception e) {
             baseBean.writeLog("PushGdtz推送工单台账error: " + e);
         }
@@ -94,5 +110,21 @@ public class PushGdtz extends BaseCronJob {
 
     public void setExeDate(String exeDate) {
         this.exeDate = exeDate;
+    }
+
+    /**
+     * 根据某一字段查另一个字段
+     *
+     * @param resultField 查询的字段名
+     * @param tableName   查询表名
+     * @param selField    条件字段名
+     */
+    private String getSysByFiled(String resultField, String tableName, String whereId, String selField) {
+        String returnStr = "";
+        connSet.executeQuery("select " + resultField + " from " + tableName + " where " + whereId + " = '" + selField + "'");
+        if (connSet.next()) {
+            returnStr = connSet.getString(resultField);
+        }
+        return returnStr;
     }
 }
