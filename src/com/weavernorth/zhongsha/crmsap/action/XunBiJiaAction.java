@@ -1,8 +1,14 @@
 package com.weavernorth.zhongsha.crmsap.action;
 
-import com.sap.conn.jco.*;
+import com.alibaba.fastjson.JSONObject;
+import com.sap.conn.jco.JCoDestination;
+import com.sap.conn.jco.JCoFunction;
+import com.sap.conn.jco.JCoParameterList;
+import com.sap.conn.jco.JCoTable;
+import com.weaver.general.Util;
 import com.weavernorth.zhongsha.crmsap.ZhsPoolThree;
 import weaver.conn.RecordSet;
+import weaver.general.TimeUtil;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
@@ -10,6 +16,8 @@ import weaver.workflow.action.BaseAction;
  * 询比价流程-物资类
  */
 public class XunBiJiaAction extends BaseAction {
+
+    private RecordSet connSet = new RecordSet();
 
     @Override
     public String execute(RequestInfo requestInfo) {
@@ -25,40 +33,78 @@ public class XunBiJiaAction extends BaseAction {
 
         this.writeLog("询比价流程-物资类 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
+            String currentDateString = TimeUtil.getCurrentDateString();
             JCoDestination jCoDestination = ZhsPoolThree.getJCoDestination();
             jCoDestination.ping();
             this.writeLog("ping 通=====");
             JCoFunction function = jCoDestination.getRepository().getFunction("ZFM_CRM_OA_INF_PO_CREATE");
-            JCoTable itOutput = function.getImportParameterList().getTable("IT_OUTPUT ");
+            JCoTable itOutput = function.getTableParameterList().getTable("IT_INPUT");
 
             // 查询主表
-            recordSet.executeQuery("select id from " + tableName + " where requestid = '" + requestId + "'");
+            recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
+            this.writeLog("主表查询结束===");
             String mainId = recordSet.getString("id");
-            recordSet.executeQuery("select * from " + tableName + "_dt1 where mainid = '" + mainId + "'");
-            recordSet.next();
+            String scsapcgdd = recordSet.getString("scsapcgdd"); // 生成SAP采购订单
+            if (!"0".equals(scsapcgdd)) {
+                this.writeLog("不推送sap，接口跳过。");
+                this.writeLog("询比价流程-物资类 End ===============");
+                return "1";
+            }
+            String hth = getSysByFiled("htbh", "uf_hbhtbd", "ylc", recordSet.getString("hth"));
+            String cgy = getSysByFiled("loginid", "hrmresource", "id", recordSet.getString("cgy"));
+            this.writeLog("合同号==========" + hth);
+            this.writeLog("采购员==========" + cgy);
 
-            itOutput.setValue("BANFN", recordSet.getString("cgsqh")); // 采购申请编号
-            itOutput.setValue("BNFPO", recordSet.getString("id")); // 明细行id
-            itOutput.setValue("LIFNR", recordSet.getString("sapdm")); // 供应商名称
-            itOutput.setValue("MATNR", recordSet.getString("wzbm")); // 物资编码
-            itOutput.setValue("TXZ01", recordSet.getString("wlcms")); // 物料长描述
+            String gysmc_A = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gysamc")); // 供应商名称A
+            String gysmc_B = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gysbmc"));
+            String gysmc_C = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gyscmc"));
+            String gysmc_D = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gysdmc"));
+            String gysmc_E = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gysemc"));
+            String[] gysNames = {gysmc_A, gysmc_B, gysmc_C, gysmc_D, gysmc_E};
+            this.writeLog("供应商名称： " + JSONObject.toJSONString(gysNames));
 
-            itOutput.setValue("MEINS", recordSet.getString("dw")); // 单位
-            itOutput.setValue("MENGE", recordSet.getString("sl")); // 数量
-            itOutput.setValue("LFDAT", recordSet.getString("jhsj")); // 交货时间
-            itOutput.setValue("ERNAM", recordSet.getString("cgy")); // 采购员
-            itOutput.setValue("INCO2", recordSet.getString("hth")); // 合同号
+            // 查询中标供应商
+            recordSet.executeQuery("select * from " + tableName + "_dt6 where mainid = '" + mainId + "'");
+            RecordSet fysSet = new RecordSet();
+            int j = 0;
+            while (recordSet.next()) {
+                String zbgys = recordSet.getString("zbgys"); // 中标供应商
+                String gysName = gysNames[Util.getIntValue(zbgys) - 1];
+                String zbgysSql = "select * from " + tableName + "_dt" + zbgys + " where mainid = '" + mainId + "'";
+                this.writeLog("中标供应商名称================ " + gysName);
+                this.writeLog("查询中标供应商sql： " + zbgysSql);
+                fysSet.executeQuery(zbgysSql);
+                while (fysSet.next()) {
+                    itOutput.appendRow();
+                    itOutput.setRow(j);
+                    itOutput.setValue("BANFN", fysSet.getString("cgsqh")); // 采购申请编号
+                    itOutput.setValue("BNFPO", fysSet.getString("hxm")); // 行项目
+                    itOutput.setValue("LIFNR", gysName); // 供应商名称
+                    itOutput.setValue("MATNR", fysSet.getString("wlbm")); // 物料编码
+                    itOutput.setValue("ERDAT", currentDateString); // 当前日期
 
-            itOutput.setValue("NETWR", recordSet.getString("zbje")); // 中标金额
+                    itOutput.setValue("MEINS", fysSet.getString("dw")); // 单位
+                    itOutput.setValue("MENGE", fysSet.getString("sl")); // 数量
+                    itOutput.setValue("LFDAT", fysSet.getString("jhsj")); // 交货时间
+                    itOutput.setValue("ERNAM", cgy); // 采购员
+                    itOutput.setValue("INCO2", hth); // 合同号
 
+                    itOutput.setValue("NETWR", fysSet.getString("xj")); // 小计
+                    itOutput.setValue("BATXT", fysSet.getString("lx")); // 类型
+
+                    j++;
+                }
+            }
+
+            this.writeLog("推送表数据共计" + j + " 行");
             this.writeLog("推送表数据： " + itOutput.toString());
             // 调用sap接口
             function.execute(jCoDestination);
             this.writeLog("调用接口结束===========");
 
             RecordSet updateSet = new RecordSet();
-            JCoParameterList exportParameterList = function.getExportParameterList();
+            JCoParameterList exportParameterList = function.getTableParameterList();
             JCoTable returnTable = exportParameterList.getTable("IT_OUTPUT");
             int numRows = returnTable.getNumRows();
             for (int i = 0; i < numRows; i++) {
@@ -68,8 +114,15 @@ public class XunBiJiaAction extends BaseAction {
                 String cgddbh = returnTable.getString("EBELN");// 采购订单编号
                 String zt = returnTable.getString("ZSTATE");// 状态
                 String bz = returnTable.getString("ZMSG"); // 备注
-                updateSet.executeUpdate("update " + tableName + "_dt1 set cgsqh = ?, cgddbh = ?, zt = ?, bz = ? where id = ?",
-                        cgsqh, cgddbh, zt, bz, id);
+                if (!"S".equalsIgnoreCase(zt)) {
+                    requestInfo.getRequestManager().setMessageid("120002");
+                    requestInfo.getRequestManager().setMessagecontent("询比价流程-物资类 异常，sap返回信息： " + zt + ", " + bz);
+                    return "0";
+                }
+                this.writeLog("返回结果=======状态:" + zt + ", 备注：" + bz);
+                this.writeLog("采购申请号: " + cgsqh + ", 明细行id: " + id + ", 采购订单编号: " + cgddbh);
+                updateSet.executeUpdate("insert into " + tableName + "_dt7(mainid, cgsqh, hxm, cgddbh, zt, bz) values(?,?,?,?,?, ?)",
+                        mainId, cgsqh, cgddbh, zt, bz, id);
             }
 
             this.writeLog("询比价流程-物资类 End ===============");
@@ -81,5 +134,21 @@ public class XunBiJiaAction extends BaseAction {
         }
 
         return "1";
+    }
+
+    /**
+     * 根据某一字段查另一个字段
+     *
+     * @param resultField 查询的字段名
+     * @param tableName   查询表名
+     * @param selField    条件字段名
+     */
+    private String getSysByFiled(String resultField, String tableName, String whereId, String selField) {
+        String returnStr = "";
+        connSet.executeQuery("select " + resultField + " from " + tableName + " where " + whereId + " = '" + selField + "'");
+        if (connSet.next()) {
+            returnStr = connSet.getString(resultField);
+        }
+        return returnStr;
     }
 }
