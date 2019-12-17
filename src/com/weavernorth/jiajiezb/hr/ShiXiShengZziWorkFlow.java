@@ -44,7 +44,7 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
         zdMap.put("rzrq", "入职日期");
         zdMap.put("ldhtqs", "劳动合同签署主体");
         zdMap.put("ldhtksrq", "劳动合同签约开始日期");
-        zdMap.put("ldhtjsrq", "ldhtjsrq");
+        zdMap.put("ldhtjsrq", "劳动合同签约结束日期");
         // 建模字段
         zdMap.put("jbgz", "基本工资");
         zdMap.put("jjbl", "奖金比例");

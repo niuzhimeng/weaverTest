@@ -795,11 +795,13 @@ public class TestMain {
 
     @Test
     public void test36() {
-        System.out.println(UUID.randomUUID().toString().replace("-", ""));
+        String currentDateString = weaver.general.TimeUtil.getCurrentDateString();
+        String selectDate = weaver.general.TimeUtil.dateAdd(currentDateString, -1);
+        System.out.println(selectDate);
     }
 
-
 }
+
 
 
 

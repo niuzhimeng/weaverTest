@@ -42,6 +42,9 @@ public class JtChangeVo {
      * 财务OU
      */
     private String cwou;
+    private String ldhtksrq; // 劳动合同签约开始日期
+    private String ldhtjsrq; // 劳动合同签约结束日期
+    private String qscs; // 劳动合同签署次数
 
     public JtChangeVo() {
     }
@@ -60,6 +63,30 @@ public class JtChangeVo {
                 ", bps='" + bps + '\'' +
                 ", cwou='" + cwou + '\'' +
                 '}';
+    }
+
+    public String getQscs() {
+        return qscs;
+    }
+
+    public void setQscs(String qscs) {
+        this.qscs = qscs;
+    }
+
+    public String getLdhtksrq() {
+        return ldhtksrq;
+    }
+
+    public void setLdhtksrq(String ldhtksrq) {
+        this.ldhtksrq = ldhtksrq;
+    }
+
+    public String getLdhtjsrq() {
+        return ldhtjsrq;
+    }
+
+    public void setLdhtjsrq(String ldhtjsrq) {
+        this.ldhtjsrq = ldhtjsrq;
     }
 
     public String getBm() {

@@ -29,8 +29,9 @@ public enum JiaJieConfigInfo {
     ZONG_BU_ID("21"), // 总部id
     JT_SYQZZ_FLOW_ID("22001"), // JT_试用期转正提醒*
     JT_ZZ_FLOW_ID("22002"), // JT_转正提醒*
-    TRIGGER_TABLE_NAME("uf_triggered_zb"); // 定时触发流程，记录表名
+    TRIGGER_TABLE_NAME("uf_triggered_zb"), // 定时触发流程，记录表名
 
+    QYCS("field87"); // 劳动合同签署次数
 
     JiaJieConfigInfo(String value) {
         this.value = value;

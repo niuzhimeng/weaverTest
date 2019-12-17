@@ -46,13 +46,15 @@ public class RuZhiWorkFlow extends BaseAction {
             String bm = recordSet.getString("bm"); // 部门
             String fb = getSysByFiled("subcompanyid1", "hrmdepartment", bm); // 分部
             String syjsrq = recordSet.getString("syjsrq"); // 试用期结束日期
+            String xb = recordSet.getString("xb"); // 性别
+            xb = "0".equals(xb) ? "1" : "0";
 
             JiajieHrmResource jiajieHrmResource = new JiajieHrmResource();
             jiajieHrmResource.setLoginid("");
             jiajieHrmResource.setDepId(bm);
             jiajieHrmResource.setSubId(fb);
             jiajieHrmResource.setStatusOa(ygzt);
-            jiajieHrmResource.setSex("");
+            jiajieHrmResource.setSex(xb);
 
             jiajieHrmResource.setLoginid("");
             jiajieHrmResource.setEmail("");
@@ -68,7 +70,7 @@ public class RuZhiWorkFlow extends BaseAction {
             //语言类型
             jiajieHrmResource.setSystemlanguage("7");
             // 安全级别默认10
-            jiajieHrmResource.setSeclevel("10");
+            jiajieHrmResource.setSeclevel("0");
 
             String xm = ""; // 人员id
             RecordSet sysSet = new RecordSet();
