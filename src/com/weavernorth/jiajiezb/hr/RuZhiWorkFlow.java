@@ -99,7 +99,7 @@ public class RuZhiWorkFlow extends BaseAction {
             String bpsspr = recordSet.getString("bpsspr"); // BPS审批人
             String wxyj = recordSet.getString("wxyj"); // 五险一金缴纳地
             String qykssj = recordSet.getString("qykssj"); // 劳动合同签约开始时间
-            String qyjssj = recordSet.getString("qykssj"); // 劳动合同签约结束时间
+            String qyjssj = recordSet.getString("qyjssj"); // 劳动合同签约结束时间
             String ypsqb = recordSet.getString("ypsqb"); // 应聘申请表
             if ("0".equals(lb)) {
                 // 经营类（业务）
@@ -124,13 +124,13 @@ public class RuZhiWorkFlow extends BaseAction {
             String updateSql = "update CUS_FIELDDATA set " + JiaJieConfigInfo.ZHI_JI.getValue() + " = ?, " + JiaJieConfigInfo.GWLX.getValue() + " = ?, "
                     + JiaJieConfigInfo.BGDD.getValue() + " = ?, " + JiaJieConfigInfo.CWOU.getValue() + " = ?," + JiaJieConfigInfo.LDHT.getValue() + " = ?, "
                     + JiaJieConfigInfo.BPS.getValue() + " = ?, " + JiaJieConfigInfo.WXYJ.getValue() + " = ?, " + JiaJieConfigInfo.QYKSRQ.getValue() + " = ?, "
-                    + JiaJieConfigInfo.QYJSRQ.getValue() + " = ?, " + JiaJieConfigInfo.YPSQB.getValue() + " = ? where id = ?";
+                    + JiaJieConfigInfo.QYJSRQ.getValue() + " = ?, " + JiaJieConfigInfo.YPSQB.getValue() + " = ?, " + JiaJieConfigInfo.RZRQ.getValue() + " = ? where id = ?";
             this.writeLog("入职流程更新自定义表sql: " + updateSql);
             zdySet.executeUpdate(updateSql,
                     zj, gwlx,
                     bgdd, cwou, ldhtqszt,
                     bpsspr, wxyj, qykssj,
-                    qyjssj, ypsqb, xm);
+                    qyjssj, ypsqb, qykssj, xm);
             this.writeLog("更新自定义表结束============");
 
             //清除缓存

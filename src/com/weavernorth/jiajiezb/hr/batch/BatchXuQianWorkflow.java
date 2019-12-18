@@ -113,11 +113,11 @@ public class BatchXuQianWorkflow extends BaseAction {
                 // 更新
                 String updateSql = "update CUS_FIELDDATA set " + JiaJieConfigInfo.ZHI_JI.getValue() + " = ?, " + JiaJieConfigInfo.CWOU.getValue() + " = ?, "
                         + JiaJieConfigInfo.LDHT.getValue() + " = ?, " + JiaJieConfigInfo.QYKSRQ.getValue() + " = ?," + JiaJieConfigInfo.QYJSRQ.getValue() + " = ?, "
-                        + JiaJieConfigInfo.QYCS.getValue() + " = ?, " + " where id = ?";
+                        + JiaJieConfigInfo.QYCS.getValue() + " = ? where id = ?";
                 zdySet.executeUpdate(updateSql,
                         zj, cwou,
                         htqszt, htksrq, htjsrq,
-                        htyqdcs, xm);
+                        newHtyqdcs, xm);
                 this.writeLog("更新自定义表结束============");
             }
 
