@@ -101,6 +101,7 @@ public class RuZhiWorkFlow extends BaseAction {
             String qykssj = recordSet.getString("qykssj"); // 劳动合同签约开始时间
             String qyjssj = recordSet.getString("qyjssj"); // 劳动合同签约结束时间
             String ypsqb = recordSet.getString("ypsqb"); // 应聘申请表
+
             if ("0".equals(lb)) {
                 // 经营类（业务）
                 gwlx = recordSet.getString("gwlxyw");
@@ -176,8 +177,9 @@ public class RuZhiWorkFlow extends BaseAction {
             String sql = "insert into hrmresource (workcode, lastname, loginid, status, sex," +
                     " locationid, email, mobile, managerid, seclevel, " +
                     "departmentid, subcompanyid1, jobtitle, dsporder, id," +
-                    "password, accounttype, belongto, systemlanguage, telephone) " +
-                    "values (?,?,?,?,?,  ?,?,?,?,?,  ?,?,?,?,?,  ?,?,?,?,?)";
+                    "password, accounttype, belongto, systemlanguage, telephone, " +
+                    "probationenddate) " +
+                    "values (?,?,?,?,?,  ?,?,?,?,?,  ?,?,?,?,?,  ?,?,?,?,?, ?)";
             statement.setStatementSql(sql);
 
             statement.setString(1, hrmResource.getWorkcode());
@@ -204,45 +206,13 @@ public class RuZhiWorkFlow extends BaseAction {
             statement.setString(19, hrmResource.getSystemlanguage());
             statement.setString(20, hrmResource.getTelephone());
 
+            statement.setString(21, hrmResource.getProbationenddate());
+
             statement.executeUpdate();
             hrmResource.updaterights(hrmResource.getId());
 
         } catch (Exception e) {
             new BaseBean().writeLog("insert HrmResource Exception :" + e);
-        } finally {
-            statement.close();
-        }
-    }
-
-    private void updateHrmResource(JiajieHrmResource hrmResource) {
-
-        ConnStatement statement = new ConnStatement();
-        try {
-            String sql = "update hrmresource set lastname = ?, status = ?, sex = ?, locationid = ?, mobile = ?, " +
-                    "departmentid = ?, subcompanyid1 = ?, email = ?, workcode = ?, telephone = ?, " +
-                    "jobtitle = ?, managerid = ?, probationenddate = ? where id = ?";
-            statement.setStatementSql(sql);
-
-            statement.setString(1, hrmResource.getLastname());
-            statement.setString(2, hrmResource.getStatusOa());
-            statement.setString(3, hrmResource.getSex());
-            statement.setString(4, hrmResource.getLocationId());
-            statement.setString(5, hrmResource.getMobile());
-
-            statement.setString(6, hrmResource.getDepId());
-            statement.setString(7, hrmResource.getSubId());
-            statement.setString(8, hrmResource.getEmail());
-            statement.setString(9, hrmResource.getWorkcode());
-            statement.setString(10, hrmResource.getTelephone());
-
-            statement.setString(11, hrmResource.getJobtitleId());
-            statement.setString(12, hrmResource.getManagerIdReal());
-            statement.setString(13, hrmResource.getProbationenddate());
-            statement.setString(14, hrmResource.getId());
-            statement.executeUpdate();
-
-        } catch (Exception e) {
-            new BaseBean().writeLog("update HrmResource Exception :" + e);
         } finally {
             statement.close();
         }
