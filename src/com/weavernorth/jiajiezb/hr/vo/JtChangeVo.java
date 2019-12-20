@@ -46,6 +46,9 @@ public class JtChangeVo {
     private String ldhtjsrq; // 劳动合同签约结束日期
     private String qscs; // 劳动合同签署次数
 
+    private String syqdz; // 试用期是否打折
+    private String htcfd; // 合同存放地
+
     public JtChangeVo() {
     }
 
@@ -63,6 +66,22 @@ public class JtChangeVo {
                 ", bps='" + bps + '\'' +
                 ", cwou='" + cwou + '\'' +
                 '}';
+    }
+
+    public String getSyqdz() {
+        return syqdz;
+    }
+
+    public void setSyqdz(String syqdz) {
+        this.syqdz = syqdz;
+    }
+
+    public String getHtcfd() {
+        return htcfd;
+    }
+
+    public void setHtcfd(String htcfd) {
+        this.htcfd = htcfd;
     }
 
     public String getQscs() {

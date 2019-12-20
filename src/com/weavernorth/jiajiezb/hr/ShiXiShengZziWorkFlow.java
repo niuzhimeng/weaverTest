@@ -45,6 +45,8 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
         zdMap.put("ldhtqs", "劳动合同签署主体");
         zdMap.put("ldhtksrq", "劳动合同签约开始日期");
         zdMap.put("ldhtjsrq", "劳动合同签约结束日期");
+
+        zdMap.put("syqdz", "试用期是否打折");
         // 建模字段
         zdMap.put("jbgz", "基本工资");
         zdMap.put("jjbl", "奖金比例");
@@ -121,9 +123,11 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             String htksrq = recordSet.getString("htksrq"); // 劳动合同签约开始时间
             String htjsrq = recordSet.getString("htjsrq"); // 劳动合同签约结束时间
 
+            String syqbdz = recordSet.getString("syqbdz"); // 特殊情况-试用期不打折
+
             this.writeLog("职级: " + zj + ", 岗位类型: " + gwlx + ", 办公地点: " + bgdd + ", 财务OU: " + cwou + ", 劳动合同签署主体: " + htqszt);
             this.writeLog("BPS审批人: " + bpsspr + ", 五险一金缴纳地: " + wxyj + ", 劳动合同签约开始时间: " + htksrq +
-                    ", 劳动合同签约结束时间: " + htjsrq + ", 入职日期: " + rzrq);
+                    ", 劳动合同签约结束时间: " + htjsrq + ", 入职日期: " + rzrq + ", 试用期是否打折: " + syqbdz);
 
             // 找出变动的对象
             ShiXiShengVo zdyOldInfo = getZdyOldInfo(xm); // 获取自定义表旧字段
@@ -140,6 +144,8 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             zdyNewInfo.setLdhtksrq(htksrq);
             zdyNewInfo.setLdhtjsrq(htjsrq);
 
+            zdyNewInfo.setSyqdz(JiaJieConnUtil.yesOrNoChange(syqbdz));
+
             List<JtDifferent> zdyDifferentList = JiaJieConnUtil.compareObj(zdyOldInfo, zdyNewInfo);
             for (JtDifferent different : zdyDifferentList) {
                 insertPerCord(xm, requestId, zdMap.get(different.getFieldId()), different.getBeforeValue(), different.getAlterValue());
@@ -151,13 +157,13 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             String updateSql = "update CUS_FIELDDATA set " + JiaJieConfigInfo.ZHI_JI.getValue() + " = ?, " + JiaJieConfigInfo.GWLX.getValue() + " = ?, "
                     + JiaJieConfigInfo.BPS.getValue() + " = ?, " + JiaJieConfigInfo.BGDD.getValue() + " = ?," + JiaJieConfigInfo.WXYJ.getValue() + " = ?, "
                     + JiaJieConfigInfo.CWOU.getValue() + " = ?, " + JiaJieConfigInfo.RZRQ.getValue() + " = ?, " + JiaJieConfigInfo.LDHT.getValue() + " = ?, "
-                    + JiaJieConfigInfo.QYKSRQ.getValue() + " = ?, " + JiaJieConfigInfo.QYJSRQ.getValue() + " = ? where id = ?";
+                    + JiaJieConfigInfo.QYKSRQ.getValue() + " = ?, " + JiaJieConfigInfo.QYJSRQ.getValue() + " = ?, " + JiaJieConfigInfo.SYQSFDZ.getValue() + " = ? where id = ?";
             this.writeLog("入职流程更新自定义表sql: " + updateSql);
             zdySet.executeUpdate(updateSql,
                     zj, gwlx,
                     bpsspr, bgdd, wxyj,
                     cwou, rzrq, htqszt,
-                    htksrq, htjsrq, xm);
+                    htksrq, htjsrq, syqbdz, xm);
             this.writeLog("更新自定义表结束============");
 
             //清除缓存
@@ -221,6 +227,8 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
         String ldhtqs = ""; // 劳动合同签署主体
         String ldhtksrq = ""; // 劳动合同签约开始日期
         String ldhtjsrq = ""; // 劳动合同签约结束日期
+
+        String syqsfdz = ""; // 试用期是否打折
         RecordSet recordSet = new RecordSet();
         recordSet.executeQuery("select * from CUS_FIELDDATA where id = '" + userId + "'");
         while (recordSet.next()) {
@@ -255,6 +263,9 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
             if (!"".equals(recordSet.getString(JiaJieConfigInfo.QYJSRQ.getValue()))) {
                 ldhtjsrq = recordSet.getString(JiaJieConfigInfo.QYJSRQ.getValue());
             }
+            if (!"".equals(recordSet.getString(JiaJieConfigInfo.SYQSFDZ.getValue()))) {
+                syqsfdz = recordSet.getString(JiaJieConfigInfo.SYQSFDZ.getValue());
+            }
         }
         ShiXiShengVo shiXiShengVo = new ShiXiShengVo();
         shiXiShengVo.setZj(getGgxzk(JiaJieConfigInfo.ZHI_JI_SEL.getValue(), zz));
@@ -268,6 +279,8 @@ public class ShiXiShengZziWorkFlow extends BaseAction {
         shiXiShengVo.setLdhtqs(getGgxzk(JiaJieConfigInfo.LDHT_SEL.getValue(), ldhtqs));
         shiXiShengVo.setLdhtksrq(ldhtksrq);
         shiXiShengVo.setLdhtjsrq(ldhtjsrq);
+
+        shiXiShengVo.setSyqdz(JiaJieConnUtil.yesOrNoChange(syqsfdz));
         return shiXiShengVo;
     }
 

@@ -91,10 +91,13 @@ public class RuZhiWorkFlow extends BaseAction {
             // 自定义表部分 ====================
             RecordSet zdySet = new RecordSet();
             String zj = recordSet.getString("zj"); // 职级
+            String syqdz = recordSet.getString("syqdz"); // 试用期是否打折
+
             String gwlx = ""; // 岗位类型
             String bgdd = ""; // 办公地点
             String cwou = ""; // 财务OU
             String ldhtqszt = ""; // 劳动合同签署主体
+            String htcfd = ""; // 合同存放地
 
             String bpsspr = recordSet.getString("bpsspr"); // BPS审批人
             String wxyj = recordSet.getString("wxyj"); // 五险一金缴纳地
@@ -102,22 +105,27 @@ public class RuZhiWorkFlow extends BaseAction {
             String qyjssj = recordSet.getString("qyjssj"); // 劳动合同签约结束时间
             String ypsqb = recordSet.getString("ypsqb"); // 应聘申请表
 
+            String mspj = recordSet.getString("mspj"); // 面试评价表
+
             if ("0".equals(lb)) {
                 // 经营类（业务）
                 gwlx = recordSet.getString("gwlxyw");
                 bgdd = recordSet.getString("bgddyw");
                 cwou = recordSet.getString("cwouyw");
                 ldhtqszt = recordSet.getString("ldhtqsztyw");
+                htcfd = recordSet.getString("htcfdyw");
             } else {
                 // 管理类（职能）
                 gwlx = recordSet.getString("gwlxzn");
                 bgdd = recordSet.getString("bgddzn");
                 cwou = recordSet.getString("cwouzn");
                 ldhtqszt = recordSet.getString("ldhtqsztzn");
+                htcfd = recordSet.getString("htcfdzn");
             }
             this.writeLog("职级: " + zj + ", 岗位类型: " + gwlx + ", 办公地点: " + bgdd + ", 财务OU: " + cwou + ", 劳动合同签署主体: " + ldhtqszt);
             this.writeLog("BPS审批人: " + bpsspr + ", 五险一金缴纳地: " + wxyj + ", 劳动合同签约开始时间: " + qykssj +
-                    ", 劳动合同签约结束时间: " + qyjssj + ", 应聘申请表: " + ypsqb);
+                    ", 劳动合同签约结束时间: " + qyjssj + ", 应聘申请表: " + ypsqb + ", 合同存放地: " + htcfd + ", 试用期是否打折: " + syqdz +
+                    ", 面试评价表: " + mspj);
 
             // 插入自定义表三条数据的基本字段
             JiaJieConnUtil.insertBaseCus(Integer.parseInt(xm));
@@ -125,13 +133,15 @@ public class RuZhiWorkFlow extends BaseAction {
             String updateSql = "update CUS_FIELDDATA set " + JiaJieConfigInfo.ZHI_JI.getValue() + " = ?, " + JiaJieConfigInfo.GWLX.getValue() + " = ?, "
                     + JiaJieConfigInfo.BGDD.getValue() + " = ?, " + JiaJieConfigInfo.CWOU.getValue() + " = ?," + JiaJieConfigInfo.LDHT.getValue() + " = ?, "
                     + JiaJieConfigInfo.BPS.getValue() + " = ?, " + JiaJieConfigInfo.WXYJ.getValue() + " = ?, " + JiaJieConfigInfo.QYKSRQ.getValue() + " = ?, "
-                    + JiaJieConfigInfo.QYJSRQ.getValue() + " = ?, " + JiaJieConfigInfo.YPSQB.getValue() + " = ?, " + JiaJieConfigInfo.RZRQ.getValue() + " = ? where id = ?";
+                    + JiaJieConfigInfo.QYJSRQ.getValue() + " = ?, " + JiaJieConfigInfo.YPSQB.getValue() + " = ?, " + JiaJieConfigInfo.RZRQ.getValue() + " = ?, "
+                    + JiaJieConfigInfo.HTCFD.getValue() + " = ?, " + JiaJieConfigInfo.SYQSFDZ.getValue() + " =?, " + JiaJieConfigInfo.MSPJB.getValue() + " = ? where id = ?";
             this.writeLog("入职流程更新自定义表sql: " + updateSql);
             zdySet.executeUpdate(updateSql,
                     zj, gwlx,
                     bgdd, cwou, ldhtqszt,
                     bpsspr, wxyj, qykssj,
-                    qyjssj, ypsqb, qykssj, xm);
+                    qyjssj, ypsqb, qykssj,
+                    htcfd, syqdz, mspj, xm);
             this.writeLog("更新自定义表结束============");
 
             //清除缓存

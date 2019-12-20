@@ -46,6 +46,9 @@ public class NoKuaQzWorkFlow extends BaseAction {
             String bpsFiled = JiaJieConfigInfo.BPS.getValue();
             String cwouFiled = JiaJieConfigInfo.CWOU.getValue();
 
+            String htcfdFiled = JiaJieConfigInfo.HTCFD.getValue();
+            String mspjbFiled = JiaJieConfigInfo.MSPJB.getValue();
+
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
@@ -62,6 +65,13 @@ public class NoKuaQzWorkFlow extends BaseAction {
             String drbpsspr = Util.null2String(recordSet.getString("drbpsspr")); // 调入-BPS审批人
             String drcwou = Util.null2String(recordSet.getString("drcwou")); // 调入-财务OU
 
+            String drhtcfd = Util.null2String(recordSet.getString("drhtcfd")); // 调入-合同存放地
+            String mspjOld = Util.null2String(recordSet.getString("dcmspjb")).trim(); // 面试评价表-调出
+            String mspjNew = Util.null2String(recordSet.getString("mspj")).trim(); // 面试评价表-调入
+            if (!"".equals(mspjOld)) {
+                mspjNew = mspjOld + "," + mspjNew;
+            }
+
             JtChangeVo oldChangeVo = new JtChangeVo();
             oldChangeVo.setBm(getSysByFiled("departmentname", "hrmdepartment", recordSet.getString("dcbm"))); // 调出部门
             oldChangeVo.setGw(getSysByFiled("jobtitlename", "hrmjobtitles", recordSet.getString("dcgw"))); // 调出岗位 dcgw
@@ -74,6 +84,8 @@ public class NoKuaQzWorkFlow extends BaseAction {
             oldChangeVo.setLdhtqs(getGgxzk(JiaJieConfigInfo.LDHT_SEL.getValue(), Util.null2String(recordSet.getString("dchtzt")))); // 调出-劳动合同签署主体
             oldChangeVo.setBps(getSysByFiled("lastname", "hrmresource", recordSet.getString("dcbpsspr"))); // 调出-BPS审批人
             oldChangeVo.setCwou(getGgxzk(JiaJieConfigInfo.CWOU_SEL.getValue(), Util.null2String(recordSet.getString("dccwou")))); // 调出-财务OU
+
+            oldChangeVo.setHtcfd(getGgxzk(JiaJieConfigInfo.HTCFD_SEL.getValue(), Util.null2String(recordSet.getString("dchtcfd")))); // 调出-合同存放地
             this.writeLog("调出对象信息： " + oldChangeVo.toString());
 
             JtChangeVo newChangeVo = new JtChangeVo();
@@ -88,6 +100,8 @@ public class NoKuaQzWorkFlow extends BaseAction {
             newChangeVo.setLdhtqs(getGgxzk(JiaJieConfigInfo.LDHT_SEL.getValue(), drzt)); // 调入-劳动合同签署主体
             newChangeVo.setBps(getSysByFiled("lastname", "hrmresource", drbpsspr)); // 调入-BPS审批人
             newChangeVo.setCwou(getGgxzk(JiaJieConfigInfo.CWOU_SEL.getValue(), drcwou)); // 调入-财务OU
+
+            newChangeVo.setHtcfd(getGgxzk(JiaJieConfigInfo.HTCFD_SEL.getValue(), drhtcfd)); // 调入-合同存放地
             this.writeLog("调入对象信息： " + newChangeVo.toString());
 
             // 更新系统表
@@ -101,12 +115,14 @@ public class NoKuaQzWorkFlow extends BaseAction {
             // 更新
             String updateSql = "update CUS_FIELDDATA set " + ddrqFiled + " = ?, " + gwlxFiled + " = ?, "
                     + zjFiled + " = ?, " + bgddFiled + " = ?," + wxyjFiled + " = ?, " + ldhtFiled + " = ?, " +
-                    bpsFiled + " = ?, " + cwouFiled + " = ? where id = ?";
+                    bpsFiled + " = ?, " + cwouFiled + " = ?, " + htcfdFiled + " = ?, " + mspjbFiled + " = ? " +
+                    " where id = ?";
             this.writeLog("调动申请updateSql: " + updateSql);
             updateSet.executeUpdate(updateSql,
                     ddrq, drgwlx,
                     drzj, drdd, drwxyj, drzt,
-                    drbpsspr, drcwou, xm);
+                    drbpsspr, drcwou, drhtcfd, mspjNew,
+                    xm);
             this.writeLog("更新自定义表结束============");
 
             //清除缓存

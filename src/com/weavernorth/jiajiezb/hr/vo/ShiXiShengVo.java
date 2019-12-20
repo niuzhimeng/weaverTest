@@ -21,10 +21,20 @@ public class ShiXiShengVo {
     private String ldhtksrq; // 劳动合同签约开始日期
     private String ldhtjsrq; // 劳动合同签约结束日期
 
+    private String syqdz; // 试用期是否打折
+
     // ============建模表============
     private String jbgz; // 基本工资
     private String jjbl; // 奖金比例
     private String sbjs; // 社保基数
+
+    public String getSyqdz() {
+        return syqdz;
+    }
+
+    public void setSyqdz(String syqdz) {
+        this.syqdz = syqdz;
+    }
 
     public String getJbgz() {
         return jbgz;

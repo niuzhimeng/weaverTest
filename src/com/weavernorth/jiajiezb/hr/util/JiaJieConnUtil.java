@@ -23,6 +23,9 @@ public class JiaJieConnUtil {
         zdMap.put("ldhtqs", "劳动合同签署主体");
         zdMap.put("bps", "BPS审批人");
         zdMap.put("cwou", "财务OU");
+
+        zdMap.put("htcfd", "合同存放地");
+        zdMap.put("syqdz", "试用期是否打折");
     }
 
     /**

@@ -31,6 +31,10 @@ public enum JiaJieConfigInfo {
     JT_ZZ_FLOW_ID("22002"), // JT_转正提醒*
     TRIGGER_TABLE_NAME("uf_triggered_zb"), // 定时触发流程，记录表名
 
+    HTCFD("field96"), // 合同存放地
+    HTCFD_SEL("4041"), // 合同存放地-公共选择框id
+    SYQSFDZ("field95"), // JT_试用期是否打折
+    MSPJB("field94"), // JT_面试评价表
     QYCS("field87"); // 劳动合同签署次数
 
     JiaJieConfigInfo(String value) {
