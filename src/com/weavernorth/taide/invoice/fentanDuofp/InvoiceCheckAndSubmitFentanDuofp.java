@@ -12,12 +12,16 @@ import weaver.workflow.action.BaseAction;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 发票验重并变更发票状态-分摊多发票
  */
 public class InvoiceCheckAndSubmitFentanDuofp extends BaseAction {
+    private RecordSet selSet = new RecordSet();
 
     @Override
     public String execute(RequestInfo requestInfo) {
@@ -175,9 +179,18 @@ public class InvoiceCheckAndSubmitFentanDuofp extends BaseAction {
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             if (entry.getValue() > 1) {
-                stringBuilder.append(entry.getKey()).append(", ");
+                stringBuilder.append(getNoByUUID(entry.getKey())).append(", ");
             }
         }
         return stringBuilder;
+    }
+
+    private String getNoByUUID(String uuid) {
+        String invoiceNo = "";
+        selSet.executeQuery("SELECT INVOICENO FROM UF_FPINFO where uuid = '" + uuid + "'");
+        if (selSet.next()) {
+            invoiceNo = selSet.getString("INVOICENO");
+        }
+        return invoiceNo;
     }
 }

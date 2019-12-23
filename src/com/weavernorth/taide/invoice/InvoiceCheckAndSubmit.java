@@ -18,6 +18,8 @@ import java.util.*;
  */
 public class InvoiceCheckAndSubmit extends BaseAction {
 
+    private RecordSet selSet = new RecordSet();
+
     @Override
     public String execute(RequestInfo requestInfo) {
         String fpName = "xzfpz"; // 发票字段名
@@ -195,9 +197,19 @@ public class InvoiceCheckAndSubmit extends BaseAction {
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             if (entry.getValue() > 1) {
-                stringBuilder.append(entry.getKey()).append(", ");
+                stringBuilder.append(getNoByUUID(entry.getKey())).append(", ");
             }
         }
         return stringBuilder;
     }
+
+    private String getNoByUUID(String uuid) {
+        String invoiceNo = "";
+        selSet.executeQuery("SELECT INVOICENO FROM UF_FPINFO where uuid = '" + uuid + "'");
+        if (selSet.next()) {
+            invoiceNo = selSet.getString("INVOICENO");
+        }
+        return invoiceNo;
+    }
+
 }
