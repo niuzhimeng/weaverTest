@@ -808,6 +808,12 @@ public class TestMain {
 
     }
 
+    @Test
+    public void test37() {
+        double all = 6500000;
+        System.out.println(all * 0.015);
+    }
+
 }
 
 

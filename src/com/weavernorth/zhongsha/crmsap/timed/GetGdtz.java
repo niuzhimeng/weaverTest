@@ -69,10 +69,10 @@ public class GetGdtz extends BaseCronJob {
             String mainSql = "insert into uf_gdtz(gdh, bbh, gdms, xtzt, xttj, " +
                     "pmzylx, gnwz, wzms, zz, sbhms, " +
                     "sgkssj, sgjssj, gsfy, cjr, cjsj, " +
-                    "jhhm, " +
+                    "jhhm, yxj, " +
                     "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
-                    " values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?, ?,?,?,?,?)";
-            Object[] mains = new String[21];
+                    " values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?, ?,?,?,?,?)";
+            Object[] mains = new String[22];
             RecordSet insertSet = new RecordSet();
             String mainCurrentTimeString = TimeUtil.getCurrentTimeString();
             for (int i = 0; i < numRows; i++) {
@@ -98,13 +98,14 @@ public class GetGdtz extends BaseCronJob {
                 mains[13] = Util.null2String(loginIdMap.get(headList.getString("ERNAM"))); // 创建人
                 mains[14] = headList.getString("ERDAT"); // 创建时间
 
-                mains[15] = (headList.getString("AUFPL")); // 计划号-关联键
+                mains[15] = headList.getString("AUFPL"); // 计划号-关联键
+                mains[16] = headList.getString("PRIOK"); // 优先级
 
-                mains[16] = String.valueOf(mainModeId);
-                mains[17] = "1";
-                mains[18] = "0";
-                mains[19] = mainCurrentTimeString.substring(0, 10);
-                mains[20] = mainCurrentTimeString.substring(11);
+                mains[17] = String.valueOf(mainModeId);
+                mains[18] = "1";
+                mains[19] = "0";
+                mains[20] = mainCurrentTimeString.substring(0, 10);
+                mains[21] = mainCurrentTimeString.substring(11);
                 insertSet.executeUpdate(mainSql, mains);
             }
 

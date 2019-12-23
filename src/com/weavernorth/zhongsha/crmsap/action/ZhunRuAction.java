@@ -39,11 +39,11 @@ public class ZhunRuAction extends BaseAction {
             String mc = recordSet.getString("mc"); // 供应商id
             String mcStr = getSysByFiled("gysmc", "uf_crm_gysxx", mc); // 供应商名称
 
-            insertStructure.setValue("LIFNR", recordSet.getString("sapdm")); // SAP代码
+            String sapdm = recordSet.getString("sapdm");
+            insertStructure.setValue("LIFNR", sapdm); // SAP代码
             insertStructure.setValue("KTOKK", recordSet.getString("zhz")); // 账户组
             insertStructure.setValue("LAND1", recordSet.getString("gj")); // 国家
             insertStructure.setValue("NAME1", mcStr); // 供应商名称
-            insertStructure.setValue("LIFNR", recordSet.getString("sapdm")); // 供应商帐号
 
             insertStructure.setValue("STCD1", recordSet.getString("sh")); // 税号
             insertStructure.setValue("STRAS", recordSet.getString("dz")); // 地址
@@ -66,9 +66,10 @@ public class ZhunRuAction extends BaseAction {
             insertStructure.setValue("ZWELS", recordSet.getString("fkfs")); // 付款方式
             insertStructure.setValue("ZTERM", "T001"); // 付款条件
             insertStructure.setValue("EKORG", recordSet.getString("cgzz")); // 采购组织
+            insertStructure.setValue("CHANGE_IND", "0".equals(recordSet.getString("sqlx")) ? "I" : "U"); // 变更类型 (U-扩展, I-新建)
 
             this.writeLog("银行代码: " + recordSet.getString("khyh") + " 账户号: " + recordSet.getString("zhh"));
-            this.writeLog("供应商名称: " + recordSet.getString("mc") + " SAP代码: " + recordSet.getString("sapdm"));
+            this.writeLog("供应商名称: " + recordSet.getString("mc") + " SAP代码: " + sapdm);
             // 表入参
             JCoTable itMatkl = function.getTableParameterList().getTable("IT_MATKL");
             String wlz = recordSet.getString("xgwlz");// 物料组
@@ -90,14 +91,21 @@ public class ZhunRuAction extends BaseAction {
             String type = exportParameterList.getString("EV_ZSTATE"); // 返回状态
             String EV_ZMSEG = exportParameterList.getString("EV_ZMSEG"); // 消息文本
             String EV_LIFNR = exportParameterList.getString("EV_LIFNR"); // 供应商编号
+            String EV_BANKA = exportParameterList.getString("EV_BANKA"); // 银行名称 回写入uf_crm_gysxx 表的yhmcsap，根据流程供应商id
             this.writeLog("sap返回状态： " + type);
             this.writeLog("sap返回消息文本： " + EV_ZMSEG);
             this.writeLog("sap返回供应商编号： " + EV_LIFNR);
+            this.writeLog("sap返回银行名称： " + EV_BANKA);
             if (!"S".equalsIgnoreCase(type)) {
                 requestInfo.getRequestManager().setMessageid("120001");
                 requestInfo.getRequestManager().setMessagecontent("Sap 接口异常： " + EV_ZMSEG);
                 return "0";
             }
+
+            // 更新uf_crm_gysxx
+            String updateSQL = "update uf_crm_gysxx set yhmcsap = '" + EV_BANKA + "' where sapdm = '" + sapdm + "'";
+            this.writeLog("更新建模表 uf_crm_gysxx 的sql: " + updateSQL);
+            recordSet.executeUpdate(updateSQL);
 
             this.writeLog("准入流程 End ===============");
         } catch (Exception e) {
