@@ -84,6 +84,7 @@ public class PushGdtz extends BaseCronJob {
                 String ddh = returnTable.getString("AUFNR"); // 订单号
                 String hxzt = Util.null2String(returnTable.getString("ZSTATE")).trim(); // 回写订单状态
                 String xxwb = returnTable.getString("ZMSG"); // 消息文本
+                baseBean.writeLog("订单号: " + ddh + ", 回写订单状态: " + hxzt + ", 消息文本: " + xxwb);
                 updateSet.executeUpdate(updateSq, hxzt, xxwb, ddh);
                 if ("S".equalsIgnoreCase(hxzt)) {
                     successCount++;
