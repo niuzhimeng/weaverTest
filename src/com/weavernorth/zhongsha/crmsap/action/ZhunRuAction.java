@@ -66,10 +66,12 @@ public class ZhunRuAction extends BaseAction {
             insertStructure.setValue("ZWELS", recordSet.getString("fkfs")); // 付款方式
             insertStructure.setValue("ZTERM", "T001"); // 付款条件
             insertStructure.setValue("EKORG", recordSet.getString("cgzz")); // 采购组织
-            insertStructure.setValue("CHANGE_IND", "0".equals(recordSet.getString("sqlx")) ? "I" : "U"); // 变更类型 (U-扩展, I-新建)
+            String sqlx = recordSet.getString("sqlx");
+            String sqlxAfter = "0".equals(sqlx) ? "I" : "U";
+            insertStructure.setValue("CHANGE_IND", sqlxAfter); // 变更类型 (U-扩展, I-新建)
 
             this.writeLog("银行代码: " + recordSet.getString("khyh") + " 账户号: " + recordSet.getString("zhh"));
-            this.writeLog("供应商名称: " + recordSet.getString("mc") + " SAP代码: " + sapdm);
+            this.writeLog("供应商名称: " + recordSet.getString("mc") + " SAP代码: " + sapdm + ", 变更类型: " + sqlxAfter);
             // 表入参
             JCoTable itMatkl = function.getTableParameterList().getTable("IT_MATKL");
             String wlz = recordSet.getString("xgwlz");// 物料组
@@ -103,9 +105,11 @@ public class ZhunRuAction extends BaseAction {
             }
 
             // 更新uf_crm_gysxx
-            String updateSQL = "update uf_crm_gysxx set yhmcsap = '" + EV_BANKA + "' where sapdm = '" + sapdm + "'";
-            this.writeLog("更新建模表 uf_crm_gysxx 的sql: " + updateSQL);
-            recordSet.executeUpdate(updateSQL);
+            if (!"U".equals(sqlxAfter)) {
+                String updateSQL = "update uf_crm_gysxx set yhmcsap = '" + EV_BANKA + "' where sapdm = '" + sapdm + "'";
+                this.writeLog("更新建模表 uf_crm_gysxx 的sql: " + updateSQL);
+                recordSet.executeUpdate(updateSQL);
+            }
 
             this.writeLog("准入流程 End ===============");
         } catch (Exception e) {

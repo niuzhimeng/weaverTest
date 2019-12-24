@@ -58,7 +58,7 @@ public class GuanXiChangeAction extends BaseAction {
             while (recordSet.next()) {
                 itMatkl.appendRow();
                 itMatkl.setRow(i);
-                itMatkl.setValue("MAKTL", recordSet.getString("wlz")); // 物料组
+                itMatkl.setValue("MATKL", recordSet.getString("wlz")); // 物料组
                 itMatkl.setValue("CHANGE_IND", "0".equals(recordSet.getString("czlx")) ? "I" : "D"); // 变更类型 (I-新建, D-删除)
 
                 i++;
