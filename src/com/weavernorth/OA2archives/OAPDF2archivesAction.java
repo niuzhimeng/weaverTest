@@ -351,9 +351,9 @@ public class OAPDF2archivesAction extends BaseBean {
                     //得到pdf文件的路径
                     String newpath = (String) dataMap.get("newpath");
                     if (i == 0) {
-                        inputDir = newpath.substring("//10.102.180.254/filesystem/".length(), newpath.length());
+                        inputDir = newpath.substring("E:/filesystem/".length());
                     } else {
-                        list1.add(newpath.substring("//10.102.180.254/filesystem/".length(), newpath.length()));
+                        list1.add(newpath.substring("E:/filesystem/".length()));
                     }
                     LogUtil.debugLog("===需要合并的pdf文件路径==>" + inputDir + list1);
                 }
