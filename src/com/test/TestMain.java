@@ -766,7 +766,7 @@ public class TestMain {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         // 检测双休日
-        Date bdate = simpleDateFormat.parse("");
+        Date bdate = simpleDateFormat.parse("2020-01-07");
         Calendar cal = Calendar.getInstance();
         cal.setTime(bdate);
         if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
@@ -795,14 +795,15 @@ public class TestMain {
 
     @Test
     public void test36() {
-
-
+        String a = "1";
+        String b = "1";
+        System.out.println(a.codePointCount(0, a.length()));
     }
 
     @Test
     public void test37() {
-        double all = 6500000;
-        System.out.println(all * 0.015);
+
+
     }
 
 }
