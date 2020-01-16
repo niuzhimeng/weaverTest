@@ -61,8 +61,8 @@ public class PushGdtz extends BaseCronJob {
                 insertTable.setValue("IEDD", recordSet.getString("sjjsrq")); // 实际结束日期
 
                 insertTable.setValue("ISMNW", recordSet.getString("zgs")); // 总工时
-                insertTable.setValue("LIFNR", getSysByFiled("sapdm", "uf_crm_gysxx",
-                        "id", recordSet.getString("sgdw"))); // 施工单位
+                insertTable.setValue("LIFNR", getSysByFiled("crmcode", "crm_customerinfo",
+                        "id", recordSet.getString("xzsgdw"))); // 施工单位
 
                 i++;
             }

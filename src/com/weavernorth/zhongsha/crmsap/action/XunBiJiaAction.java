@@ -12,12 +12,33 @@ import weaver.general.TimeUtil;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 询比价流程-物资类
  */
 public class XunBiJiaAction extends BaseAction {
 
     private RecordSet connSet = new RecordSet();
+    /**
+     * 下拉框value - 供应商所在明细表
+     */
+    private static Map<String, String> mxbNameMap = new HashMap<String, String>();
+
+    static {
+        mxbNameMap.put("1", "1");
+        mxbNameMap.put("2", "2");
+        mxbNameMap.put("3", "3");
+        mxbNameMap.put("4", "4");
+        mxbNameMap.put("5", "5");
+
+        mxbNameMap.put("6", "8");
+        mxbNameMap.put("7", "9");
+        mxbNameMap.put("8", "10");
+        mxbNameMap.put("9", "11");
+        mxbNameMap.put("10", "12");
+    }
 
     @Override
     public String execute(RequestInfo requestInfo) {
@@ -61,7 +82,14 @@ public class XunBiJiaAction extends BaseAction {
             String gysmc_C = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gyscmc"));
             String gysmc_D = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gysdmc"));
             String gysmc_E = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gysemc"));
-            String[] gysNames = {gysmc_A, gysmc_B, gysmc_C, gysmc_D, gysmc_E};
+
+            String gysmc_F = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gysfmc"));
+            String gysmc_G = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gysgmc"));
+            String gysmc_H = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gyshmc"));
+            String gysmc_I = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gysimc"));
+            String gysmc_J = getSysByFiled("sapdm", "uf_crm_gysxx", "id", recordSet.getString("gysjmc"));
+            String[] gysNames = {gysmc_A, gysmc_B, gysmc_C, gysmc_D, gysmc_E,
+                    gysmc_F, gysmc_G, gysmc_H, gysmc_I, gysmc_J};
             this.writeLog("供应商名称： " + JSONObject.toJSONString(gysNames));
 
             // 查询中标供应商
@@ -69,9 +97,15 @@ public class XunBiJiaAction extends BaseAction {
             RecordSet fysSet = new RecordSet();
             int j = 0;
             while (recordSet.next()) {
+                String zfzb = recordSet.getString("zfzb"); // 是否中标
+                this.writeLog("是否中标： " + zfzb);
+                if ("0".equals(zfzb)) {
+                    continue;
+                }
                 String zbgys = recordSet.getString("zbgys"); // 中标供应商
+                String zbgysSql = "select * from " + tableName + "_dt" + mxbNameMap.get(zbgys) + " where mainid = '" + mainId + "'";
+
                 String gysName = gysNames[Util.getIntValue(zbgys) - 1];
-                String zbgysSql = "select * from " + tableName + "_dt" + zbgys + " where mainid = '" + mainId + "'";
                 this.writeLog("中标供应商名称================ " + gysName);
                 this.writeLog("查询中标供应商sql： " + zbgysSql);
                 fysSet.executeQuery(zbgysSql);
