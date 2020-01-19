@@ -1,6 +1,5 @@
 package com.weavernorth.zhongsha.crmsap.timed;
 
-import com.alibaba.fastjson.JSONObject;
 import com.sap.conn.jco.JCoDestination;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
@@ -24,7 +23,7 @@ public class GetGdtz extends BaseCronJob {
     private BaseBean baseBean = new BaseBean();
     private static final Integer mainModeId = 69;
     private static final Integer detailModeId = 79;
-
+    private RecordSet connSet = new RecordSet();
     private String version; // 版本
 
     @Override
@@ -117,14 +116,15 @@ public class GetGdtz extends BaseCronJob {
             this.fuQuan(mainCurrentTimeString, "uf_gdtz", mainModeId);
             baseBean.writeLog("明细数据开始====================");
             String detailSql = "insert into uf_gdtzmxb(jhgylx, js, gxh, gxms, jhfy, " +
-                    "jbksrq, jbjsrq, gdh," +
-                    "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime ) values(?,?,?,?,?, ?,?,?, ?,?,?,?,?)";
-            Object[] details = new String[13];
+                    "jbksrq, jbjsrq, gdhwb, gdh, " +
+                    "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime ) values(?,?,?,?,?, ?,?,?,?, ?,?,?,?,?)";
+            Object[] details = new String[14];
             String detailCurrentTimeString = TimeUtil.getCurrentTimeString();
             for (int i = 0; i < tableRows; i++) {
                 tableList.setRow(i);
                 String aufpl = tableList.getString("AUFPL");
                 String aplzl = tableList.getString("APLZL");
+                String aufnr = tableList.getString("AUFNR");
                 if (detailList.contains(aufpl + aplzl)) {
                     continue;
                 }
@@ -136,14 +136,14 @@ public class GetGdtz extends BaseCronJob {
 
                 details[5] = tableList.getString("SSAVD"); // 基本开始日期
                 details[6] = tableList.getString("SSEDD"); // 基本结束日期
-                details[7] = tableList.getString("AUFNR"); // 工单号
+                details[7] = aufnr; // 工单号
+                details[8] = getSysByFiled("id", "uf_gdtz", "gdh", aufnr); // 主表id
 
-                details[8] = String.valueOf(detailModeId);
-                details[9] = "1";
-                details[10] = "0";
-                details[11] = detailCurrentTimeString.substring(0, 10);
-                details[12] = detailCurrentTimeString.substring(11);
-                baseBean.writeLog("details=======" + JSONObject.toJSONString(details));
+                details[9] = String.valueOf(detailModeId);
+                details[10] = "1";
+                details[11] = "0";
+                details[12] = detailCurrentTimeString.substring(0, 10);
+                details[13] = detailCurrentTimeString.substring(11);
                 insertSet.executeUpdate(detailSql, details);
             }
 
@@ -175,6 +175,22 @@ public class GetGdtz extends BaseCronJob {
             new BaseBean().writeLog("GetGdtz数据授权异常： " + e);
         }
 
+    }
+
+    /**
+     * 根据某一字段查另一个字段
+     *
+     * @param resultField 查询的字段名
+     * @param tableName   查询表名
+     * @param selField    条件字段名
+     */
+    private String getSysByFiled(String resultField, String tableName, String whereId, String selField) {
+        String returnStr = "";
+        connSet.executeQuery("select " + resultField + " from " + tableName + " where " + whereId + " = '" + selField + "'");
+        if (connSet.next()) {
+            returnStr = connSet.getString(resultField);
+        }
+        return returnStr;
     }
 
     public String getVersion() {

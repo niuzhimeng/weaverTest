@@ -10,7 +10,7 @@ import java.io.FileOutputStream;
 import java.util.Properties;
 
 /**
- * 菜百 sap连接池
+ * sap连接池
  */
 public class ZhsPoolThree {
 
