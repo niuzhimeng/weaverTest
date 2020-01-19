@@ -802,7 +802,10 @@ public class TestMain {
 
     @Test
     public void test37() {
-
+        Map<String, String> testMap = new HashMap<String, String>();
+        testMap.put("NZM", "123");
+        System.out.println(testMap.get("NZM"));
+        System.out.println("NZM".toLowerCase());
 
     }
 

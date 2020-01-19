@@ -27,8 +27,8 @@ public enum JiaJieConfigInfo {
 
     TIAO_ZHENG_RI_QI("field85"), // 调整日期
         ZONG_BU_ID("21"), // 总部id
-        JT_SYQZZ_FLOW_ID("22001"), // JT_试用期转正提醒*
-        JT_ZZ_FLOW_ID("22002"), // JT_转正提醒*
+    JT_SYQZZ_FLOW_ID("21506"), // JT_试用期转正提醒*
+    JT_ZZ_FLOW_ID("21507"), // JT_转正提醒*
     TRIGGER_TABLE_NAME("uf_triggered_zb"), // 定时触发流程，记录表名
 
     HTCFD("field89"), // 合同存放地

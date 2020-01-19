@@ -54,7 +54,7 @@ public class PushGdtz extends BaseCronJob {
             while (recordSet.next()) {
                 insertTable.appendRow();
                 insertTable.setRow(i);
-                insertTable.setValue("AUFNR", recordSet.getString("gdh")); // 工单号
+                insertTable.setValue("AUFNR", getSysByFiled("gdh", "uf_gdtz", "id", recordSet.getString("gdh"))); // 工单号
                 insertTable.setValue("VORNR", recordSet.getString("gxh")); // 工序
                 insertTable.setValue("LTXA1", recordSet.getString("gxms")); // 工序描述
                 insertTable.setValue("ISDD", recordSet.getString("sjksrq")); // 实际开始日期

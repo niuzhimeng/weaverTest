@@ -25,6 +25,8 @@ public class GetGdtz extends BaseCronJob {
     private static final Integer mainModeId = 69;
     private static final Integer detailModeId = 79;
 
+    private String version; // 版本
+
     @Override
     public void execute() {
         baseBean.writeLog("GetGdtz获取工单台账Start=========== " + TimeUtil.getCurrentTimeString());
@@ -34,6 +36,9 @@ public class GetGdtz extends BaseCronJob {
             baseBean.writeLog("ping 通=====");
             JCoFunction function = jCoDestination.getRepository().getFunction("ZFM_CRM_OA_INF_PMORD_GET");
 
+            // 版本（默认为空， 手动触发时，由前台传入）
+            baseBean.writeLog("发送版本： " + this.version);
+            function.getImportParameterList().setValue("IV_REVNR", version);
             // 调用sap接口
             function.execute(jCoDestination);
             baseBean.writeLog("调用接口结束===========");
@@ -63,7 +68,7 @@ public class GetGdtz extends BaseCronJob {
             recordSet.executeQuery("select loginid, id from hrmresource where loginid != ''");
             Map<String, String> loginIdMap = new HashMap<String, String>();
             while (recordSet.next()) {
-                loginIdMap.put(recordSet.getString("loginid"), recordSet.getString("id"));
+                loginIdMap.put(Util.null2String(recordSet.getString("loginid")).toLowerCase(), recordSet.getString("id"));
             }
 
             String mainSql = "insert into uf_gdtz(gdh, bbh, gdms, xtzt, xttj, " +
@@ -95,7 +100,7 @@ public class GetGdtz extends BaseCronJob {
                 mains[10] = headList.getString("GSTRP"); // 施工时间开始
                 mains[11] = headList.getString("GLTRP"); // 施工时间结束
                 mains[12] = headList.getString("WRT04"); // 估算费用
-                mains[13] = Util.null2String(loginIdMap.get(headList.getString("ERNAM"))); // 创建人
+                mains[13] = Util.null2String(loginIdMap.get(Util.null2String(headList.getString("ERNAM")).toLowerCase())); // 创建人
                 mains[14] = headList.getString("ERDAT"); // 创建时间
 
                 mains[15] = headList.getString("AUFPL"); // 计划号-关联键
@@ -172,4 +177,11 @@ public class GetGdtz extends BaseCronJob {
 
     }
 
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 }

@@ -120,7 +120,7 @@ public class XunBiJiaAction extends BaseAction {
 
                     itOutput.setValue("MEINS", fysSet.getString("dw")); // 单位
                     itOutput.setValue("MENGE", fysSet.getString("sl")); // 数量
-                    itOutput.setValue("LFDAT", fysSet.getString("jhsj")); // 交货时间
+                    itOutput.setValue("LFDAT", fysSet.getString("jhrq")); // 交货时间
                     itOutput.setValue("ERNAM", cgy); // 采购员
                     itOutput.setValue("INCO2", hth); // 合同号
 
