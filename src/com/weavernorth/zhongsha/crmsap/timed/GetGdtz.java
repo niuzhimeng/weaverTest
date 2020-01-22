@@ -21,8 +21,8 @@ import java.util.Map;
 public class GetGdtz extends BaseCronJob {
 
     private BaseBean baseBean = new BaseBean();
-    private static final Integer mainModeId = 69;
-    private static final Integer detailModeId = 79;
+    private static final Integer mainModeId = 71;
+    private static final Integer detailModeId = 68;
     private RecordSet connSet = new RecordSet();
     private String version; // 版本
 
