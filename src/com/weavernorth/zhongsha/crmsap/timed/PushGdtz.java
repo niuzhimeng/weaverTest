@@ -76,16 +76,17 @@ public class PushGdtz extends BaseCronJob {
             int numRows = returnTable.getNumRows();
             baseBean.writeLog("headList返回表行数： " + numRows);
             RecordSet updateSet = new RecordSet();
-            String updateSq = "update uf_gdtzmxb set tbzt = ?, tbbz = ? where gdh = ?";
+            String updateSq = "update uf_gdtzmxb set tbzt = ?, tbbz = ? where gdhwb = ? and gxh = ?";
             int successCount = 0;
             int errorCount = 0;
             for (int j = 0; j < numRows; j++) {
                 returnTable.setRow(j);
                 String ddh = returnTable.getString("AUFNR"); // 订单号
+                String vornr = returnTable.getString("VORNR"); // 活动编号
                 String hxzt = Util.null2String(returnTable.getString("ZSTATE")).trim(); // 回写订单状态
                 String xxwb = returnTable.getString("ZMSG"); // 消息文本
-                baseBean.writeLog("订单号: " + ddh + ", 回写订单状态: " + hxzt + ", 消息文本: " + xxwb);
-                updateSet.executeUpdate(updateSq, hxzt, xxwb, ddh);
+                baseBean.writeLog("订单号: " + ddh + ", 活动编号: " + vornr + ",  回写订单状态: " + hxzt + ", 消息文本: " + xxwb);
+                updateSet.executeUpdate(updateSq, hxzt, xxwb, ddh, vornr);
                 if ("S".equalsIgnoreCase(hxzt)) {
                     successCount++;
                 } else {

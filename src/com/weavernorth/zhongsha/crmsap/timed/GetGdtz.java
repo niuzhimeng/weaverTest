@@ -21,8 +21,12 @@ import java.util.Map;
 public class GetGdtz extends BaseCronJob {
 
     private BaseBean baseBean = new BaseBean();
-    private static final Integer mainModeId = 71;
-    private static final Integer detailModeId = 68;
+    private static final Integer mainModeId = 71; // 正式环境
+    private static final Integer detailModeId = 68; // 正式环境
+
+//    private static final Integer mainModeId = 69; // 测试
+//    private static final Integer detailModeId = 79; // 测试
+
     private RecordSet connSet = new RecordSet();
     private String version; // 版本
 
@@ -53,15 +57,15 @@ public class GetGdtz extends BaseCronJob {
             // 查询重复数据， 不做操作
             RecordSet recordSet = new RecordSet();
             List<String> mainList = new ArrayList<String>();
-            recordSet.executeQuery("select jhhm from uf_gdtz");
+            recordSet.executeQuery("select gdh from uf_gdtz");
             while (recordSet.next()) {
-                mainList.add(recordSet.getString("jhhm"));
+                mainList.add(recordSet.getString("gdh"));
             }
 
             List<String> detailList = new ArrayList<String>();
-            recordSet.executeQuery("select jhgylx, js from uf_gdtzmxb");
+            recordSet.executeQuery("select gxh, gdhwb from uf_gdtzmxb");
             while (recordSet.next()) {
-                detailList.add(recordSet.getString("jhgylx") + recordSet.getString("js"));
+                detailList.add(recordSet.getString("gxh") + recordSet.getString("gdhwb"));
             }
 
             recordSet.executeQuery("select loginid, id from hrmresource where loginid != ''");
@@ -70,20 +74,24 @@ public class GetGdtz extends BaseCronJob {
                 loginIdMap.put(Util.null2String(recordSet.getString("loginid")).toLowerCase(), recordSet.getString("id"));
             }
 
-            String mainSql = "insert into uf_gdtz(gdh, bbh, gdms, xtzt, xttj, " +
+            String mainSqlInsert = "insert into uf_gdtz(gdh, bbh, gdms, xtzt, xttj, " +
                     "pmzylx, gnwz, wzms, zz, sbhms, " +
                     "sgkssj, sgjssj, gsfy, cjr, cjsj, " +
                     "jhhm, yxj, " +
                     "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
                     " values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?, ?,?,?,?,?)";
+            String mainSqlUpdate = "update uf_gdtz set gdh = ?, bbh = ?, gdms = ?, xtzt = ?, xttj = ?, " +
+                    "pmzylx = ?, gnwz = ?, wzms = ?, zz = ?, sbhms = ?, " +
+                    "sgkssj = ?, sgjssj = ?, gsfy = ?, cjr = ?, cjsj = ?, " +
+                    "jhhm = ?, yxj = ? " +
+                    "where gdh = ?";
             Object[] mains = new String[22];
             RecordSet insertSet = new RecordSet();
             String mainCurrentTimeString = TimeUtil.getCurrentTimeString();
+            int mainInsertCount = 0;
+            int mainUpdateCount = 0;
             for (int i = 0; i < numRows; i++) {
                 headList.setRow(i);
-                if (mainList.contains(headList.getString("AUFPL"))) {
-                    continue;
-                }
                 mains[0] = headList.getString("AUFNR"); // 工单号
                 mains[1] = headList.getString("REVNR"); // 版本号
                 mains[2] = headList.getString("KTEXT"); // 工单描述
@@ -110,27 +118,40 @@ public class GetGdtz extends BaseCronJob {
                 mains[19] = "0";
                 mains[20] = mainCurrentTimeString.substring(0, 10);
                 mains[21] = mainCurrentTimeString.substring(11);
-                insertSet.executeUpdate(mainSql, mains);
+                if (mainList.contains(headList.getString("AUFNR"))) {
+                    // 更新
+                    insertSet.executeUpdate(mainSqlUpdate, mains[0], mains[1], mains[2], mains[3], mains[4],
+                            mains[5], mains[6], mains[7], mains[8], mains[9],
+                            mains[10], mains[11], mains[12], mains[13], mains[14],
+                            mains[15], mains[16], mains[0]);
+                    mainUpdateCount++;
+                } else {
+                    // 新增
+                    insertSet.executeUpdate(mainSqlInsert, mains);
+                    mainInsertCount++;
+                }
             }
 
             this.fuQuan(mainCurrentTimeString, "uf_gdtz", mainModeId);
             baseBean.writeLog("明细数据开始====================");
-            String detailSql = "insert into uf_gdtzmxb(jhgylx, js, gxh, gxms, jhfy, " +
+            String detailSqlInsert = "insert into uf_gdtzmxb(jhgylx, js, gxh, gxms, jhfy, " +
                     "jbksrq, jbjsrq, gdhwb, gdh, " +
                     "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime ) values(?,?,?,?,?, ?,?,?,?, ?,?,?,?,?)";
+            String detailSqlUpdate = "update uf_gdtzmxb set jhgylx = ?, js = ?, gxh = ?, gxms = ?, jhfy = ?, " +
+                    "jbksrq = ?, jbjsrq = ?, gdhwb = ?, gdh = ? " +
+                    "where gxh = ? and gdhwb = ?";
             Object[] details = new String[14];
             String detailCurrentTimeString = TimeUtil.getCurrentTimeString();
+            int detailInsertCount = 0;
+            int detailUpdateCount = 0;
             for (int i = 0; i < tableRows; i++) {
                 tableList.setRow(i);
-                String aufpl = tableList.getString("AUFPL");
-                String aplzl = tableList.getString("APLZL");
+                String vornr = tableList.getString("VORNR");
                 String aufnr = tableList.getString("AUFNR");
-                if (detailList.contains(aufpl + aplzl)) {
-                    continue;
-                }
-                details[0] = aufpl; // 计划工艺路线号-关联键
-                details[1] = aplzl; // 计数
-                details[2] = tableList.getString("VORNR"); // 工序号
+
+                details[0] = tableList.getString("AUFPL"); // 计划工艺路线号-关联键
+                details[1] = tableList.getString("APLZL"); // 计数
+                details[2] = vornr; // 工序号
                 details[3] = tableList.getString("LTXA1"); // 工序描述
                 details[4] = tableList.getString("PREIS"); // 计划费用
 
@@ -144,13 +165,25 @@ public class GetGdtz extends BaseCronJob {
                 details[11] = "0";
                 details[12] = detailCurrentTimeString.substring(0, 10);
                 details[13] = detailCurrentTimeString.substring(11);
-                insertSet.executeUpdate(detailSql, details);
+                if (detailList.contains(vornr + aufnr)) {
+                    // 更新
+                    insertSet.executeUpdate(detailSqlUpdate, details[0], details[1], details[2], details[3], details[4],
+                            details[5], details[6], details[7], details[8],
+                            vornr, aufnr);
+                    detailUpdateCount++;
+                } else {
+                    // 新增
+                    insertSet.executeUpdate(detailSqlInsert, details);
+                    detailInsertCount++;
+                }
             }
 
             this.fuQuan(detailCurrentTimeString, "uf_gdtzmxb", detailModeId);
             // 插入日志表
-            ZsConnUtil.insertTimedLog("uf_gdtz", "获取工单台账主表数据更新成功，共计 " + numRows + "条", numRows, "工单台账主表数据");
-            ZsConnUtil.insertTimedLog("uf_gdtzmxb", "获取工单台账明细表数据更新成功，共计 " + tableRows + "条", tableRows, "工单台账明细表数据");
+            ZsConnUtil.insertTimedLog("uf_gdtz", "获取工单台账主表数据更新成功，共计 " + numRows + "条，" +
+                    "新增 " + mainInsertCount + " 条，更新 " + mainUpdateCount + " 条", numRows, "工单台账主表数据");
+            ZsConnUtil.insertTimedLog("uf_gdtzmxb", "获取工单台账明细表数据更新成功，共计 " + tableRows + "条， " +
+                    "新增 " + detailInsertCount + " 条，更新 " + detailUpdateCount + " 条", tableRows, "工单台账明细表数据");
         } catch (Exception e) {
             baseBean.writeLog("GetGdtz获取工单台账error: " + e);
         }
