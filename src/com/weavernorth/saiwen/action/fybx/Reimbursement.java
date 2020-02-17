@@ -1,6 +1,8 @@
 package com.weavernorth.saiwen.action.fybx;
 
+import com.alibaba.fastjson.JSONObject;
 import com.weaver.general.TimeUtil;
+import com.weaver.general.Util;
 import com.weavernorth.saiwen.myWeb.WebUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -8,6 +10,9 @@ import org.dom4j.Element;
 import weaver.conn.RecordSet;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 费用报销
@@ -32,71 +37,122 @@ public class Reimbursement extends BaseAction {
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
-
+            String mainid = recordSet.getString("id");
             String workCode = recordSet.getString("ygbm"); // 人员编码
             String lcbh = recordSet.getString("lcbh"); // 流程编号
-            String jieksy = recordSet.getString("jieksy"); // 借款事由
-            String fkfs = recordSet.getString("fkfs"); // 付款方式
-            String zhangh = recordSet.getString("zhangh"); // 账户
-
+            String bxsm = recordSet.getString("bxsm"); // 报销说明
             String fyssgs = recordSet.getString("fyssgs"); // 费用所属公司
-            String jkje = recordSet.getString("jkje"); // 借款金额
-            this.writeLog("流程编号: " + lcbh + ", 借款事由: " + jieksy);
 
-            String jfCode = ""; // 借方-科目编码
-            String dfCode = ""; // 贷方-科目编码
-            if ("0".equals(fkfs)) {
-                // 现金
-                jfCode = "122101" + workCode;
-                dfCode = "100101|0|0|0|0|0|0|0|0";
-            } else if ("1".equals(fkfs)) {
-                // 电汇 - 人民币
-                jfCode = "122101" + workCode;
-                dfCode = "100201" + zhangh;
-            } else if ("2".equals(fkfs)) {
-                // 电汇 - 外币
-                jfCode = "122101" + workCode;
-                dfCode = "100202" + zhangh;
-            }
+            String fyssbm = recordSet.getString("fyssbm"); // 费用所属部门
+            String fkfs = recordSet.getString("fkfsxz"); // 付款方式
+            double cxhj = Util.getDoubleValue(recordSet.getString("cxhj"), 0); // 税额合计
+            double cjkje = Util.getDoubleValue(recordSet.getString("cjkje"), 0); // 冲借款金额
+            double bxhj = Util.getDoubleValue(recordSet.getString("bxhj"), 0); // 价税合计总额
 
+            double fkje = Util.getDoubleValue(recordSet.getString("fkje"), 0); // 付款金额
+            String gys = recordSet.getString("gys"); // 供应商
+            String zy = lcbh + "|" + bxsm; // 摘要
+            this.writeLog("付款方式： " + fkfs);
+            this.writeLog("税额合计： " + cxhj + ", 冲借款金额： " + cjkje + " 价税合计总额: " + bxhj + " 付款金额: " + fkje);
+
+            // 明细字段部分
+            recordSet.executeQuery("select * from " + tableName + "_dt1 where mainid = '" + mainid + "'");
             Element root = DocumentHelper.createElement("GLVoucherList");
             Element SupplierList = root.addElement("VoucherList");
             Element glVoucherHead = SupplierList.addElement("GLVoucherHead");
-
             // 拼接明细
             Element m_entries_arrayLines = glVoucherHead.addElement("M_entries_ArrayLines");
-            //================ 借方
-            Element glVoucherLine = m_entries_arrayLines.addElement("GLVoucherLine");
-            glVoucherLine.addElement("M_amountDr").setText("0"); // 固定值0
-            glVoucherLine.addElement("M_amountCr").setText("0"); // 固定值0
-            glVoucherLine.addElement("M_enteredDr").setText(jkje); // 借方金额(原币)
-            glVoucherLine.addElement("M_enteredCr").setText(jkje); // 贷方金额(原币)
-            glVoucherLine.addElement("M_accountedDr").setText(jkje); // 借方金额(本币)
+            int sfzx = 0;
+            while (recordSet.next()) {
+                String fykm = recordSet.getString("fykm"); // 费用科目
+                double wsje = Util.getDoubleValue(recordSet.getString("wsje"), 0); // 未税金额
+                // 拼接规则
+                String jfCode = fykm + "|" + fyssbm;
+                //================ 借方
+                Element glVoucherLine = m_entries_arrayLines.addElement("GLVoucherLine");
+                glVoucherLine.addElement("M_amountDr").setText("0"); // 固定值0
+                glVoucherLine.addElement("M_amountCr").setText("0"); // 固定值0
+                glVoucherLine.addElement("M_enteredDr").setText(String.valueOf(wsje)); // 借方金额(原币)
+                glVoucherLine.addElement("M_enteredCr").setText("0"); // 贷方金额(原币)
+                glVoucherLine.addElement("M_accountedDr").setText(String.valueOf(wsje)); // 借方金额(本币)
 
-            glVoucherLine.addElement("M_accountedCr").setText(jkje); // 贷方金额(本币)
-            glVoucherLine.addElement("M_currency").setText("C001"); // 币种编码人民币（C001）
-            glVoucherLine.addElement("M_account").setText(jfCode); // 科目编码
-            glVoucherLine.addElement("M_abstracts").setText(lcbh + jieksy); // 摘要
+                glVoucherLine.addElement("M_accountedCr").setText("0"); // 贷方金额(本币)
+                glVoucherLine.addElement("M_currency").setText("C001"); // 币种编码人民币（C001）
+                glVoucherLine.addElement("M_account").setText(jfCode); // 科目编码
+                glVoucherLine.addElement("M_abstracts").setText(zy); // 摘要
 
-            //================ 贷方
-            Element glVoucherLinedf = m_entries_arrayLines.addElement("GLVoucherLine");
-            glVoucherLinedf.addElement("M_amountDr").setText("0"); // 固定值0
-            glVoucherLinedf.addElement("M_amountCr").setText("0"); // 固定值0
-            glVoucherLinedf.addElement("M_enteredDr").setText(jkje); // 借方金额(原币)
-            glVoucherLinedf.addElement("M_enteredCr").setText(jkje); // 贷方金额(原币)
-            glVoucherLinedf.addElement("M_accountedDr").setText(jkje); // 借方金额(本币)
+                if (cxhj > 0 && sfzx == 0) {
+                    // 如果税额合计 > 0 ，多传一个借方
+                    Element glVoucherLine1 = m_entries_arrayLines.addElement("GLVoucherLine");
+                    glVoucherLine1.addElement("M_amountDr").setText("0"); // 固定值0
+                    glVoucherLine1.addElement("M_amountCr").setText("0"); // 固定值0
+                    glVoucherLine1.addElement("M_enteredDr").setText(String.valueOf(cxhj)); // 借方金额(原币)
+                    glVoucherLine1.addElement("M_enteredCr").setText("0"); // 贷方金额(原币)
+                    glVoucherLine1.addElement("M_accountedDr").setText(String.valueOf(cxhj)); // 借方金额(本币)
 
-            glVoucherLinedf.addElement("M_accountedCr").setText(jkje); // 贷方金额(本币)
-            glVoucherLinedf.addElement("M_currency").setText("C001"); // 币种编码人民币（C001）
-            glVoucherLinedf.addElement("M_account").setText(dfCode); // 科目编码
-            glVoucherLinedf.addElement("M_abstracts").setText(lcbh + jieksy); // 摘要
+                    glVoucherLine1.addElement("M_accountedCr").setText("0"); // 贷方金额(本币)
+                    glVoucherLine1.addElement("M_currency").setText("C001"); // 币种编码人民币（C001）
+                    glVoucherLine1.addElement("M_account").setText("22210101"); // 科目编码
+                    glVoucherLine1.addElement("M_abstracts").setText(zy); // 摘要
+                    sfzx++;
+                }
+            }
+
+            // 贷方编码 - 贷方金额
+            Map<String, Double> dfMap = new HashMap<String, Double>();
+            if ("0".equals(fkfs)) {
+                // 现金
+                if (bxhj > cjkje && cjkje > 0) {
+                    dfMap.put("122101|" + workCode, cjkje);
+                    dfMap.put("224101|" + workCode, fkje);
+                } else if (cjkje == bxhj && fkje == bxhj && bxhj > 0) {
+                    dfMap.put("122101|" + workCode, cjkje);
+                } else if (cjkje == 0) {
+                    dfMap.put("224101|" + workCode, bxhj);
+                }
+            } else if ("3".equals(fkfs)) {
+                // 电汇-员工
+                if (bxhj > cjkje && cjkje > 0) {
+                    dfMap.put("122101|" + workCode, cjkje);
+                    dfMap.put("224101|" + workCode, fkje);
+                } else if (cjkje == bxhj && fkje == bxhj && bxhj > 0) {
+                    dfMap.put("122101|" + workCode, cjkje);
+                } else if (cjkje == 0) {
+                    dfMap.put("224101|" + workCode, bxhj);
+                }
+            } else if ("1".equals(fkfs)) {
+                // 电汇-人民币
+                if (bxhj > cjkje && cjkje > 0) {
+                    dfMap.put("112302|" + gys + "|" + workCode, cjkje);
+                    dfMap.put("220202|" + gys, fkje);
+                } else if (cjkje == bxhj && fkje == bxhj && bxhj > 0) {
+                    dfMap.put("112302|" + gys + "|" + workCode, cjkje);
+                } else if (cjkje == 0) {
+                    dfMap.put("220202|" + gys, bxhj);
+                }
+            }
+
+            this.writeLog("贷方拼接开始=========== 贷方数量" + dfMap.size() + ", " + JSONObject.toJSONString(dfMap));
+            for (Map.Entry<String, Double> entry : dfMap.entrySet()) {
+                Element glVoucherLinedf = m_entries_arrayLines.addElement("GLVoucherLine");
+                glVoucherLinedf.addElement("M_amountDr").setText("0"); // 固定值0
+                glVoucherLinedf.addElement("M_amountCr").setText("0"); // 固定值0
+                glVoucherLinedf.addElement("M_enteredDr").setText("0"); // 借方金额(原币)
+                glVoucherLinedf.addElement("M_enteredCr").setText(String.valueOf(entry.getValue())); // 贷方金额(原币)
+                glVoucherLinedf.addElement("M_accountedDr").setText("0"); // 借方金额(本币)
+
+                glVoucherLinedf.addElement("M_accountedCr").setText(String.valueOf(entry.getValue())); // 贷方金额(本币)
+                glVoucherLinedf.addElement("M_currency").setText("C001"); // 币种编码人民币（C001）
+                glVoucherLinedf.addElement("M_account").setText(entry.getKey()); // 科目编码
+                glVoucherLinedf.addElement("M_abstracts").setText(zy); // 摘要
+            }
 
             //================ 单据头
-            glVoucherLinedf.addElement("M_voucherCategory").setText("01"); // 单据类型 编码（01 记账凭证）
-            glVoucherLinedf.addElement("M_sOB").setText(fyssgs); // 账簿 编码
-            glVoucherLinedf.addElement("M_postedPeriod").setText(currentTimeString.substring(0, 7)); // 记账区间
-            glVoucherLinedf.addElement("M_attachmentCount").setText("0"); // 固定值0
-            glVoucherLinedf.addElement("M_createDate").setText(currentTimeString); // 凭证创日期时间
+            glVoucherHead.addElement("M_voucherCategory").setText("01"); // 单据类型 编码（01 记账凭证）
+            glVoucherHead.addElement("M_sOB").setText(fyssgs); // 账簿 编码
+            glVoucherHead.addElement("M_postedPeriod").setText(currentTimeString.substring(0, 7)); // 记账区间
+            glVoucherHead.addElement("M_attachmentCount").setText("0"); // 固定值0
+            glVoucherHead.addElement("M_createDate").setText(currentTimeString); // 凭证创日期时间
 
             Document document = DocumentHelper.createDocument(root);
             String pushXml = document.asXML();
