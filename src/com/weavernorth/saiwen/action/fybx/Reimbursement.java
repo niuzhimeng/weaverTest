@@ -33,7 +33,6 @@ public class Reimbursement extends BaseAction {
 
         this.writeLog("费用报销 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
-            String currentTimeString = TimeUtil.getCurrentTimeString();
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
@@ -66,8 +65,13 @@ public class Reimbursement extends BaseAction {
             while (recordSet.next()) {
                 String fykm = recordSet.getString("fykm"); // 费用科目
                 double wsje = Util.getDoubleValue(recordSet.getString("wsje"), 0); // 未税金额
-                // 拼接规则
-                String jfCode = fykm + "|" + fyssbm;
+                // 借方科目编码拼接规则
+                String jfCode = "";
+                if ("660306".equals(fykm) || "66023354".equals(fykm) || "51012501".equals(fykm)) {
+                    jfCode = fykm + "|0|0|0|0|0|0|0|0|0";
+                } else {
+                    jfCode = fykm + "|0|0|" + fyssbm + "|0|0|0|0|0|0";
+                }
                 //================ 借方
                 Element glVoucherLine = m_entries_arrayLines.addElement("GLVoucherLine");
                 glVoucherLine.addElement("M_amountDr").setText("0"); // 固定值0
@@ -92,7 +96,7 @@ public class Reimbursement extends BaseAction {
 
                     glVoucherLine1.addElement("M_accountedCr").setText("0"); // 贷方金额(本币)
                     glVoucherLine1.addElement("M_currency").setText("C001"); // 币种编码人民币（C001）
-                    glVoucherLine1.addElement("M_account").setText("22210101"); // 科目编码
+                    glVoucherLine1.addElement("M_account").setText("22210101|0|0|0|0|0|0|0|0|0"); // 科目编码
                     glVoucherLine1.addElement("M_abstracts").setText(zy); // 摘要
                     sfzx++;
                 }
@@ -103,32 +107,32 @@ public class Reimbursement extends BaseAction {
             if ("0".equals(fkfs)) {
                 // 现金
                 if (bxhj > cjkje && cjkje > 0) {
-                    dfMap.put("122101|" + workCode, cjkje);
-                    dfMap.put("224101|" + workCode, fkje);
+                    dfMap.put("122101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", cjkje);
+                    dfMap.put("224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", fkje);
                 } else if (cjkje == bxhj && fkje == bxhj && bxhj > 0) {
-                    dfMap.put("122101|" + workCode, cjkje);
+                    dfMap.put("122101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", cjkje);
                 } else if (cjkje == 0) {
-                    dfMap.put("224101|" + workCode, bxhj);
+                    dfMap.put("224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", bxhj);
                 }
             } else if ("3".equals(fkfs)) {
                 // 电汇-员工
                 if (bxhj > cjkje && cjkje > 0) {
-                    dfMap.put("122101|" + workCode, cjkje);
-                    dfMap.put("224101|" + workCode, fkje);
+                    dfMap.put("122101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", cjkje);
+                    dfMap.put("224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", fkje);
                 } else if (cjkje == bxhj && fkje == bxhj && bxhj > 0) {
-                    dfMap.put("122101|" + workCode, cjkje);
+                    dfMap.put("122101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", cjkje);
                 } else if (cjkje == 0) {
-                    dfMap.put("224101|" + workCode, bxhj);
+                    dfMap.put("224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", bxhj);
                 }
             } else if ("1".equals(fkfs)) {
                 // 电汇-人民币
                 if (bxhj > cjkje && cjkje > 0) {
-                    dfMap.put("112302|" + gys + "|" + workCode, cjkje);
-                    dfMap.put("220202|" + gys, fkje);
+                    dfMap.put("112302|0|" + gys + "|0|" + workCode + "|0|0|0|0|0", cjkje);
+                    dfMap.put("220202|0|" + gys + "|0|0|0|0|0|0|0", fkje);
                 } else if (cjkje == bxhj && fkje == bxhj && bxhj > 0) {
-                    dfMap.put("112302|" + gys + "|" + workCode, cjkje);
+                    dfMap.put("112302|0|" + gys + "|0|" + workCode + "|0|0|0|0|0", cjkje);
                 } else if (cjkje == 0) {
-                    dfMap.put("220202|" + gys, bxhj);
+                    dfMap.put("220202|0|" + gys + "|0|0|0|0|0|0|0", bxhj);
                 }
             }
 
@@ -148,11 +152,12 @@ public class Reimbursement extends BaseAction {
             }
 
             //================ 单据头
+            String currentDateString = TimeUtil.getCurrentDateString();
             glVoucherHead.addElement("M_voucherCategory").setText("01"); // 单据类型 编码（01 记账凭证）
             glVoucherHead.addElement("M_sOB").setText(fyssgs); // 账簿 编码
-            glVoucherHead.addElement("M_postedPeriod").setText(currentTimeString.substring(0, 7)); // 记账区间
+            glVoucherHead.addElement("M_postedPeriod").setText(currentDateString.substring(0, 7)); // 记账区间
             glVoucherHead.addElement("M_attachmentCount").setText("0"); // 固定值0
-            glVoucherHead.addElement("M_createDate").setText(currentTimeString); // 凭证创日期时间
+            glVoucherHead.addElement("M_createDate").setText(currentDateString); // 凭证创日期时间
 
             Document document = DocumentHelper.createDocument(root);
             String pushXml = document.asXML();

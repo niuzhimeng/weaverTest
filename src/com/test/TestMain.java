@@ -802,10 +802,12 @@ public class TestMain {
 
     @Test
     public void test37() {
-        Map<String, String> testMap = new HashMap<String, String>();
-        testMap.put("NZM", "123");
-        System.out.println(testMap.get("NZM"));
-        System.out.println("NZM".toLowerCase());
+        String td = "000000000010001146";
+        String dt = td.replaceAll("^0+", "");
+        System.out.println(dt);
+
+        String currentDateString = TimeUtil.getCurrentDateString();
+        System.out.println(currentDateString.substring(0, 7));
 
     }
 
