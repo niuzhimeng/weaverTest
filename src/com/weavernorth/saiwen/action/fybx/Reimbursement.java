@@ -41,6 +41,7 @@ public class Reimbursement extends BaseAction {
             String lcbh = recordSet.getString("lcbh"); // 流程编号
             String bxsm = recordSet.getString("bxsm"); // 报销说明
             String fyssgs = recordSet.getString("fyssgs"); // 费用所属公司
+            String zhangbbm  = recordSet.getString("zhangbbm "); // 账簿编码
 
             String fyssbm = recordSet.getString("fyssbm"); // 费用所属部门
             String fkfs = recordSet.getString("fkfsxz"); // 付款方式
@@ -154,17 +155,19 @@ public class Reimbursement extends BaseAction {
             //================ 单据头
             String currentDateString = TimeUtil.getCurrentDateString();
             glVoucherHead.addElement("M_voucherCategory").setText("01"); // 单据类型 编码（01 记账凭证）
-            glVoucherHead.addElement("M_sOB").setText(fyssgs); // 账簿 编码
-            glVoucherHead.addElement("M_postedPeriod").setText(currentDateString.substring(0, 7)); // 记账区间
+            glVoucherHead.addElement("M_sOB").setText(zhangbbm); // 账簿 编码
+            //glVoucherHead.addElement("M_postedPeriod").setText(currentDateString.substring(0, 7)); // 记账区间
+            glVoucherHead.addElement("M_postedPeriod").setText("2019-09"); // 记账区间
             glVoucherHead.addElement("M_attachmentCount").setText("0"); // 固定值0
-            glVoucherHead.addElement("M_createDate").setText(currentDateString); // 凭证创日期时间
+            //glVoucherHead.addElement("M_createDate").setText(currentDateString); // 凭证创日期时间
+            glVoucherHead.addElement("M_createDate").setText("2019-09-09"); // 凭证创日期时间
 
             Document document = DocumentHelper.createDocument(root);
             String pushXml = document.asXML();
             this.writeLog("个人借款凭证推送xml： " + pushXml);
 
             // 调用接口创建凭证
-            String voucherReturn = WebUtil.createVoucher(pushXml, fyssgs);
+            String voucherReturn = WebUtil.createVoucher(pushXml, zhangbbm);
             this.writeLog("创建凭证返回信息： " + voucherReturn);
             Document doc = DocumentHelper.parseText(voucherReturn);
             Element rootElt = doc.getRootElement();

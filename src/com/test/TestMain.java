@@ -807,7 +807,7 @@ public class TestMain {
         System.out.println(dt);
 
         String currentDateString = TimeUtil.getCurrentDateString();
-        System.out.println(currentDateString.substring(0, 7));
+        System.out.println(new MD5().getMD5ofStr("1"));
 
     }
 
