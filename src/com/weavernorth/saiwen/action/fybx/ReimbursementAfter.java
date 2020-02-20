@@ -39,8 +39,8 @@ public class ReimbursementAfter extends BaseAction {
             String workCode = recordSet.getString("ygbm"); // 人员编码
             String lcbh = recordSet.getString("lcbh"); // 流程编号
             String bxsm = recordSet.getString("bxsm"); // 报销说明
-
-            String zhangbbm = recordSet.getString("zhangbbm "); // 账簿编码
+            String fyssgs = recordSet.getString("fyssgs"); // 费用所属公司
+            String zhangbbm = recordSet.getString("zhangbbm"); // 账簿编码
 
             String fyssbm = recordSet.getString("fyssbm"); // 费用所属部门
             String fkfs = recordSet.getString("fkfsxz"); // 付款方式
@@ -51,8 +51,9 @@ public class ReimbursementAfter extends BaseAction {
             double fkje = Util.getDoubleValue(recordSet.getString("fkje"), 0); // 付款金额
             String gys = recordSet.getString("gys"); // 供应商
             String zy = lcbh + "|" + bxsm; // 摘要
-            this.writeLog("付款方式： " + fkfs + ", 银行： " + yh + ", 银行账号： " + yhzh);
-            this.writeLog("税额合计： " + cxhj + ", 冲借款金额： " + cjkje + " 价税合计总额: " + bxhj + " 付款金额: " + fkje);
+            this.writeLog("付款方式： " + fkfs + ", 银行： " + yh + ", 银行账号： " + yhzh + ", 账簿编码: " + zhangbbm);
+            this.writeLog("税额合计： " + cxhj + ", 冲借款金额： " + cjkje + " 价税合计总额: " + bxhj + " 付款金额: " + fkje +
+                    ", 费用所属公司： " + fyssgs);
 
             Element root = DocumentHelper.createElement("GLVoucherList");
             Element SupplierList = root.addElement("VoucherList");
@@ -145,7 +146,7 @@ public class ReimbursementAfter extends BaseAction {
             this.writeLog("个人借款凭证推送xml： " + pushXml);
 
             // 调用接口创建凭证
-            String voucherReturn = WebUtil.createVoucher(pushXml, zhangbbm);
+            String voucherReturn = WebUtil.createVoucher(pushXml, fyssgs);
             this.writeLog("创建凭证返回信息： " + voucherReturn);
             Document doc = DocumentHelper.parseText(voucherReturn);
             Element rootElt = doc.getRootElement();

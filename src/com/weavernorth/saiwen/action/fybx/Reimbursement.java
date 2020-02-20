@@ -41,7 +41,7 @@ public class Reimbursement extends BaseAction {
             String lcbh = recordSet.getString("lcbh"); // 流程编号
             String bxsm = recordSet.getString("bxsm"); // 报销说明
             String fyssgs = recordSet.getString("fyssgs"); // 费用所属公司
-            String zhangbbm  = recordSet.getString("zhangbbm "); // 账簿编码
+            String zhangbbm = recordSet.getString("zhangbbm"); // 账簿编码
 
             String fyssbm = recordSet.getString("fyssbm"); // 费用所属部门
             String fkfs = recordSet.getString("fkfsxz"); // 付款方式
@@ -52,7 +52,7 @@ public class Reimbursement extends BaseAction {
             double fkje = Util.getDoubleValue(recordSet.getString("fkje"), 0); // 付款金额
             String gys = recordSet.getString("gys"); // 供应商
             String zy = lcbh + "|" + bxsm; // 摘要
-            this.writeLog("付款方式： " + fkfs);
+            this.writeLog("付款方式： " + fkfs + ", 账簿编码: " + zhangbbm + ", 费用所属公司： " + fyssgs);
             this.writeLog("税额合计： " + cxhj + ", 冲借款金额： " + cjkje + " 价税合计总额: " + bxhj + " 付款金额: " + fkje);
 
             // 明细字段部分
@@ -167,7 +167,7 @@ public class Reimbursement extends BaseAction {
             this.writeLog("个人借款凭证推送xml： " + pushXml);
 
             // 调用接口创建凭证
-            String voucherReturn = WebUtil.createVoucher(pushXml, zhangbbm);
+            String voucherReturn = WebUtil.createVoucher(pushXml, fyssgs);
             this.writeLog("创建凭证返回信息： " + voucherReturn);
             Document doc = DocumentHelper.parseText(voucherReturn);
             Element rootElt = doc.getRootElement();

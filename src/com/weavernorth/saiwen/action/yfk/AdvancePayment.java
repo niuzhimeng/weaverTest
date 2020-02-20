@@ -35,19 +35,20 @@ public class AdvancePayment extends BaseAction {
 
             String yh = recordSet.getString("khhbm"); // 银行
             String yhzh = recordSet.getString("fkzh"); // 银行账号
+            String fyssgs = recordSet.getString("fyssgs"); // 费用所属公司
 
             String workCode = recordSet.getString("ygbm"); // 人员编码
             String lcbh = recordSet.getString("lcbh"); // 流程编号
             String jieksy = recordSet.getString("jieksy"); // 借款事由
             String fkfs = recordSet.getString("fkfs"); // 付款方式
-            String hangb = recordSet.getString("zhangb"); // 账簿编码
+            String zhangb = recordSet.getString("zhangb"); // 账簿编码
 
             String gys = recordSet.getString("gys"); // 供应商
 
             String zy = lcbh + "|" + jieksy; // 摘要
             double jkje = Util.getDoubleValue(recordSet.getString("jkje"), 0); // 借款金额
             this.writeLog("流程编号: " + lcbh + ", 借款事由: " + jieksy + ", 借款金额： " + jkje + ", 付款方式： " + fkfs +
-                    "账簿编码: " + hangb);
+                    "账簿编码: " + zhangb + ", 费用所属公司： " + fyssgs);
 
             Element root = DocumentHelper.createElement("GLVoucherList");
             Element SupplierList = root.addElement("VoucherList");
@@ -106,7 +107,7 @@ public class AdvancePayment extends BaseAction {
             //================ 单据头
             String currentDateString = TimeUtil.getCurrentDateString();
             glVoucherHead.addElement("M_voucherCategory").setText("01"); // 单据类型 编码（01 记账凭证）
-            glVoucherHead.addElement("M_sOB").setText(hangb); // 账簿 编码
+            glVoucherHead.addElement("M_sOB").setText(zhangb); // 账簿 编码
             //glVoucherHead.addElement("M_postedPeriod").setText(currentDateString.substring(0, 7)); // 记账区间
             glVoucherHead.addElement("M_postedPeriod").setText("2019-09"); // 记账区间
             glVoucherHead.addElement("M_attachmentCount").setText("0"); // 固定值0
@@ -118,7 +119,7 @@ public class AdvancePayment extends BaseAction {
             this.writeLog("预付款凭证推送xml： " + pushXml);
 
             // 调用接口创建凭证
-            String voucherReturn = WebUtil.createVoucher(pushXml, hangb);
+            String voucherReturn = WebUtil.createVoucher(pushXml, fyssgs);
             this.writeLog("创建凭证返回信息： " + voucherReturn);
             Document doc = DocumentHelper.parseText(voucherReturn);
             Element rootElt = doc.getRootElement();
