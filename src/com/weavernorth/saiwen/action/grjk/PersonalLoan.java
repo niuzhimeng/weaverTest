@@ -29,7 +29,6 @@ public class PersonalLoan extends BaseAction {
 
         this.writeLog("个人借款 Start requestid --- " + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
-            String currentTimeString = TimeUtil.getCurrentTimeString();
             // 查询主表
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
@@ -48,7 +47,7 @@ public class PersonalLoan extends BaseAction {
             String zy = lcbh + "|" + jieksy; // 摘要
             double jkje = Util.getDoubleValue(recordSet.getString("jkje"), 0); // 借款金额
             this.writeLog("流程编号: " + lcbh + ", 借款事由: " + jieksy + ", 借款金额： " + jkje + ", 付款方式： " + fkfs +
-                    ", 费用所属公司： " + fyssgs);
+                    ", 费用所属公司： " + fyssgs + "员工编码： " + workCode);
 
             Element root = DocumentHelper.createElement("GLVoucherList");
             Element SupplierList = root.addElement("VoucherList");
@@ -78,6 +77,12 @@ public class PersonalLoan extends BaseAction {
                 dfCode = "100202|0|0|0|0|" + yh + "|" + yhzh + "|0|0|0";
                 dfMoney = jkje;
             }
+//            this.writeLog("替换前借方编码： " + jfCode + ", 贷方编码： " + dfCode);
+//            // 如果为苏州，则去掉借贷方编码中所有的|0
+//            jfCode = SwUtil.deleteZero(jfCode, fyssgs);
+//            dfCode = SwUtil.deleteZero(dfCode, fyssgs);
+//            this.writeLog("替换后借方编码： " + jfCode + ", 贷方编码： " + dfCode);
+
             this.writeLog("借方拼接开始===========");
             Element glVoucherLine = m_entries_arrayLines.addElement("GLVoucherLine");
             glVoucherLine.addElement("M_amountDr").setText("0"); // 固定值0
@@ -108,11 +113,9 @@ public class PersonalLoan extends BaseAction {
             String currentDateString = TimeUtil.getCurrentDateString();
             glVoucherHead.addElement("M_voucherCategory").setText("01"); // 单据类型 编码（01 记账凭证）
             glVoucherHead.addElement("M_sOB").setText(zhangb); // 账簿 编码
-            //glVoucherHead.addElement("M_postedPeriod").setText(currentDateString.substring(0, 7)); // 记账区间
-            glVoucherHead.addElement("M_postedPeriod").setText("2019-09"); // 记账区间
+            glVoucherHead.addElement("M_postedPeriod").setText(currentDateString.substring(0, 7)); // 记账区间
             glVoucherHead.addElement("M_attachmentCount").setText("0"); // 固定值0
-            //glVoucherHead.addElement("M_createDate").setText(currentDateString); // 凭证创日期时间
-            glVoucherHead.addElement("M_createDate").setText("2019-09-09"); // 凭证创日期时间
+            glVoucherHead.addElement("M_createDate").setText(currentDateString); // 凭证创日期时间
 
             Document document = DocumentHelper.createDocument(root);
             String pushXml = document.asXML();

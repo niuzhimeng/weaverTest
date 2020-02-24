@@ -12,6 +12,7 @@ import com.google.gson.JsonParser;
 import com.lowagie.text.pdf.*;
 import com.test.webserviceTest.vo.Student;
 import com.weaver.general.TimeUtil;
+import com.weavernorth.saiwen.util.SwUtil;
 import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -802,12 +803,10 @@ public class TestMain {
 
     @Test
     public void test37() {
-        String td = "000000000010001146";
-        String dt = td.replaceAll("^0+", "");
-        System.out.println(dt);
+        String code = "1002010|0|0|0|0|019|11015108386003|0|0|0";
+        String s = SwUtil.deleteZero(code, "104");
+        System.out.println(s);
 
-        String currentDateString = TimeUtil.getCurrentDateString();
-        System.out.println(new MD5().getMD5ofStr("1"));
 
     }
 

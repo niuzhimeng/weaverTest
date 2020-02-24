@@ -104,6 +104,10 @@ public class ReimbursementAfter extends BaseAction {
                     dfMoney = bxhj;
                 }
             }
+            // 如果为苏州，则去掉借贷方编码中所有的|0
+//            jfCode = SwUtil.deleteZero(jfCode, fyssgs);
+//            dfCode = SwUtil.deleteZero(dfCode, fyssgs);
+
             this.writeLog("借方拼接开始===========");
             Element glVoucherLine = m_entries_arrayLines.addElement("GLVoucherLine");
             glVoucherLine.addElement("M_amountDr").setText("0"); // 固定值0
@@ -130,20 +134,17 @@ public class ReimbursementAfter extends BaseAction {
             glVoucherLinedf.addElement("M_account").setText(dfCode); // 科目编码
             glVoucherLinedf.addElement("M_abstracts").setText(zy); // 摘要
 
-
             //================ 单据头
             String currentDateString = TimeUtil.getCurrentDateString();
             glVoucherHead.addElement("M_voucherCategory").setText("01"); // 单据类型 编码（01 记账凭证）
             glVoucherHead.addElement("M_sOB").setText(zhangbbm); // 账簿 编码
-            //glVoucherHead.addElement("M_postedPeriod").setText(currentDateString.substring(0, 7)); // 记账区间
-            glVoucherHead.addElement("M_postedPeriod").setText("2019-09"); // 记账区间
+            glVoucherHead.addElement("M_postedPeriod").setText(currentDateString.substring(0, 7)); // 记账区间
             glVoucherHead.addElement("M_attachmentCount").setText("0"); // 固定值0
-            //glVoucherHead.addElement("M_createDate").setText(currentDateString); // 凭证创日期时间
-            glVoucherHead.addElement("M_createDate").setText("2019-09-09"); // 凭证创日期时间
+            glVoucherHead.addElement("M_createDate").setText(currentDateString); // 凭证创日期时间
 
             Document document = DocumentHelper.createDocument(root);
             String pushXml = document.asXML();
-            this.writeLog("个人借款凭证推送xml： " + pushXml);
+            this.writeLog("费用报销凭证推送xml： " + pushXml);
 
             // 调用接口创建凭证
             String voucherReturn = WebUtil.createVoucher(pushXml, fyssgs);

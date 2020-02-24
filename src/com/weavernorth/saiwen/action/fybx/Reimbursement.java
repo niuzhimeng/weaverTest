@@ -73,6 +73,7 @@ public class Reimbursement extends BaseAction {
                 } else {
                     jfCode = fykm + "|0|0|" + fyssbm + "|0|0|0|0|0|0";
                 }
+                //jfCode = SwUtil.deleteZero(jfCode, fyssgs);
                 //================ 借方
                 Element glVoucherLine = m_entries_arrayLines.addElement("GLVoucherLine");
                 glVoucherLine.addElement("M_amountDr").setText("0"); // 固定值0
@@ -88,6 +89,8 @@ public class Reimbursement extends BaseAction {
 
                 if (cxhj > 0 && sfzx == 0) {
                     // 如果税额合计 > 0 ，多传一个借方
+                    String jfCode1 = "22210101|0|0|0|0|0|0|0|0|0";
+                    //jfCode1 = SwUtil.deleteZero(jfCode1, fyssgs);
                     Element glVoucherLine1 = m_entries_arrayLines.addElement("GLVoucherLine");
                     glVoucherLine1.addElement("M_amountDr").setText("0"); // 固定值0
                     glVoucherLine1.addElement("M_amountCr").setText("0"); // 固定值0
@@ -97,7 +100,7 @@ public class Reimbursement extends BaseAction {
 
                     glVoucherLine1.addElement("M_accountedCr").setText("0"); // 贷方金额(本币)
                     glVoucherLine1.addElement("M_currency").setText("C001"); // 币种编码人民币（C001）
-                    glVoucherLine1.addElement("M_account").setText("22210101|0|0|0|0|0|0|0|0|0"); // 科目编码
+                    glVoucherLine1.addElement("M_account").setText(jfCode1); // 科目编码
                     glVoucherLine1.addElement("M_abstracts").setText(zy); // 摘要
                     sfzx++;
                 }
@@ -139,6 +142,8 @@ public class Reimbursement extends BaseAction {
 
             this.writeLog("贷方拼接开始=========== 贷方数量" + dfMap.size() + ", " + JSONObject.toJSONString(dfMap));
             for (Map.Entry<String, Double> entry : dfMap.entrySet()) {
+                String dfCode = entry.getKey();
+                //dfCode = SwUtil.deleteZero(dfCode, fyssgs);
                 Element glVoucherLinedf = m_entries_arrayLines.addElement("GLVoucherLine");
                 glVoucherLinedf.addElement("M_amountDr").setText("0"); // 固定值0
                 glVoucherLinedf.addElement("M_amountCr").setText("0"); // 固定值0
@@ -148,7 +153,7 @@ public class Reimbursement extends BaseAction {
 
                 glVoucherLinedf.addElement("M_accountedCr").setText(String.valueOf(entry.getValue())); // 贷方金额(本币)
                 glVoucherLinedf.addElement("M_currency").setText("C001"); // 币种编码人民币（C001）
-                glVoucherLinedf.addElement("M_account").setText(entry.getKey()); // 科目编码
+                glVoucherLinedf.addElement("M_account").setText(dfCode); // 科目编码
                 glVoucherLinedf.addElement("M_abstracts").setText(zy); // 摘要
             }
 
@@ -156,15 +161,13 @@ public class Reimbursement extends BaseAction {
             String currentDateString = TimeUtil.getCurrentDateString();
             glVoucherHead.addElement("M_voucherCategory").setText("01"); // 单据类型 编码（01 记账凭证）
             glVoucherHead.addElement("M_sOB").setText(zhangbbm); // 账簿 编码
-            //glVoucherHead.addElement("M_postedPeriod").setText(currentDateString.substring(0, 7)); // 记账区间
-            glVoucherHead.addElement("M_postedPeriod").setText("2019-09"); // 记账区间
+            glVoucherHead.addElement("M_postedPeriod").setText(currentDateString.substring(0, 7)); // 记账区间
             glVoucherHead.addElement("M_attachmentCount").setText("0"); // 固定值0
-            //glVoucherHead.addElement("M_createDate").setText(currentDateString); // 凭证创日期时间
-            glVoucherHead.addElement("M_createDate").setText("2019-09-09"); // 凭证创日期时间
+            glVoucherHead.addElement("M_createDate").setText(currentDateString); // 凭证创日期时间
 
             Document document = DocumentHelper.createDocument(root);
             String pushXml = document.asXML();
-            this.writeLog("个人借款凭证推送xml： " + pushXml);
+            this.writeLog("费用报销凭证推送xml： " + pushXml);
 
             // 调用接口创建凭证
             String voucherReturn = WebUtil.createVoucher(pushXml, fyssgs);
