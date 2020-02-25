@@ -12,7 +12,6 @@ import com.google.gson.JsonParser;
 import com.lowagie.text.pdf.*;
 import com.test.webserviceTest.vo.Student;
 import com.weaver.general.TimeUtil;
-import com.weavernorth.saiwen.util.SwUtil;
 import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -803,11 +802,8 @@ public class TestMain {
 
     @Test
     public void test37() {
-        String code = "1002010|0|0|0|0|019|11015108386003|0|0|0";
-        String s = SwUtil.deleteZero(code, "104");
-        System.out.println(s);
-
-
+        File file = new File("//d:/价格分析.xls");
+        System.out.println(file.exists());
     }
 
 }

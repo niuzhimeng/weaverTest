@@ -90,12 +90,20 @@ public class GetGdtz extends BaseCronJob {
             String mainCurrentTimeString = TimeUtil.getCurrentTimeString();
             int mainInsertCount = 0;
             int mainUpdateCount = 0;
+            List<String> noUseList = new ArrayList<String>(); // 不做插入的（明细表使用）
             for (int i = 0; i < numRows; i++) {
                 headList.setRow(i);
+                boolean ifInsert = true;
+                String txt04 = Util.null2String(headList.getString("TXT04")).trim();
+                String aufpl = headList.getString("AUFPL");
+                if (!"下达".equals(txt04) && !"重批".equals(txt04)) {
+                    noUseList.add(aufpl);
+                    ifInsert = false;
+                }
                 mains[0] = headList.getString("AUFNR"); // 工单号
                 mains[1] = headList.getString("REVNR"); // 版本号
                 mains[2] = headList.getString("KTEXT"); // 工单描述
-                mains[3] = headList.getString("TXT04"); // 系统状态
+                mains[3] = txt04; // 系统状态
                 mains[4] = headList.getString("ANLZU"); // 系统条件
 
                 mains[5] = headList.getString("ILART"); // PM作业类型
@@ -110,7 +118,7 @@ public class GetGdtz extends BaseCronJob {
                 mains[13] = Util.null2String(loginIdMap.get(Util.null2String(headList.getString("ERNAM")).toLowerCase())); // 创建人
                 mains[14] = headList.getString("ERDAT"); // 创建时间
 
-                mains[15] = headList.getString("AUFPL"); // 计划号-关联键
+                mains[15] = aufpl; // 计划号-关联键
                 mains[16] = headList.getString("PRIOK"); // 优先级
 
                 mains[17] = String.valueOf(mainModeId);
@@ -127,8 +135,11 @@ public class GetGdtz extends BaseCronJob {
                     mainUpdateCount++;
                 } else {
                     // 新增
-                    insertSet.executeUpdate(mainSqlInsert, mains);
-                    mainInsertCount++;
+                    if (ifInsert) {
+                        insertSet.executeUpdate(mainSqlInsert, mains);
+                        mainInsertCount++;
+                    }
+
                 }
             }
 
@@ -148,8 +159,9 @@ public class GetGdtz extends BaseCronJob {
                 tableList.setRow(i);
                 String vornr = tableList.getString("VORNR");
                 String aufnr = tableList.getString("AUFNR");
+                String aufpl = tableList.getString("AUFPL");
 
-                details[0] = tableList.getString("AUFPL"); // 计划工艺路线号-关联键
+                details[0] = aufpl; // 计划工艺路线号-关联键
                 details[1] = tableList.getString("APLZL"); // 计数
                 details[2] = vornr; // 工序号
                 details[3] = tableList.getString("LTXA1"); // 工序描述
@@ -173,8 +185,11 @@ public class GetGdtz extends BaseCronJob {
                     detailUpdateCount++;
                 } else {
                     // 新增
-                    insertSet.executeUpdate(detailSqlInsert, details);
-                    detailInsertCount++;
+                    if (!noUseList.contains(aufpl)) {
+                        insertSet.executeUpdate(detailSqlInsert, details);
+                        detailInsertCount++;
+                    }
+
                 }
             }
 

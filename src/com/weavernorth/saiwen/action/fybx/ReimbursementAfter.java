@@ -104,6 +104,10 @@ public class ReimbursementAfter extends BaseAction {
                     dfMoney = bxhj;
                 }
             }
+            if ("".equals(jfCode) || "".equals(dfCode)) {
+                this.writeLog("不生成凭证==========");
+                return "1";
+            }
             // 如果为苏州，则去掉借贷方编码中所有的|0
 //            jfCode = SwUtil.deleteZero(jfCode, fyssgs);
 //            dfCode = SwUtil.deleteZero(dfCode, fyssgs);

@@ -123,7 +123,7 @@ public class Reimbursement extends BaseAction {
                 if (bxhj > cjkje && cjkje > 0) {
                     dfMap.put("122101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", cjkje);
                     dfMap.put("224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", fkje);
-                } else if (cjkje == bxhj && fkje == bxhj && bxhj > 0) {
+                } else if (cjkje == bxhj && bxhj > 0 && fkje == 0) {
                     dfMap.put("122101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", cjkje);
                 } else if (cjkje == 0) {
                     dfMap.put("224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", bxhj);
