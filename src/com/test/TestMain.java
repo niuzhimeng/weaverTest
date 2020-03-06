@@ -28,6 +28,7 @@ import weaver.integration.util.HTTPUtil;
 
 import java.awt.*;
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -802,8 +803,17 @@ public class TestMain {
 
     @Test
     public void test37() {
-        File file = new File("//d:/价格分析.xls");
-        System.out.println(file.exists());
+
+        double a = 46800;
+        double b = 103240.00;
+        BigDecimal bigDecimal = BigDecimal.valueOf(a);
+        BigDecimal bigDecimal2 = BigDecimal.valueOf(b);
+        System.out.println(bigDecimal.divide(bigDecimal2, 2, BigDecimal.ROUND_HALF_UP));
+
+//        double a = 12.267;
+//        BigDecimal bg = new BigDecimal("468.00");
+//        double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+//        System.out.println(f1);
     }
 
 }

@@ -410,7 +410,7 @@ public class ConvertPDFTools extends BaseBean {
             //如果就一个附件需要合并的话直接调用复制文件的方法，return出去
             if (StringUtil.isNull(mergeInput)) {
                 String inputDir = param.get("inputDir");
-                copyFileUsingFileChannels(new File("//10.102.180.254/filesystem/" + inputDir), new File(savePath));
+                copyFileUsingFileChannels(new File("E:/filesystem/" + inputDir), new File(savePath));
                 copyFileUsingFileChannels(new File(savePath), new File(savePathBak));
                 LogUtil.doWriteLog("就一个附件，无需使用永中插件合并");
                 return getPageYs(savePath);
