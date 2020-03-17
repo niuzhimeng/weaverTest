@@ -25,8 +25,8 @@ public class CreateReport extends BaseCronJob {
     private RecordSet maxSet = new RecordSet();
     private RecordSet updateSet = new RecordSet();
 
-    private static final Integer modeId = 91; // 测试环境
-    //private static final Integer modeId = 91; // 正式环境
+    // private static final Integer modeId = 91; // 测试环境
+    private static final Integer modeId = 97; // 正式环境
 
     @Override
     public void execute() {
