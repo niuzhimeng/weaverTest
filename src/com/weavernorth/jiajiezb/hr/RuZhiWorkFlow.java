@@ -151,19 +151,24 @@ public class RuZhiWorkFlow extends BaseAction {
             String jbgz1 = recordSet.getString("jbgz1"); // 基本工资
             String jjbl = recordSet.getString("jjbl"); // 奖金比例
             String sbjs = recordSet.getString("sbjs"); // 社保基数
-            this.writeLog("基本工资: " + jbgz1 + ", 奖金比例: " + jjbl + ", 社保基数: " + sbjs);
+            String nsr = recordSet.getString("nsr"); // 年收入
+            String jjbz = recordSet.getString("jjbz"); // 奖金标准
+            this.writeLog("基本工资: " + jbgz1 + ", 奖金比例: " + jjbl + ", 社保基数: " + sbjs +
+                    ", 年收入: " + nsr + ", 奖金标准： " + jjbz);
 
             recordSet.executeQuery("select * from uf_jtxz where xm = '" + xm + "'");
             RecordSet updateSet = new RecordSet();
             if (recordSet.next()) {
                 this.writeLog("更新建模========");
-                updateSet.executeUpdate("update uf_jtxz set jbgz = ?, jjbl = ?, sbjs = ? where xm = ?", jbgz1, jjbl, sbjs, xm);
+                updateSet.executeUpdate("update uf_jtxz set jbgz = ?, jjbl = ?, sbjs = ?, nsr = ?, jjbz = ? where xm = ?",
+                        jbgz1, jjbl, sbjs, nsr, jjbz,
+                        xm);
             } else {
                 this.writeLog("新增建模========");
-                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, jjbl, sbjs, " +
+                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, jjbl, sbjs, nsr, jjbz, " +
                                 "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
-                                " values(?,?,?,?,?, ?, ?,?,?,?,?)",
-                        xm, ygbh, bm, jbgz1, jjbl, sbjs,
+                                " values(?,?,?,?,?, ?,?,?, ?,?,?,?,?)",
+                        xm, ygbh, bm, jbgz1, jjbl, sbjs, nsr, jjbz,
                         JiaJieConfigInfo.XZ_MODE_ID.getValue(), "1", "0", detailCurrentTimeString.substring(0, 10), detailCurrentTimeString.substring(11));
 
                 JiaJieConnUtil.fuQuan(detailCurrentTimeString, "uf_jtxz", Integer.parseInt(JiaJieConfigInfo.XZ_MODE_ID.getValue()));

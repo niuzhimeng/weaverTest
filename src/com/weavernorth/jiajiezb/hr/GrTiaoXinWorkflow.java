@@ -45,6 +45,9 @@ public class GrTiaoXinWorkflow extends BaseAction {
             // 调整后基本工资
             String hjbgz = recordSet.getString("hjbgz");
 
+            String nsr2 = recordSet.getString("nsr2"); // 调整后年收入
+            String jjbz2 = recordSet.getString("jjbz2"); // 调整后奖金标准
+
             // 查询原值
             String oldZhiJi = JiaJieConnUtil.getCusById(xm, JiaJieConfigInfo.ZHI_JI.getValue()); // 职级
             String oldTiaoZRQ = JiaJieConnUtil.getCusById(xm, JiaJieConfigInfo.TIAO_ZHENG_RI_QI.getValue()); // 调整日期
@@ -61,22 +64,29 @@ public class GrTiaoXinWorkflow extends BaseAction {
 
             // 更新建模表
             String jbgz = ""; // 基本工资
+            String nsr = ""; // 年收入
+            String jjbz = ""; // 奖金标准
             recordSet.executeQuery("select * from uf_jtxz where xm = '" + xm + "'");
             RecordSet updateSet = new RecordSet();
             if (recordSet.next()) {
                 this.writeLog("更新建模========");
                 jbgz = recordSet.getString("jbgz");
+                nsr = recordSet.getString("nsr");
+                jjbz = recordSet.getString("jjbz");
                 updateSet.executeUpdate("update uf_jtxz set jbgz = ? where xm = ?", hjbgz, xm);
             } else {
                 this.writeLog("新增建模========");
-                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz," +
+                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, nsr, jjbz, " +
                                 "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
-                                " values(?,?,?,?, ?,?,?,?,?)",
-                        xm, ygbh, bm, hjbgz,
+                                " values(?,?,?,?,?,?,  ?,?,?,?,?)",
+                        xm, ygbh, bm, hjbgz, nsr2, jjbz2,
                         JiaJieConfigInfo.XZ_MODE_ID.getValue(), "1", "0", detailCurrentTimeString.substring(0, 10), detailCurrentTimeString.substring(11));
+
                 JiaJieConnUtil.fuQuan(detailCurrentTimeString, "uf_jtxz", Integer.parseInt(JiaJieConfigInfo.XZ_MODE_ID.getValue()));
             }
-            this.writeLog("基本工资原值: " + jbgz + ", 现值： " + hjbgz);
+            this.writeLog("【基本工资】原值: " + jbgz + ", 现值： " + hjbgz +
+                    ", 【年收入】原值：" + nsr + ", 现值： " + nsr2 +
+                    ", 【奖金标准】原值：" + jjbz + ", 现值： " + jjbz2);
 
             // 插入日志
             JiaJieConnUtil.insertPerCord(xm, requestId, "职级", getGgxzk(JiaJieConfigInfo.ZHI_JI_SEL.getValue(), oldZhiJi),

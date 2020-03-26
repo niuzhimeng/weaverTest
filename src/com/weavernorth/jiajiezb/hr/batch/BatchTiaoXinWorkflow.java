@@ -75,6 +75,8 @@ public class BatchTiaoXinWorkflow extends BaseAction {
 
                 String zj1 = recordSet.getString("zj1"); // 调整后职级
                 String tzh = recordSet.getString("tzh"); // 调整后基本工资
+                String nsr2 = recordSet.getString("nsr2"); // 调整后年收入
+                String jjbz2 = recordSet.getString("jjbz2"); // 调整后奖金标准
                 BatchTxVo newChangeVo = new BatchTxVo();
                 newChangeVo.setZj(getGgxzk(JiaJieConfigInfo.ZHI_JI_SEL.getValue(), zj1));
                 newChangeVo.setTzrq(sxrq);
@@ -93,12 +95,12 @@ public class BatchTiaoXinWorkflow extends BaseAction {
 
                 // 更新建模表
                 if (idList.contains(xm)) {
-                    updateSet.executeUpdate("update uf_jtxz set jbgz = ? where xm = ?", tzh, xm);
+                    updateSet.executeUpdate("update uf_jtxz set jbgz = ?, nsr = ?, jjbz = ? where xm = ?", tzh, nsr2, jjbz2, xm);
                 } else {
-                    updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz," +
+                    updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, nsr, jjbz, " +
                                     "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
-                                    " values(?,?,?,?, ?,?,?,?,?)",
-                            xm, ygbh, bm, tzh,
+                                    " values(?,?,?,?,?,?, ?,?,?,?,?)",
+                            xm, ygbh, bm, tzh, nsr2, jjbz2,
                             JiaJieConfigInfo.XZ_MODE_ID.getValue(), "1", "0", detailCurrentTimeString.substring(0, 10), detailCurrentTimeString.substring(11));
                     JiaJieConnUtil.fuQuan(detailCurrentTimeString, "uf_jtxz", Integer.parseInt(JiaJieConfigInfo.XZ_MODE_ID.getValue()));
                     idList.add(xm);
