@@ -73,7 +73,8 @@ public class GrTiaoXinWorkflow extends BaseAction {
                 jbgz = recordSet.getString("jbgz");
                 nsr = recordSet.getString("nsr");
                 jjbz = recordSet.getString("jjbz");
-                updateSet.executeUpdate("update uf_jtxz set jbgz = ? where xm = ?", hjbgz, xm);
+                updateSet.executeUpdate("update uf_jtxz set jbgz = ?, nsr = ?, jjbz = ? where xm = ?", hjbgz, nsr2, jjbz2,
+                        xm);
             } else {
                 this.writeLog("新增建模========");
                 updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, nsr, jjbz, " +

@@ -16,6 +16,9 @@ import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -810,11 +813,69 @@ public class TestMain {
         BigDecimal bigDecimal2 = BigDecimal.valueOf(b);
         System.out.println(bigDecimal.divide(bigDecimal2, 2, BigDecimal.ROUND_HALF_UP));
 
-//        double a = 12.267;
-//        BigDecimal bg = new BigDecimal("468.00");
-//        double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-//        System.out.println(f1);
+        String uploadPath = "test2";
+        System.out.println(Arrays.toString(uploadPath.split("/")));
     }
+
+    @Test
+    public void test38() throws Exception {
+        String encoding = System.getProperty("file.encoding");
+        System.out.println("encoding: " + encoding);
+
+        FTPClient ftpClient = new FTPClient();
+        int reply;
+        ftpClient.connect("192.168.0.101", 21);
+        ftpClient.login("295290968@qq.com", "nzm19940827");
+        ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+        reply = ftpClient.getReplyCode();
+        System.out.println("reply: " + reply);
+        System.out.println(FTPReply.isPositiveCompletion(reply));
+        if (!FTPReply.isPositiveCompletion(reply)) {
+            ftpClient.disconnect();
+        }
+
+        //读取本地文件
+        File file = new File("C:\\Users\\29529\\Desktop\\开发任务.xlsx");
+        FileInputStream inputStream = new FileInputStream(file);
+        //设置为被动模式(如上传文件夹成功，不能上传文件，注释这行，否则报错refused:connect  )
+        ftpClient.enterLocalPassiveMode();
+        ftpClient.setControlEncoding(encoding);
+        //设置上传路径
+        String uploadPath = "/测试2";
+        if(uploadPath != null && !"".equals(uploadPath.trim())){
+            String[] pathes = uploadPath.split("/");
+            for(String onePath :pathes){
+                if(onePath == null || "".equals(onePath.trim())){
+                    continue;
+                }
+                onePath = new String(onePath.getBytes("GBK"),"iso-8859-1");
+                if(!ftpClient.changeWorkingDirectory(onePath)){
+                    ftpClient.makeDirectory(onePath);
+                    ftpClient.changeWorkingDirectory(onePath);
+                }
+            }
+        }else {
+            ftpClient.changeWorkingDirectory(uploadPath);
+        }
+
+        //修改上传文件格式   2是二进制流
+        ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+        //上传文件
+        String s = new String(file.getName().getBytes("gbk"), "iso-8859-1");
+        String s1 = new String(file.getName().getBytes("utf-8"), "iso-8859-1");
+        System.out.println("编译后的名字GBK： "+ s);
+        System.out.println("编译后的名字UTF-8： "+ s1);
+        // boolean b = ftpClient.storeFile(new String(file.getName().getBytes("utf-8"), "iso-8859-1"), inputStream);
+        boolean b = ftpClient.storeFile(s, inputStream);
+        System.out.println("上传结果： " + b);
+        //关闭链接
+        ftpClient.logout();
+        ftpClient.disconnect();
+        inputStream.close();
+
+    }
+
+
 
 }
 

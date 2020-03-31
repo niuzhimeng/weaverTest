@@ -81,7 +81,7 @@ public class CreateReport extends BaseCronJob {
         }
         try {
 
-            String selectSql = "SELECT DISTINCT a.hth, b.htbh, b.lxqxs, b.lxqxz, b.htmc, b.rmbje, b.httf FROM uf_gdtzmxb a LEFT JOIN uf_httz b ON a.hth = b.ylc WHERE a.hth IS NOT NULL AND a.hth != '' and b.htbh is not null";
+            String selectSql = "SELECT DISTINCT a.hth, b.htbh, b.lxqxs, b.lxqxz, b.htmc, b.rmbje, b.httf FROM uf_gdtzmxb a LEFT JOIN uf_hbhtbd b ON a.hth = b.ylc WHERE a.hth IS NOT NULL AND a.hth != '' and b.htbh is not null";
             baseBean.writeLog("查询基础字段sql： " + selectSql);
             recordSet.executeQuery(selectSql);
 
