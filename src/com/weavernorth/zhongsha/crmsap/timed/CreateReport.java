@@ -25,7 +25,7 @@ public class CreateReport extends BaseCronJob {
     private RecordSet updateSet = new RecordSet();
     private DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
-    // private static final Integer modeId = 91; // 测试环境
+    //private static final Integer modeId = 91; // 测试环境
     private static final Integer modeId = 97; // 正式环境
 
     @Override
@@ -48,7 +48,13 @@ public class CreateReport extends BaseCronJob {
             hthFyzhMap.put(recordSet.getString("hth"), recordSet.getString("jhfy"));
         }
 
-        //
+        // 合同号-不含税价格
+        Map<String, Double> hthBhsjeMap = new HashMap<String, Double>();
+        recordSet.executeQuery("Select htbh, bhsjg from uf_htzxbb");
+        while (recordSet.next()) {
+            hthBhsjeMap.put(recordSet.getString("htbh"), recordSet.getDouble("bhsjg"));
+        }
+
         /*
            计算【执行金额】
             第一优先级：将 zzjg 列求和。
@@ -81,15 +87,15 @@ public class CreateReport extends BaseCronJob {
         }
         try {
 
-            String selectSql = "SELECT DISTINCT a.hth, b.htbh, b.lxqxs, b.lxqxz, b.htmc, b.rmbje, b.httf FROM uf_gdtzmxb a LEFT JOIN uf_hbhtbd b ON a.hth = b.ylc WHERE a.hth IS NOT NULL AND a.hth != '' and b.htbh is not null";
+            String selectSql = "SELECT DISTINCT a.hth, b.htbh, b.lxqxs, b.lxqxz, b.htmc, b.rmbje, b.httf, b.htjelx FROM uf_gdtzmxb a LEFT JOIN uf_hbhtbd b ON a.hth = b.ylc WHERE a.hth IS NOT NULL AND a.hth != '' and b.htbh is not null";
             baseBean.writeLog("查询基础字段sql： " + selectSql);
             recordSet.executeQuery(selectSql);
 
             String insertSql = "insert into uf_htzxbb (htbh, htbhwb, lxqxs, lxqxz, htmc, " +
-                    "htjg, httf, jhje, zxje, zxbfb_number, " +
-                    "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?)";
+                    "htjg, httf, jhje, zxje, zxbfb_number, jelx," +
+                    "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime) values(?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?,?)";
             String updateSql = "update uf_htzxbb set htbhwb = ?, lxqxs = ?, lxqxz = ?, htmc = ?, htjg = ?, " +
-                    "httf = ?, jhje = ?, zxje = ?, zxbfb_number = ? where htbh = ?";
+                    "httf = ?, jhje = ?, zxje = ?, zxbfb_number = ?, jelx = ? where htbh = ?";
             String detailCurrentTimeString = TimeUtil.getCurrentTimeString();
             String dateStr = detailCurrentTimeString.substring(0, 10);
             String timeStr = detailCurrentTimeString.substring(11);
@@ -101,27 +107,33 @@ public class CreateReport extends BaseCronJob {
                 String lxqxz = recordSet.getString("lxqxz"); // 履行期限-终
                 String htmc = recordSet.getString("htmc"); // 合同名称
 
+                String htjelx = recordSet.getString("htjelx"); // 金额类型
                 String htjg = recordSet.getString("rmbje"); // 合同价格（不含税）
                 String httf = recordSet.getString("httf"); // 合同他方
                 String jhje = hthFyzhMap.get(htbh); // 计划金额
                 double zxje = calculate(htbh, hthZxjeMap); // 执行金额
 
-                // 执行金额 / 合同金额 * 100%
-                double zxjeTemp = zxje * 100;
-                BigDecimal bigOne = BigDecimal.valueOf(zxjeTemp);
-                BigDecimal bigTwo = new BigDecimal(htjg);
-                String zxbfb_number = bigOne.divide(bigTwo, 2, BigDecimal.ROUND_HALF_UP).toString(); // 执行百分比
+                Double bhsjg = hthBhsjeMap.get(htbh); // 不含税价格
+
+                String zxbfb_number = "0";
+                if (bhsjg > 0) {
+                    // 执行百分比 = 执行金额 / 不含税价格 * 100%
+                    double zxjeTemp = zxje * 100;
+                    BigDecimal bigOne = BigDecimal.valueOf(zxjeTemp);
+                    BigDecimal bigTwo = BigDecimal.valueOf(bhsjg);
+                    zxbfb_number = bigOne.divide(bigTwo, 2, BigDecimal.ROUND_HALF_UP).toString(); // 执行百分比
+                }
 
                 if (existList.contains(htbh)) {
                     // 更新
                     updateSet.executeUpdate(updateSql,
                             htbhwb, lxqxs, lxqxz, htmc, htjg,
-                            httf, jhje, formatDouble(zxje), zxbfb_number, htbh);
+                            httf, jhje, formatDouble(zxje), zxbfb_number, htjelx, htbh);
                 } else {
                     // 新增
                     updateSet.executeUpdate(insertSql,
                             htbh, htbhwb, lxqxs, lxqxz, htmc,
-                            htjg, httf, jhje, formatDouble(zxje), zxbfb_number,
+                            htjg, httf, jhje, formatDouble(zxje), zxbfb_number, htjelx,
                             String.valueOf(modeId), "1", "0", dateStr, timeStr);
                     existList.add(htbh);
                     // 建模赋权

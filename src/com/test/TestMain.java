@@ -31,7 +31,6 @@ import weaver.integration.util.HTTPUtil;
 
 import java.awt.*;
 import java.io.*;
-import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -41,6 +40,8 @@ import java.util.List;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class TestMain {
 
@@ -805,16 +806,58 @@ public class TestMain {
     }
 
     @Test
-    public void test37() {
+    public void test37() throws IOException {
+        //
 
-        double a = 46800;
-        double b = 103240.00;
-        BigDecimal bigDecimal = BigDecimal.valueOf(a);
-        BigDecimal bigDecimal2 = BigDecimal.valueOf(b);
-        System.out.println(bigDecimal.divide(bigDecimal2, 2, BigDecimal.ROUND_HALF_UP));
+//        String property = System.getProperty("sun.jnu.encoding");
+//        System.out.println(property);
+//        System.out.println(System.getProperty("file.encoding"));
+        unZip("C:\\Users\\29529\\Desktop\\新建文件夹 (2)\\开发部人天统计.zip",
+                "C:\\Users\\29529\\Desktop\\新建文件夹 (2)\\test.xlsx");
 
-        String uploadPath = "test2";
-        System.out.println(Arrays.toString(uploadPath.split("/")));
+    }
+
+    private void unZip(String srcFilePath, String destDirPath) throws RuntimeException, IOException {
+        System.setProperty("sun.jnu.encoding", "UTF-8");
+        File srcFile = new File(srcFilePath);
+        // 判断源文件是否存在
+        if (!srcFile.exists()) {
+            throw new RuntimeException(srcFile.getPath() + "所指文件不存在");
+        }
+        // 开始解压
+        ZipFile zipFile = new ZipFile(srcFile);
+
+        Enumeration<?> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            // 如果是文件，就先创建一个文件，然后用io流把内容copy过去
+            File targetFile = new File(destDirPath);
+            // 保证这个文件的父文件夹必须要存在
+            if (!targetFile.getParentFile().exists()) {
+                targetFile.getParentFile().mkdirs();
+            }
+            // 将压缩文件内容写入到这个文件中
+            InputStream is = zipFile.getInputStream(entry);
+            FileOutputStream fos = new FileOutputStream(targetFile);
+            int len;
+            byte[] buf = new byte[4096];
+            while ((len = is.read(buf)) != -1) {
+                fos.write(buf, 0, len);
+            }
+            // 关流顺序，先打开的后关闭
+            fos.close();
+            is.close();
+        }
+
+
+        if (zipFile != null) {
+            try {
+                zipFile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Test
@@ -842,19 +885,19 @@ public class TestMain {
         ftpClient.setControlEncoding(encoding);
         //设置上传路径
         String uploadPath = "/测试2";
-        if(uploadPath != null && !"".equals(uploadPath.trim())){
+        if (uploadPath != null && !"".equals(uploadPath.trim())) {
             String[] pathes = uploadPath.split("/");
-            for(String onePath :pathes){
-                if(onePath == null || "".equals(onePath.trim())){
+            for (String onePath : pathes) {
+                if (onePath == null || "".equals(onePath.trim())) {
                     continue;
                 }
-                onePath = new String(onePath.getBytes("GBK"),"iso-8859-1");
-                if(!ftpClient.changeWorkingDirectory(onePath)){
+                onePath = new String(onePath.getBytes("GBK"), "iso-8859-1");
+                if (!ftpClient.changeWorkingDirectory(onePath)) {
                     ftpClient.makeDirectory(onePath);
                     ftpClient.changeWorkingDirectory(onePath);
                 }
             }
-        }else {
+        } else {
             ftpClient.changeWorkingDirectory(uploadPath);
         }
 
@@ -863,8 +906,8 @@ public class TestMain {
         //上传文件
         String s = new String(file.getName().getBytes("gbk"), "iso-8859-1");
         String s1 = new String(file.getName().getBytes("utf-8"), "iso-8859-1");
-        System.out.println("编译后的名字GBK： "+ s);
-        System.out.println("编译后的名字UTF-8： "+ s1);
+        System.out.println("编译后的名字GBK： " + s);
+        System.out.println("编译后的名字UTF-8： " + s1);
         // boolean b = ftpClient.storeFile(new String(file.getName().getBytes("utf-8"), "iso-8859-1"), inputStream);
         boolean b = ftpClient.storeFile(s, inputStream);
         System.out.println("上传结果： " + b);
@@ -875,8 +918,21 @@ public class TestMain {
 
     }
 
+    @Test
+    public void test39() {
+        String content = "<p style=\"font-family:&#39;微软雅黑&#39;,&#39;Microsoft YaHei&#39;;font-size:12px;\">啦啦啦&nbsp;&nbsp;&nbsp;&nbsp;</p><p style=\"font-family:&#39;微软雅黑&#39;,&#39;Microsoft YaHei&#39;;font-size:12px;\">你好啊&gt;&lt;&gt;</p>";
+        String s = clearHtml(content);
+        System.out.println(s);
+    }
 
+    private String clearHtml(String content) {
+        Pattern pattern = Pattern.compile("<.*?>");
+        String returnStr = "";
+        Matcher matcher = pattern.matcher(content);
+        returnStr = matcher.replaceAll("").replace("&nbsp;", " ");
 
+        return returnStr;
+    }
 }
 
 

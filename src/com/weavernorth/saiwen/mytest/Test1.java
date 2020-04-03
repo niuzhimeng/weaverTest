@@ -75,7 +75,7 @@ public class Test1 {
             glVoucherLine.addElement("M_accountedCr").setText("1");
             glVoucherLine.addElement("M_currency").setText("1");
             glVoucherLine.addElement("M_account").setText("1");
-            glVoucherLine.addElement("M_abstracts").setText("1");
+            glVoucherLine.addElement("M_abstracts").setText("nzm&lt;br&gt");
         }
 
         glVoucherHead.addElement("M_voucherCategory").setText("1");
@@ -86,6 +86,6 @@ public class Test1 {
 
         Document document = DocumentHelper.createDocument(root);
         String pushXml = document.asXML();
-        System.out.println(pushXml);
+        System.out.println(pushXml.replaceAll("\\s*",""));
     }
 }
