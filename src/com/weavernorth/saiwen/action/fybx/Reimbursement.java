@@ -112,21 +112,21 @@ public class Reimbursement extends BaseAction {
                 // 现金
                 if (bxhj > cjkje && cjkje > 0) {
                     dfMap.put("122101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", cjkje);
-                    dfMap.put("224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", fkje);
+                    dfMap.put("224106|0|0|0|0|0|0|0|0|0|0", fkje);
                 } else if (cjkje == bxhj && fkje == bxhj && bxhj > 0) {
                     dfMap.put("122101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", cjkje);
                 } else if (cjkje == 0) {
-                    dfMap.put("224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", bxhj);
+                    dfMap.put("224106|0|0|0|0|0|0|0|0|0|0", bxhj);
                 }
             } else if ("3".equals(fkfs)) {
                 // 电汇-员工
                 if (bxhj > cjkje && cjkje > 0) {
                     dfMap.put("122101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", cjkje);
-                    dfMap.put("224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", fkje);
+                    dfMap.put("224106|0|0|0|0|0|0|0|0|0|0", fkje);
                 } else if (cjkje == bxhj && bxhj > 0 && fkje == 0) {
                     dfMap.put("122101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", cjkje);
                 } else if (cjkje == 0) {
-                    dfMap.put("224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0", bxhj);
+                    dfMap.put("224106|0|0|0|0|0|0|0|0|0|0", bxhj);
                 }
             } else if ("1".equals(fkfs)) {
                 // 电汇-人民币

@@ -67,12 +67,12 @@ public class ReimbursementAfter extends BaseAction {
             if ("0".equals(fkfs)) {
                 // 现金
                 if (bxhj > cjkje && cjkje > 0) {
-                    jfCode = "224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0";
+                    jfCode = "224106|0|0|0|0|0|0|0|0|0|0";
                     jfMoney = fkje;
                     dfCode = "100101|0|0|0|0|0|0|0|0|0";
                     dfMoney = fkje;
                 } else if (cjkje == 0) {
-                    jfCode = "224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0";
+                    jfCode = "224106|0|0|0|0|0|0|0|0|0|0";
                     jfMoney = bxhj;
                     dfCode = "100101|0|0|0|0|0|0|0|0|0";
                     dfMoney = bxhj;
@@ -80,12 +80,12 @@ public class ReimbursementAfter extends BaseAction {
             } else if ("3".equals(fkfs)) {
                 // 电汇-员工
                 if (bxhj > cjkje && cjkje > 0) {
-                    jfCode = "224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0";
+                    jfCode = "224106|0|0|0|0|0|0|0|0|0|0";
                     jfMoney = fkje;
                     dfCode = "100201|0|0|0|0|" + yh + "|" + yhzh + "|0|0|0";
                     dfMoney = fkje;
                 } else if (cjkje == 0) {
-                    jfCode = "224101|0|0|" + fyssbm + "|" + workCode + "|0|0|0|0|0";
+                    jfCode = "224106|0|0|0|0|0|0|0|0|0|0";
                     jfMoney = bxhj;
                     dfCode = "100201|0|0|0|0|" + yh + "|" + yhzh + "|0|0|0";
                     dfMoney = bxhj;
