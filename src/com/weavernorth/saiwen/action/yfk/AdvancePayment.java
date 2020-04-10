@@ -39,15 +39,15 @@ public class AdvancePayment extends BaseAction {
 
             String workCode = recordSet.getString("ygbm"); // 人员编码
             String lcbh = recordSet.getString("lcbh"); // 流程编号
-            String jieksy = recordSet.getString("jieksy"); // 借款事由
+            String fksy = recordSet.getString("fksy"); // 付款事由
             String fkfs = recordSet.getString("fkfs"); // 付款方式
             String zhangb = recordSet.getString("zhangb"); // 账簿编码
 
             String gys = recordSet.getString("gys"); // 供应商
 
-            String zy = lcbh + "|" + jieksy; // 摘要
+            String zy = lcbh + "|" + fksy; // 摘要
             double jkje = Util.getDoubleValue(recordSet.getString("jkje"), 0); // 借款金额
-            this.writeLog("流程编号: " + lcbh + ", 借款事由: " + jieksy + ", 借款金额： " + jkje + ", 付款方式： " + fkfs +
+            this.writeLog("流程编号: " + lcbh + ", 付款事由: " + fksy + ", 借款金额： " + jkje + ", 付款方式： " + fkfs +
                     "账簿编码: " + zhangb + ", 费用所属公司： " + fyssgs);
 
             Element root = DocumentHelper.createElement("GLVoucherList");

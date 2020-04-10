@@ -39,14 +39,14 @@ public class PersonalLoan extends BaseAction {
 
             String workCode = recordSet.getString("ygbm"); // 人员编码
             String lcbh = recordSet.getString("lcbh"); // 流程编号
-            String jieksy = recordSet.getString("jieksy"); // 借款事由
+            String grjksy = recordSet.getString("grjksy"); // 借款事由
             String fkfs = recordSet.getString("fkfs"); // 付款方式
             String zhangb = recordSet.getString("zhangb"); // 账簿编码
 
             String fyssbm = recordSet.getString("fyssbm"); // 费用所属部门
-            String zy = lcbh + "|" + jieksy; // 摘要
+            String zy = lcbh + "|" + grjksy; // 摘要
             double jkje = Util.getDoubleValue(recordSet.getString("jkje"), 0); // 借款金额
-            this.writeLog("流程编号: " + lcbh + ", 借款事由: " + jieksy + ", 借款金额： " + jkje + ", 付款方式： " + fkfs +
+            this.writeLog("流程编号: " + lcbh + ", 借款事由: " + grjksy + ", 借款金额： " + jkje + ", 付款方式： " + fkfs +
                     ", 费用所属公司： " + fyssgs + "员工编码： " + workCode);
 
             Element root = DocumentHelper.createElement("GLVoucherList");

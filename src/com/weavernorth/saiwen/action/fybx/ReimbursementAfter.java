@@ -38,7 +38,7 @@ public class ReimbursementAfter extends BaseAction {
 
             String workCode = recordSet.getString("ygbm"); // 人员编码
             String lcbh = recordSet.getString("lcbh"); // 流程编号
-            String bxsm = recordSet.getString("bxsm"); // 报销说明
+            String fybxsm = recordSet.getString("fybxsm"); // 报销说明
             String fyssgs = recordSet.getString("fyssgs"); // 费用所属公司
             String zhangbbm = recordSet.getString("zhangbbm"); // 账簿编码
 
@@ -50,7 +50,7 @@ public class ReimbursementAfter extends BaseAction {
 
             double fkje = Util.getDoubleValue(recordSet.getString("fkje"), 0); // 付款金额
             String gys = recordSet.getString("gys"); // 供应商
-            String zy = lcbh + "|" + bxsm; // 摘要
+            String zy = lcbh + "|" + fybxsm; // 摘要
             this.writeLog("付款方式： " + fkfs + ", 银行： " + yh + ", 银行账号： " + yhzh + ", 账簿编码: " + zhangbbm);
             this.writeLog("税额合计： " + cxhj + ", 冲借款金额： " + cjkje + " 价税合计总额: " + bxhj + " 付款金额: " + fkje +
                     ", 费用所属公司： " + fyssgs);
