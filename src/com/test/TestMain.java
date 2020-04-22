@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.lowagie.text.pdf.*;
 import com.test.webserviceTest.vo.Student;
+import com.thoughtworks.xstream.XStream;
 import com.weaver.general.TimeUtil;
 import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
@@ -932,6 +933,18 @@ public class TestMain {
         returnStr = matcher.replaceAll("").replace("&nbsp;", " ");
 
         return returnStr;
+    }
+
+    @Test
+    public void test40() {
+        ChangeVoTest changeVo = new ChangeVoTest();
+        changeVo.setGwdt("岗位地铁图");
+        changeVo.setGwmc("岗位名称");
+
+        XStream xStream = new XStream();
+        xStream.autodetectAnnotations(true);
+        String s = xStream.toXML(changeVo);
+        System.out.println(s);
     }
 }
 
