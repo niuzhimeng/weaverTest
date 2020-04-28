@@ -32,9 +32,11 @@ import weaver.integration.util.HTTPUtil;
 
 import java.awt.*;
 import java.io.*;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -945,6 +947,23 @@ public class TestMain {
         xStream.autodetectAnnotations(true);
         String s = xStream.toXML(changeVo);
         System.out.println(s);
+    }
+    @Test
+    public void test41() {
+        String currentTimeString = TimeUtil.getCurrentTimeString();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String timeStamp = simpleDateFormat.format(new Date());
+        System.out.println(getMD5("1"));
+
+    }
+    private static String getMD5(String str) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(str.getBytes());
+            return new BigInteger(1, md.digest()).toString(16);
+        } catch (Exception e) {
+            throw new RuntimeException("MD5加密出现错误");
+        }
     }
 }
 

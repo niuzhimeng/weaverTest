@@ -151,8 +151,8 @@ public class RuZhiWorkFlow extends BaseAction {
             String jbgz1 = recordSet.getString("jbgz1"); // 基本工资
             String jjbl = recordSet.getString("jjbl"); // 奖金比例
             String sbjs = recordSet.getString("sbjs"); // 社保基数
-            String nsr = recordSet.getString("nsr"); // 年收入
-            String jjbz = recordSet.getString("jjbz"); // 奖金标准
+            String nsr = recordSet.getString("nsr1"); // 年收入
+            String jjbz = recordSet.getString("jjbz1"); // 奖金标准
             this.writeLog("基本工资: " + jbgz1 + ", 奖金比例: " + jjbl + ", 社保基数: " + sbjs +
                     ", 年收入: " + nsr + ", 奖金标准： " + jjbz);
 
@@ -160,12 +160,12 @@ public class RuZhiWorkFlow extends BaseAction {
             RecordSet updateSet = new RecordSet();
             if (recordSet.next()) {
                 this.writeLog("更新建模========");
-                updateSet.executeUpdate("update uf_jtxz set jbgz = ?, jjbl = ?, sbjs = ?, nsr = ?, jjbz = ? where xm = ?",
+                updateSet.executeUpdate("update uf_jtxz set jbgz = ?, jjbl = ?, sbjs = ?, nsr = ?, jjbzyd = ? where xm = ?",
                         jbgz1, jjbl, sbjs, nsr, jjbz,
                         xm);
             } else {
                 this.writeLog("新增建模========");
-                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, jjbl, sbjs, nsr, jjbz, " +
+                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, jjbl, sbjs, nsr, jjbzyd, " +
                                 "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
                                 " values(?,?,?,?,?, ?,?,?, ?,?,?,?,?)",
                         xm, ygbh, bm, jbgz1, jjbl, sbjs, nsr, jjbz,
