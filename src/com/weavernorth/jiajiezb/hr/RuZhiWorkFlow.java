@@ -100,7 +100,7 @@ public class RuZhiWorkFlow extends BaseAction {
             String htcfd = ""; // 合同存放地
 
             String bpsspr = recordSet.getString("bpsspr"); // BPS审批人
-            String wxyj = recordSet.getString("wxyj"); // 五险一金缴纳地
+            String wxyj = recordSet.getString("wxyjjnd"); // 五险一金缴纳地
             String qykssj = recordSet.getString("qykssj"); // 劳动合同签约开始时间
             String qyjssj = recordSet.getString("qyjssj"); // 劳动合同签约结束时间
             String ypsqb = recordSet.getString("ypsqb"); // 应聘申请表

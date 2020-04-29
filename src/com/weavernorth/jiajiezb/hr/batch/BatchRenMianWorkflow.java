@@ -88,7 +88,7 @@ public class BatchRenMianWorkflow extends BaseAction {
                 String gwlx = recordSet.getString("gwlx"); // 岗位类型
                 String zj = recordSet.getString("zj"); // 职级
                 String bgdd = recordSet.getString("bgdd"); // 办公地点
-                String wxyj = recordSet.getString("wxyj"); // 五险一金缴纳地
+                String wxyj = recordSet.getString("wxyjjnd"); // 五险一金缴纳地
                 String htqszt = recordSet.getString("htqszt"); // 劳动合同签署主体
 
                 String bpsspr = recordSet.getString("bpsspr"); // BPS审批人
