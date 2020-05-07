@@ -3,10 +3,6 @@ package com.test;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.artofsolving.jodconverter.DocumentConverter;
-import com.artofsolving.jodconverter.openoffice.connection.OpenOfficeConnection;
-import com.artofsolving.jodconverter.openoffice.connection.SocketOpenOfficeConnection;
-import com.artofsolving.jodconverter.openoffice.converter.OpenOfficeDocumentConverter;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.lowagie.text.pdf.*;
@@ -17,6 +13,7 @@ import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.commons.codec.binary.Base64;
+
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -269,32 +266,32 @@ public class TestMain {
 
     public static void setWatermark(BufferedOutputStream bos, String input, String waterMarkName) throws Exception {
 
-        PdfReader reader = new PdfReader(input);
-        PdfStamper stamper = new PdfStamper(reader, bos);
-        int total = reader.getNumberOfPages() + 1;
-        PdfContentByte content;
-        BaseFont base = BaseFont.createFont("C:\\Windows\\Fonts\\STCAIYUN.TTF", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-        PdfGState gs = new PdfGState();
-        for (int i = 1; i < total; i++) {
-            content = stamper.getOverContent(i);// 在内容上方加水印
-            //content = stamper.getUnderContent(i);//在内容下方加水印
-            gs.setFillOpacity(0.2f);
-            // content.setGState(gs);
-            content.beginText();
-            content.setColorFill(Color.LIGHT_GRAY);
-            content.setFontAndSize(base, 80);
-            content.setTextMatrix(70, 200);
-            // x y 倾斜角度
-            content.showTextAligned(1, "牛智萌加的水印", 260, 350, 30);
-            content.showTextAligned(1, "2019-07-30", 260, 280, 30);
-            content.setColorFill(Color.BLACK);
-            content.setFontAndSize(base, 8);
-            content.showTextAligned(1, "下载时间：" + waterMarkName + "", 300, 10, 0);
-            content.endText();
-
-        }
-        stamper.close();
-        reader.close();
+//        PdfReader reader = new PdfReader(input);
+//        PdfStamper stamper = new PdfStamper(reader, bos);
+//        int total = reader.getNumberOfPages() + 1;
+//        PdfContentByte content;
+//        BaseFont base = BaseFont.createFont("C:\\Windows\\Fonts\\STCAIYUN.TTF", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+//        PdfGState gs = new PdfGState();
+//        for (int i = 1; i < total; i++) {
+//            content = stamper.getOverContent(i);// 在内容上方加水印
+//            //content = stamper.getUnderContent(i);//在内容下方加水印
+//            gs.setFillOpacity(0.2f);
+//            // content.setGState(gs);
+//            content.beginText();
+//            content.setColorFill(Color.LIGHT_GRAY);
+//            content.setFontAndSize(base, 80);
+//            content.setTextMatrix(70, 200);
+//            // x y 倾斜角度
+//            content.showTextAligned(1, "牛智萌加的水印", 260, 350, 30);
+//            content.showTextAligned(1, "2019-07-30", 260, 280, 30);
+//            content.setColorFill(Color.BLACK);
+//            content.setFontAndSize(base, 8);
+//            content.showTextAligned(1, "下载时间：" + waterMarkName + "", 300, 10, 0);
+//            content.endText();
+//
+//        }
+//        stamper.close();
+//        reader.close();
     }
 
     @Test
@@ -370,17 +367,17 @@ public class TestMain {
         String command = "D:/openOffice/program/soffice.exe -headless -accept=\"socket,host=127.0.0.1,port=8100;urp;\"";
         Process p = Runtime.getRuntime().exec(command);
 
-        // 连接openoffice服务
-        OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
-
-        connection.connect();
-
-        // 转换
-        DocumentConverter converter = new OpenOfficeDocumentConverter(connection);
-        converter.convert(inputFile, outputFile);
-
-        // 关闭连接
-        connection.disconnect();
+//        // 连接openoffice服务
+//        OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
+//
+//        connection.connect();
+//
+//        // 转换
+//        DocumentConverter converter = new OpenOfficeDocumentConverter(connection);
+//        converter.convert(inputFile, outputFile);
+//
+//        // 关闭连接
+//        connection.disconnect();
 
         // 关闭进程
         p.destroy();
@@ -948,6 +945,7 @@ public class TestMain {
         String s = xStream.toXML(changeVo);
         System.out.println(s);
     }
+
     @Test
     public void test41() {
         String currentTimeString = TimeUtil.getCurrentTimeString();
@@ -956,6 +954,7 @@ public class TestMain {
         System.out.println(getMD5("1"));
 
     }
+
     private static String getMD5(String str) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -965,7 +964,16 @@ public class TestMain {
             throw new RuntimeException("MD5加密出现错误");
         }
     }
+
+    @Test
+    public void test42() {
+        String currentTimeString = TimeUtil.getCurrentTimeString();
+        String substring = currentTimeString.substring(0, 7);
+        System.out.println(substring);
+    }
+
 }
+
 
 
 

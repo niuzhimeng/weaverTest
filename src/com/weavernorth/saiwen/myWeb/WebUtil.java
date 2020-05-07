@@ -3,6 +3,27 @@ package com.weavernorth.saiwen.myWeb;
 import weaver.conn.RecordSet;
 
 public class WebUtil {
+
+    /**
+     * 付款单创建
+     */
+    public static String createPayBillFromXML(String myXml, String orgId) throws Exception {
+        String[] userInfo = getUserInfo();
+        SevenU9WeaverLocator locator = new SevenU9WeaverLocator();
+        SevenU9WeaverSoap_PortType soap = locator.getSevenU9WeaverSoap();
+        return soap.createpayBillFromXML(myXml, userInfo[0], userInfo[1], orgId);
+    }
+
+    /**
+     * 借款余额查询
+     */
+    public static String getLoanBalance(String myXml, String orgId) throws Exception {
+        String[] userInfo = getUserInfo();
+        SevenU9WeaverLocator locator = new SevenU9WeaverLocator();
+        SevenU9WeaverSoap_PortType soap = locator.getSevenU9WeaverSoap();
+        return soap.getAccountRemainFromXML(myXml, userInfo[0], userInfo[1], orgId);
+    }
+
     /**
      * 创建凭证
      */

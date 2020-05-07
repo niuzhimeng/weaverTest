@@ -12,60 +12,60 @@ public interface SevenU9WeaverSoap_PortType extends java.rmi.Remote {
     /**
      * 创建客户
      */
-    public java.lang.String createCustomerFromXML(java.lang.String customerXml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+    public String createCustomerFromXML(String customerXml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
 
     /**
      * 创建供应商
      */
-    public java.lang.String createSupplierFromXML(java.lang.String supplierXml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+    public String createSupplierFromXML(String supplierXml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
 
     /**
      * 查询科目
      */
-    public java.lang.String queryAccountFromXML(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+    public String queryAccountFromXML(String xml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
 
     /**
      * 查询供应商银行账号
      */
-    public java.lang.String querySupplierBankAccountFromXML(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+    public String querySupplierBankAccountFromXML(String xml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
 
     /**
      * 销售价格调整单
      */
-    public java.lang.String createSPAdjustFromXML(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+    public String createSPAdjustFromXML(String xml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
 
     /**
      * 凭证创建
      */
-    public java.lang.String createVoucherFromXML(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
-
-    /**
-     * 创建文件 --分步1 返回文件id
-     */
-    public java.lang.String u9FileCreate(java.lang.String fileName) throws java.rmi.RemoteException;
-
-    /**
-     * 上传文件--分步2
-     */
-    public boolean u9FileAppend(java.lang.String fileName, byte[] buffer, java.lang.String fileDbID) throws java.rmi.RemoteException;
-
-    /**
-     * 上传验证--分步3
-     */
-    public boolean u9FileVerify(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+    public String createVoucherFromXML(String xml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
 
     /**
      * 创建客户银行账号
      */
-    public java.lang.String createCustomerBankAccountFromXML(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+    public String createCustomerBankAccountFromXML(String xml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
 
     /**
      * 创建地址
      */
-    public java.lang.String createAddressFromXML(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+    public String createAddressFromXML(String xml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
 
     /**
      * 创建联系对象
      */
-    public java.lang.String createContanctFromXML(java.lang.String xml, java.lang.String u9User, java.lang.String u9Pwd, java.lang.String u9Org) throws java.rmi.RemoteException;
+    public String createContanctFromXML(String xml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
+
+    /**
+     * 创建付款单
+     */
+    public String createpayBillFromXML(String payXml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
+
+    /**
+     * 创建供应商银行账号
+     */
+    public String createSupplierBankAccountFromXML(String xml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
+
+    /**
+     * 获取科目余额
+     */
+    public String getAccountRemainFromXML(String xml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
 }

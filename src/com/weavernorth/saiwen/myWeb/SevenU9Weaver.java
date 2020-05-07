@@ -8,14 +8,14 @@
 package com.weavernorth.saiwen.myWeb;
 
 public interface SevenU9Weaver extends javax.xml.rpc.Service {
-    public java.lang.String getSevenU9WeaverSoap12Address();
+    public String getSevenU9WeaverSoap12Address();
 
-    public com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_PortType getSevenU9WeaverSoap12() throws javax.xml.rpc.ServiceException;
+    public SevenU9WeaverSoap_PortType getSevenU9WeaverSoap12() throws javax.xml.rpc.ServiceException;
 
-    public com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_PortType getSevenU9WeaverSoap12(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
-    public java.lang.String getSevenU9WeaverSoapAddress();
+    public SevenU9WeaverSoap_PortType getSevenU9WeaverSoap12(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
+    public String getSevenU9WeaverSoapAddress();
 
-    public com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_PortType getSevenU9WeaverSoap() throws javax.xml.rpc.ServiceException;
+    public SevenU9WeaverSoap_PortType getSevenU9WeaverSoap() throws javax.xml.rpc.ServiceException;
 
-    public com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_PortType getSevenU9WeaverSoap(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
+    public SevenU9WeaverSoap_PortType getSevenU9WeaverSoap(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
 }
