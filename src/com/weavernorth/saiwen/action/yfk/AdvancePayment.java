@@ -47,6 +47,9 @@ public class AdvancePayment extends BaseAction {
             String jklb = recordSet.getString("jklb"); // 付款类别
             String kaihh = recordSet.getString("kaihh"); // 开户行名称
             String zhangh = recordSet.getString("zhangh"); // 账户
+            String fukbm = recordSet.getString("fukbm"); // 付款方式
+
+            String fyssbm = recordSet.getString("fyssbm"); // 费用所属部门
 
             String zy = lcbh + "|" + fksy; // 摘要
             double jkje = Util.getDoubleValue(recordSet.getString("jkje"), 0); // 借款金额
@@ -151,12 +154,12 @@ public class AdvancePayment extends BaseAction {
                 payBillLine.addElement("M_payBkAcc").setText(yhzh);
                 payBillLine.addElement("M_recBkAccount").setText(zhangh);
                 payBillLine.addElement("M_recBkAccName").setText(kaihh);
-                payBillLine.addElement("M_settlementMethod").setText(fkfs);
+                payBillLine.addElement("M_settlementMethod").setText(fukbm);
 
-                payBillHead.addElement("M_dept").setText(fyssgs);
+                payBillHead.addElement("M_dept").setText(fyssbm);
                 payBillHead.addElement("M_transactor").setText(workCode);
                 payBillHead.addElement("M_payObjType").setText("1");
-                payBillHead.addElement("M_payDate").setText(TimeUtil.getCurrentTimeString());
+                payBillHead.addElement("M_payDate").setText(TimeUtil.getCurrentDateString());
                 payBillHead.addElement("M_supp").setText(gys);
 
                 payBillHead.addElement("M_documentType").setText("APP002");
@@ -170,6 +173,12 @@ public class AdvancePayment extends BaseAction {
                 // 调用接口创建付款单
                 String voucherReturn = WebUtil.createPayBillFromXML(pushXml, fyssgs);
                 this.writeLog("创建付款单返回信息： " + voucherReturn);
+                if (voucherReturn.startsWith("error")) {
+                    this.writeLog("付款单创建失败： " + voucherReturn);
+                    requestInfo.getRequestManager().setMessageid("110000");
+                    requestInfo.getRequestManager().setMessagecontent("创建付款单返回信息： " + voucherReturn);
+                    return "0";
+                }
                 Document doc = DocumentHelper.parseText(voucherReturn);
                 Element rootElt = doc.getRootElement();
                 String state = rootElt.elementTextTrim("State");
