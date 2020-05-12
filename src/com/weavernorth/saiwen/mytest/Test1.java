@@ -1,5 +1,6 @@
 package com.weavernorth.saiwen.mytest;
 
+import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -152,6 +153,8 @@ public class Test1 {
         Element rootElt = doc.getRootElement();
         String state = rootElt.elementTextTrim("State");
         System.out.println(state);
+
+
 
     }
 

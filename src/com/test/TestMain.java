@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.lowagie.text.pdf.*;
 import com.test.webserviceTest.vo.Student;
 import com.thoughtworks.xstream.XStream;
 import com.weaver.general.TimeUtil;
@@ -13,7 +12,6 @@ import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.commons.codec.binary.Base64;
-
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -27,7 +25,6 @@ import weaver.conn.RecordSet;
 import weaver.general.MD5;
 import weaver.integration.util.HTTPUtil;
 
-import java.awt.*;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -36,7 +33,6 @@ import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -965,13 +961,30 @@ public class TestMain {
         }
     }
 
-    @Test
-    public void test42() {
-        String currentTimeString = TimeUtil.getCurrentTimeString();
-        String substring = currentTimeString.substring(0, 7);
-        System.out.println(substring);
+    @org.junit.Test
+    public void test191() throws Exception {
+        String yz = "zhangtai;2020/05/09 09:53:04";
+        byte[] bytes = yz.getBytes("utf-8");
+        String jmq = "df042b791d7b4496f02b98cf6d1cd144";
+
+        String md51 = getMD51(yz);
+        Base64 base64 = new Base64();
+        String userKey = new String(base64.encode(md51.getBytes()), "utf-8");
+
+        System.out.println("md5加密后： " + md51);
+        System.out.println(userKey);
+        String jmh = "3wQreR17RJbwK5jPbRzRRA==";
     }
 
+    private String getMD51(String str) {
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            sun.misc.BASE64Encoder baseEncoder = new sun.misc.BASE64Encoder();
+            return baseEncoder.encode(md5.digest(str.getBytes("utf-8")));
+        } catch (Exception e) {
+            throw new RuntimeException("MD5加密出现错误");
+        }
+    }
 }
 
 
