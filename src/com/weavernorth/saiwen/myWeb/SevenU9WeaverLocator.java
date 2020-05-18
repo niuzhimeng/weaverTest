@@ -7,7 +7,7 @@
 
 package com.weavernorth.saiwen.myWeb;
 
-public class SevenU9WeaverLocator extends org.apache.axis.client.Service implements com.weavernorth.saiwen.myWeb.SevenU9Weaver {
+public class SevenU9WeaverLocator extends org.apache.axis.client.Service implements SevenU9Weaver {
 
     public SevenU9WeaverLocator() {
     }
@@ -17,29 +17,29 @@ public class SevenU9WeaverLocator extends org.apache.axis.client.Service impleme
         super(config);
     }
 
-    public SevenU9WeaverLocator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
+    public SevenU9WeaverLocator(String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
         super(wsdlLoc, sName);
     }
 
     // Use to get a proxy class for SevenU9WeaverSoap12
-    private java.lang.String SevenU9WeaverSoap12_address = "http://60.28.102.130/SVUW/SevenU9Weaver.asmx";
+    private String SevenU9WeaverSoap12_address = "http://60.28.102.130/SVUW/SevenU9Weaver.asmx";
 
-    public java.lang.String getSevenU9WeaverSoap12Address() {
+    public String getSevenU9WeaverSoap12Address() {
         return SevenU9WeaverSoap12_address;
     }
 
     // The WSDD service name defaults to the port name.
-    private java.lang.String SevenU9WeaverSoap12WSDDServiceName = "SevenU9WeaverSoap12";
+    private String SevenU9WeaverSoap12WSDDServiceName = "SevenU9WeaverSoap12";
 
-    public java.lang.String getSevenU9WeaverSoap12WSDDServiceName() {
+    public String getSevenU9WeaverSoap12WSDDServiceName() {
         return SevenU9WeaverSoap12WSDDServiceName;
     }
 
-    public void setSevenU9WeaverSoap12WSDDServiceName(java.lang.String name) {
+    public void setSevenU9WeaverSoap12WSDDServiceName(String name) {
         SevenU9WeaverSoap12WSDDServiceName = name;
     }
 
-    public com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_PortType getSevenU9WeaverSoap12() throws javax.xml.rpc.ServiceException {
+    public SevenU9WeaverSoap_PortType getSevenU9WeaverSoap12() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
             endpoint = new java.net.URL(SevenU9WeaverSoap12_address);
@@ -50,9 +50,9 @@ public class SevenU9WeaverLocator extends org.apache.axis.client.Service impleme
         return getSevenU9WeaverSoap12(endpoint);
     }
 
-    public com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_PortType getSevenU9WeaverSoap12(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
+    public SevenU9WeaverSoap_PortType getSevenU9WeaverSoap12(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
         try {
-            com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap12Stub _stub = new com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap12Stub(portAddress, this);
+            SevenU9WeaverSoap12Stub _stub = new SevenU9WeaverSoap12Stub(portAddress, this);
             _stub.setPortName(getSevenU9WeaverSoap12WSDDServiceName());
             return _stub;
         }
@@ -61,30 +61,30 @@ public class SevenU9WeaverLocator extends org.apache.axis.client.Service impleme
         }
     }
 
-    public void setSevenU9WeaverSoap12EndpointAddress(java.lang.String address) {
+    public void setSevenU9WeaverSoap12EndpointAddress(String address) {
         SevenU9WeaverSoap12_address = address;
     }
 
 
     // Use to get a proxy class for SevenU9WeaverSoap
-    private java.lang.String SevenU9WeaverSoap_address = "http://60.28.102.130/SVUW/SevenU9Weaver.asmx";
+    private String SevenU9WeaverSoap_address = "http://60.28.102.130/SVUW/SevenU9Weaver.asmx";
 
-    public java.lang.String getSevenU9WeaverSoapAddress() {
+    public String getSevenU9WeaverSoapAddress() {
         return SevenU9WeaverSoap_address;
     }
 
     // The WSDD service name defaults to the port name.
-    private java.lang.String SevenU9WeaverSoapWSDDServiceName = "SevenU9WeaverSoap";
+    private String SevenU9WeaverSoapWSDDServiceName = "SevenU9WeaverSoap";
 
-    public java.lang.String getSevenU9WeaverSoapWSDDServiceName() {
+    public String getSevenU9WeaverSoapWSDDServiceName() {
         return SevenU9WeaverSoapWSDDServiceName;
     }
 
-    public void setSevenU9WeaverSoapWSDDServiceName(java.lang.String name) {
+    public void setSevenU9WeaverSoapWSDDServiceName(String name) {
         SevenU9WeaverSoapWSDDServiceName = name;
     }
 
-    public com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_PortType getSevenU9WeaverSoap() throws javax.xml.rpc.ServiceException {
+    public SevenU9WeaverSoap_PortType getSevenU9WeaverSoap() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
             endpoint = new java.net.URL(SevenU9WeaverSoap_address);
@@ -95,9 +95,9 @@ public class SevenU9WeaverLocator extends org.apache.axis.client.Service impleme
         return getSevenU9WeaverSoap(endpoint);
     }
 
-    public com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_PortType getSevenU9WeaverSoap(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
+    public SevenU9WeaverSoap_PortType getSevenU9WeaverSoap(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
         try {
-            com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_BindingStub _stub = new com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_BindingStub(portAddress, this);
+            SevenU9WeaverSoap_BindingStub _stub = new SevenU9WeaverSoap_BindingStub(portAddress, this);
             _stub.setPortName(getSevenU9WeaverSoapWSDDServiceName());
             return _stub;
         }
@@ -106,7 +106,7 @@ public class SevenU9WeaverLocator extends org.apache.axis.client.Service impleme
         }
     }
 
-    public void setSevenU9WeaverSoapEndpointAddress(java.lang.String address) {
+    public void setSevenU9WeaverSoapEndpointAddress(String address) {
         SevenU9WeaverSoap_address = address;
     }
 
@@ -119,18 +119,18 @@ public class SevenU9WeaverLocator extends org.apache.axis.client.Service impleme
      */
     public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
-            if (com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_PortType.class.isAssignableFrom(serviceEndpointInterface)) {
-                com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap12Stub _stub = new com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap12Stub(new java.net.URL(SevenU9WeaverSoap12_address), this);
+            if (SevenU9WeaverSoap_PortType.class.isAssignableFrom(serviceEndpointInterface)) {
+                SevenU9WeaverSoap12Stub _stub = new SevenU9WeaverSoap12Stub(new java.net.URL(SevenU9WeaverSoap12_address), this);
                 _stub.setPortName(getSevenU9WeaverSoap12WSDDServiceName());
                 return _stub;
             }
-            if (com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_PortType.class.isAssignableFrom(serviceEndpointInterface)) {
-                com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_BindingStub _stub = new com.weavernorth.saiwen.myWeb.SevenU9WeaverSoap_BindingStub(new java.net.URL(SevenU9WeaverSoap_address), this);
+            if (SevenU9WeaverSoap_PortType.class.isAssignableFrom(serviceEndpointInterface)) {
+                SevenU9WeaverSoap_BindingStub _stub = new SevenU9WeaverSoap_BindingStub(new java.net.URL(SevenU9WeaverSoap_address), this);
                 _stub.setPortName(getSevenU9WeaverSoapWSDDServiceName());
                 return _stub;
             }
         }
-        catch (java.lang.Throwable t) {
+        catch (Throwable t) {
             throw new javax.xml.rpc.ServiceException(t);
         }
         throw new javax.xml.rpc.ServiceException("There is no stub implementation for the interface:  " + (serviceEndpointInterface == null ? "null" : serviceEndpointInterface.getName()));
@@ -145,7 +145,7 @@ public class SevenU9WeaverLocator extends org.apache.axis.client.Service impleme
         if (portName == null) {
             return getPort(serviceEndpointInterface);
         }
-        java.lang.String inputPortName = portName.getLocalPart();
+        String inputPortName = portName.getLocalPart();
         if ("SevenU9WeaverSoap12".equals(inputPortName)) {
             return getSevenU9WeaverSoap12();
         }
@@ -177,7 +177,7 @@ public class SevenU9WeaverLocator extends org.apache.axis.client.Service impleme
     /**
     * Set the endpoint address for the specified port name.
     */
-    public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
+    public void setEndpointAddress(String portName, String address) throws javax.xml.rpc.ServiceException {
         
 if ("SevenU9WeaverSoap12".equals(portName)) {
             setSevenU9WeaverSoap12EndpointAddress(address);
@@ -195,7 +195,7 @@ if ("SevenU9WeaverSoap".equals(portName)) {
     /**
     * Set the endpoint address for the specified port name.
     */
-    public void setEndpointAddress(javax.xml.namespace.QName portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
+    public void setEndpointAddress(javax.xml.namespace.QName portName, String address) throws javax.xml.rpc.ServiceException {
         setEndpointAddress(portName.getLocalPart(), address);
     }
 

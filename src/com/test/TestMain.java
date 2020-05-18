@@ -3,13 +3,8 @@ package com.test;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.artofsolving.jodconverter.DocumentConverter;
-import com.artofsolving.jodconverter.openoffice.connection.OpenOfficeConnection;
-import com.artofsolving.jodconverter.openoffice.connection.SocketOpenOfficeConnection;
-import com.artofsolving.jodconverter.openoffice.converter.OpenOfficeDocumentConverter;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.lowagie.text.pdf.*;
 import com.test.webserviceTest.vo.Student;
 import com.thoughtworks.xstream.XStream;
 import com.weaver.general.TimeUtil;
@@ -30,7 +25,6 @@ import weaver.conn.RecordSet;
 import weaver.general.MD5;
 import weaver.integration.util.HTTPUtil;
 
-import java.awt.*;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -39,7 +33,6 @@ import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -269,32 +262,32 @@ public class TestMain {
 
     public static void setWatermark(BufferedOutputStream bos, String input, String waterMarkName) throws Exception {
 
-        PdfReader reader = new PdfReader(input);
-        PdfStamper stamper = new PdfStamper(reader, bos);
-        int total = reader.getNumberOfPages() + 1;
-        PdfContentByte content;
-        BaseFont base = BaseFont.createFont("C:\\Windows\\Fonts\\STCAIYUN.TTF", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-        PdfGState gs = new PdfGState();
-        for (int i = 1; i < total; i++) {
-            content = stamper.getOverContent(i);// 在内容上方加水印
-            //content = stamper.getUnderContent(i);//在内容下方加水印
-            gs.setFillOpacity(0.2f);
-            // content.setGState(gs);
-            content.beginText();
-            content.setColorFill(Color.LIGHT_GRAY);
-            content.setFontAndSize(base, 80);
-            content.setTextMatrix(70, 200);
-            // x y 倾斜角度
-            content.showTextAligned(1, "牛智萌加的水印", 260, 350, 30);
-            content.showTextAligned(1, "2019-07-30", 260, 280, 30);
-            content.setColorFill(Color.BLACK);
-            content.setFontAndSize(base, 8);
-            content.showTextAligned(1, "下载时间：" + waterMarkName + "", 300, 10, 0);
-            content.endText();
-
-        }
-        stamper.close();
-        reader.close();
+//        PdfReader reader = new PdfReader(input);
+//        PdfStamper stamper = new PdfStamper(reader, bos);
+//        int total = reader.getNumberOfPages() + 1;
+//        PdfContentByte content;
+//        BaseFont base = BaseFont.createFont("C:\\Windows\\Fonts\\STCAIYUN.TTF", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+//        PdfGState gs = new PdfGState();
+//        for (int i = 1; i < total; i++) {
+//            content = stamper.getOverContent(i);// 在内容上方加水印
+//            //content = stamper.getUnderContent(i);//在内容下方加水印
+//            gs.setFillOpacity(0.2f);
+//            // content.setGState(gs);
+//            content.beginText();
+//            content.setColorFill(Color.LIGHT_GRAY);
+//            content.setFontAndSize(base, 80);
+//            content.setTextMatrix(70, 200);
+//            // x y 倾斜角度
+//            content.showTextAligned(1, "牛智萌加的水印", 260, 350, 30);
+//            content.showTextAligned(1, "2019-07-30", 260, 280, 30);
+//            content.setColorFill(Color.BLACK);
+//            content.setFontAndSize(base, 8);
+//            content.showTextAligned(1, "下载时间：" + waterMarkName + "", 300, 10, 0);
+//            content.endText();
+//
+//        }
+//        stamper.close();
+//        reader.close();
     }
 
     @Test
@@ -370,17 +363,17 @@ public class TestMain {
         String command = "D:/openOffice/program/soffice.exe -headless -accept=\"socket,host=127.0.0.1,port=8100;urp;\"";
         Process p = Runtime.getRuntime().exec(command);
 
-        // 连接openoffice服务
-        OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
-
-        connection.connect();
-
-        // 转换
-        DocumentConverter converter = new OpenOfficeDocumentConverter(connection);
-        converter.convert(inputFile, outputFile);
-
-        // 关闭连接
-        connection.disconnect();
+//        // 连接openoffice服务
+//        OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
+//
+//        connection.connect();
+//
+//        // 转换
+//        DocumentConverter converter = new OpenOfficeDocumentConverter(connection);
+//        converter.convert(inputFile, outputFile);
+//
+//        // 关闭连接
+//        connection.disconnect();
 
         // 关闭进程
         p.destroy();
@@ -948,6 +941,7 @@ public class TestMain {
         String s = xStream.toXML(changeVo);
         System.out.println(s);
     }
+
     @Test
     public void test41() {
         String currentTimeString = TimeUtil.getCurrentTimeString();
@@ -956,6 +950,7 @@ public class TestMain {
         System.out.println(getMD5("1"));
 
     }
+
     private static String getMD5(String str) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -965,7 +960,33 @@ public class TestMain {
             throw new RuntimeException("MD5加密出现错误");
         }
     }
+
+    @org.junit.Test
+    public void test191() throws Exception {
+        String yz = "zhangtai;2020/05/09 09:53:04";
+        byte[] bytes = yz.getBytes("utf-8");
+        String jmq = "df042b791d7b4496f02b98cf6d1cd144";
+
+        String md51 = getMD51(yz);
+        Base64 base64 = new Base64();
+        String userKey = new String(base64.encode(md51.getBytes()), "utf-8");
+
+        System.out.println("md5加密后： " + md51);
+        System.out.println(userKey);
+        String jmh = "3wQreR17RJbwK5jPbRzRRA==";
+    }
+
+    private String getMD51(String str) {
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            sun.misc.BASE64Encoder baseEncoder = new sun.misc.BASE64Encoder();
+            return baseEncoder.encode(md5.digest(str.getBytes("utf-8")));
+        } catch (Exception e) {
+            throw new RuntimeException("MD5加密出现错误");
+        }
+    }
 }
+
 
 
 

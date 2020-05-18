@@ -37,7 +37,7 @@ public class ClientInsert extends BaseAction {
                 // 账号名称
                 String zhmc = recordSet.getString("zhmc");
                 // 开户行
-                String khh = recordSet.getString("khh");
+                String khh = recordSet.getString("kaihh");
                 // 开户行账号
                 String khhzh = recordSet.getString("khhzh");
                 // 组织名称
@@ -119,10 +119,16 @@ public class ClientInsert extends BaseAction {
                 String returnContactStr = WebUtil.createContanct(contactPushXml, zuzhimc);
                 this.writeLog("OA客户联系对象创建 返回信息： " + returnContactStr);
 
+                if (returnContactStr.startsWith("error")) {
+                    requestInfo.getRequestManager().setMessageid("1100000");
+                    requestInfo.getRequestManager().setMessagecontent("客户信息录入-【联系人信息】异常： " + returnContactStr);
+                    return "0";
+                }
+
                 Document returnContact = DocumentHelper.parseText(returnContactStr);
                 Element contactRootElement = returnContact.getRootElement();
                 String contactState = contactRootElement.elementTextTrim("State");
-                // 地点信息创建成功返回的code
+                // 联系对象创建成功返回的code
                 String contactCode = "";
                 if ("success".equalsIgnoreCase(contactState)) {
                     contactCode = contactRootElement.element("Result").element("IDCodeName").elementTextTrim("M_code");
@@ -141,6 +147,9 @@ public class ClientInsert extends BaseAction {
                 Element mDescflexfield = createSupplierModel.addElement("M_descFlexField");
                 mDescflexfield.addElement("M_privateDescSeg4").setText(recordSet.getString("kprq")); // 开票日期
                 mDescflexfield.addElement("M_privateDescSeg2").setText(recordSet.getString("dh")); // 电话
+                createSupplierModel.addElement("M_department").setText(recordSet.getString("bmbm")); // =========
+                createSupplierModel.addElement("M_Turnover").setText(recordSet.getString("yingye")); // ===========
+                createSupplierModel.addElement("M_RegisterCapital").setText(recordSet.getString("zhucje")); // ========
                 createSupplierModel.addElement("M_tradeCategory").setText(recordSet.getString("khhy")); // 行业
                 String tczcdz = ""; // 填充的注册地址
                 if (!"".equalsIgnoreCase(zcLocationCode)) {
@@ -149,14 +158,15 @@ public class ClientInsert extends BaseAction {
                     tczcdz = shLocationCode;
                 }
                 createSupplierModel.addElement("M_RegisterLocation").setText(tczcdz); // 注册地址
+                createSupplierModel.addElement("M_effective").setText("true"); // 固定值
                 createSupplierModel.addElement("M_tradeCurrency").setText(recordSet.getString("jhbz")); // 交货币种
                 createSupplierModel.addElement("M_shortName").setText(recordSet.getString("khjc")); // 客户简称
-                createSupplierModel.addElement("Name").setText(recordSet.getString("gsmc")); // 公司名称
+                createSupplierModel.addElement("Name").setText(recordSet.getString("khqv")); // 公司名称
 
                 createSupplierModel.addElement("M_code").setText(recordSet.getString("khbm")); // 客户编码
-                createSupplierModel.addElement("M_officialLocation").setText(recordSet.getString("bgshdz")); // 办公/收货地址
+                createSupplierModel.addElement("M_officialLocation").setText(recordSet.getString("shdzbm")); // 办公/收货地址
                 createSupplierModel.addElement("M_org").setText(recordSet.getString("zuzhimc")); // 所属组织
-                createSupplierModel.addElement("M_saleType").setText(recordSet.getString("gysbm")); // 允许限销类型
+                createSupplierModel.addElement("M_saleType").setText(recordSet.getString("yxlx")); // 允许限销类型
                 createSupplierModel.addElement("M_aRConfirmTerm").setText(recordSet.getString("lztj")); // 立账条件
 
                 createSupplierModel.addElement("M_recervalTerm").setText("001"); // 固定值001
@@ -178,8 +188,14 @@ public class ClientInsert extends BaseAction {
                 this.writeLog("OA创建客户推送xml：" + pushXml);
 
                 // 调用客户创建接口
-                String returnStr = WebUtil.createClient(pushXml, "");
+                String returnStr = WebUtil.createClient(pushXml, zuzhimc);
                 this.writeLog("OA创建客户U9返回xml： " + returnStr);
+
+                if (returnStr.startsWith("error")) {
+                    requestInfo.getRequestManager().setMessageid("1100000");
+                    requestInfo.getRequestManager().setMessagecontent("客户信息录入-【联系人信息】异常： " + returnStr);
+                    return "0";
+                }
 
                 Document returnClient = DocumentHelper.parseText(returnStr);
                 Element clientRootElement = returnClient.getRootElement();
@@ -211,6 +227,20 @@ public class ClientInsert extends BaseAction {
 
                 String customerBank = WebUtil.createCustomerBank(bankPushXml, zuzhimc);
                 this.writeLog("客户银行账号创建U9返回xml： " + customerBank);
+                if (customerBank.startsWith("error")) {
+                    requestInfo.getRequestManager().setMessageid("1100000");
+                    requestInfo.getRequestManager().setMessagecontent("客户信息录入-【银行账号创建】异常： " + customerBank);
+                    return "0";
+                }
+
+                Document customerBankClient = DocumentHelper.parseText(customerBank);
+                Element clientR = customerBankClient.getRootElement();
+                String bankAccountState = clientR.elementTextTrim("State");
+                if (!"success".equalsIgnoreCase(bankAccountState)) {
+                    requestInfo.getRequestManager().setMessageid("1100000");
+                    requestInfo.getRequestManager().setMessagecontent("客户信息录入-【银行账号创建】异常： " + clientR.elementTextTrim("Msg"));
+                    return "0";
+                }
             }
             this.writeLog("新客户录入 End ===============");
         } catch (Exception e) {
@@ -242,6 +272,11 @@ public class ClientInsert extends BaseAction {
             this.writeLog("OA客户位置创建推送xml：" + locationPushXml);
             String returnAddress = WebUtil.createAddress(locationPushXml, zuzhimc);
             this.writeLog("OA客户位置创建 返回信息： " + returnAddress);
+
+            if (returnAddress.startsWith("error")) {
+                this.writeLog("客户信息录入-【地点信息】异常： " + returnAddress);
+                return returnAddress;
+            }
 
             Document returnDdDocument = DocumentHelper.parseText(returnAddress);
             Element ddRootElement = returnDdDocument.getRootElement();

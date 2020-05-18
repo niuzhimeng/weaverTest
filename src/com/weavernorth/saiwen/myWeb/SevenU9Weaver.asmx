@@ -104,53 +104,6 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="U9FileCreate">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="fileName" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="U9FileCreateResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="U9FileCreateResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="U9FileAppend">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="fileName" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="buffer" type="s:base64Binary" />
-            <s:element minOccurs="0" maxOccurs="1" name="fileDbID" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="U9FileAppendResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="U9FileAppendResult" type="s:boolean" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="U9FileVerify">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="xml" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="u9User" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="u9Pwd" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="u9Org" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="U9FileVerifyResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="U9FileVerifyResult" type="s:boolean" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
       <s:element name="CreateCustomerBankAccountFromXML">
         <s:complexType>
           <s:sequence>
@@ -202,6 +155,57 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="CreatepayBillFromXML">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="payXml" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9User" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9Pwd" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9Org" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreatepayBillFromXMLResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CreatepayBillFromXMLResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateSupplierBankAccountFromXML">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="xml" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9User" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9Pwd" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9Org" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateSupplierBankAccountFromXMLResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CreateSupplierBankAccountFromXMLResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAccountRemainFromXML">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="xml" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9User" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9Pwd" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9Org" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAccountRemainFromXMLResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAccountRemainFromXMLResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="CreateCustomerFromXMLSoapIn">
@@ -240,24 +244,6 @@
   <wsdl:message name="CreateVoucherFromXMLSoapOut">
     <wsdl:part name="parameters" element="tns:CreateVoucherFromXMLResponse" />
   </wsdl:message>
-  <wsdl:message name="U9FileCreateSoapIn">
-    <wsdl:part name="parameters" element="tns:U9FileCreate" />
-  </wsdl:message>
-  <wsdl:message name="U9FileCreateSoapOut">
-    <wsdl:part name="parameters" element="tns:U9FileCreateResponse" />
-  </wsdl:message>
-  <wsdl:message name="U9FileAppendSoapIn">
-    <wsdl:part name="parameters" element="tns:U9FileAppend" />
-  </wsdl:message>
-  <wsdl:message name="U9FileAppendSoapOut">
-    <wsdl:part name="parameters" element="tns:U9FileAppendResponse" />
-  </wsdl:message>
-  <wsdl:message name="U9FileVerifySoapIn">
-    <wsdl:part name="parameters" element="tns:U9FileVerify" />
-  </wsdl:message>
-  <wsdl:message name="U9FileVerifySoapOut">
-    <wsdl:part name="parameters" element="tns:U9FileVerifyResponse" />
-  </wsdl:message>
   <wsdl:message name="CreateCustomerBankAccountFromXMLSoapIn">
     <wsdl:part name="parameters" element="tns:CreateCustomerBankAccountFromXML" />
   </wsdl:message>
@@ -275,6 +261,24 @@
   </wsdl:message>
   <wsdl:message name="CreateContanctFromXMLSoapOut">
     <wsdl:part name="parameters" element="tns:CreateContanctFromXMLResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreatepayBillFromXMLSoapIn">
+    <wsdl:part name="parameters" element="tns:CreatepayBillFromXML" />
+  </wsdl:message>
+  <wsdl:message name="CreatepayBillFromXMLSoapOut">
+    <wsdl:part name="parameters" element="tns:CreatepayBillFromXMLResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreateSupplierBankAccountFromXMLSoapIn">
+    <wsdl:part name="parameters" element="tns:CreateSupplierBankAccountFromXML" />
+  </wsdl:message>
+  <wsdl:message name="CreateSupplierBankAccountFromXMLSoapOut">
+    <wsdl:part name="parameters" element="tns:CreateSupplierBankAccountFromXMLResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetAccountRemainFromXMLSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAccountRemainFromXML" />
+  </wsdl:message>
+  <wsdl:message name="GetAccountRemainFromXMLSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAccountRemainFromXMLResponse" />
   </wsdl:message>
   <wsdl:portType name="SevenU9WeaverSoap">
     <wsdl:operation name="CreateCustomerFromXML">
@@ -307,21 +311,6 @@
       <wsdl:input message="tns:CreateVoucherFromXMLSoapIn" />
       <wsdl:output message="tns:CreateVoucherFromXMLSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="U9FileCreate">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">创建文件 --分步1 返回文件id </wsdl:documentation>
-      <wsdl:input message="tns:U9FileCreateSoapIn" />
-      <wsdl:output message="tns:U9FileCreateSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="U9FileAppend">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">上传文件--分步2</wsdl:documentation>
-      <wsdl:input message="tns:U9FileAppendSoapIn" />
-      <wsdl:output message="tns:U9FileAppendSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="U9FileVerify">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">上传验证--分步3</wsdl:documentation>
-      <wsdl:input message="tns:U9FileVerifySoapIn" />
-      <wsdl:output message="tns:U9FileVerifySoapOut" />
-    </wsdl:operation>
     <wsdl:operation name="CreateCustomerBankAccountFromXML">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">创建客户银行账号</wsdl:documentation>
       <wsdl:input message="tns:CreateCustomerBankAccountFromXMLSoapIn" />
@@ -336,6 +325,21 @@
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">创建联系对象</wsdl:documentation>
       <wsdl:input message="tns:CreateContanctFromXMLSoapIn" />
       <wsdl:output message="tns:CreateContanctFromXMLSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreatepayBillFromXML">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">创建付款单</wsdl:documentation>
+      <wsdl:input message="tns:CreatepayBillFromXMLSoapIn" />
+      <wsdl:output message="tns:CreatepayBillFromXMLSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateSupplierBankAccountFromXML">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">创建供应商银行账号</wsdl:documentation>
+      <wsdl:input message="tns:CreateSupplierBankAccountFromXMLSoapIn" />
+      <wsdl:output message="tns:CreateSupplierBankAccountFromXMLSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAccountRemainFromXML">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">获取科目余额 </wsdl:documentation>
+      <wsdl:input message="tns:GetAccountRemainFromXMLSoapIn" />
+      <wsdl:output message="tns:GetAccountRemainFromXMLSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="SevenU9WeaverSoap" type="tns:SevenU9WeaverSoap">
@@ -394,33 +398,6 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="U9FileCreate">
-      <soap:operation soapAction="http://tempuri.org/U9FileCreate" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="U9FileAppend">
-      <soap:operation soapAction="http://tempuri.org/U9FileAppend" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="U9FileVerify">
-      <soap:operation soapAction="http://tempuri.org/U9FileVerify" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="CreateCustomerBankAccountFromXML">
       <soap:operation soapAction="http://tempuri.org/CreateCustomerBankAccountFromXML" style="document" />
       <wsdl:input>
@@ -441,6 +418,33 @@
     </wsdl:operation>
     <wsdl:operation name="CreateContanctFromXML">
       <soap:operation soapAction="http://tempuri.org/CreateContanctFromXML" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreatepayBillFromXML">
+      <soap:operation soapAction="http://tempuri.org/CreatepayBillFromXML" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateSupplierBankAccountFromXML">
+      <soap:operation soapAction="http://tempuri.org/CreateSupplierBankAccountFromXML" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAccountRemainFromXML">
+      <soap:operation soapAction="http://tempuri.org/GetAccountRemainFromXML" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -505,33 +509,6 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="U9FileCreate">
-      <soap12:operation soapAction="http://tempuri.org/U9FileCreate" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="U9FileAppend">
-      <soap12:operation soapAction="http://tempuri.org/U9FileAppend" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="U9FileVerify">
-      <soap12:operation soapAction="http://tempuri.org/U9FileVerify" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="CreateCustomerBankAccountFromXML">
       <soap12:operation soapAction="http://tempuri.org/CreateCustomerBankAccountFromXML" style="document" />
       <wsdl:input>
@@ -552,6 +529,33 @@
     </wsdl:operation>
     <wsdl:operation name="CreateContanctFromXML">
       <soap12:operation soapAction="http://tempuri.org/CreateContanctFromXML" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreatepayBillFromXML">
+      <soap12:operation soapAction="http://tempuri.org/CreatepayBillFromXML" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateSupplierBankAccountFromXML">
+      <soap12:operation soapAction="http://tempuri.org/CreateSupplierBankAccountFromXML" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAccountRemainFromXML">
+      <soap12:operation soapAction="http://tempuri.org/GetAccountRemainFromXML" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
