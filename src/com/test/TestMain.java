@@ -1,6 +1,7 @@
 package com.test;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
@@ -944,10 +945,21 @@ public class TestMain {
 
     @Test
     public void test41() {
-        String currentTimeString = TimeUtil.getCurrentTimeString();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String timeStamp = simpleDateFormat.format(new Date());
-        System.out.println(getMD5("1"));
+        Element root = DocumentHelper.createElement("test");
+        root.addElement("one").setText("<123&");
+
+        String s = root.asXML();
+        System.out.println(s);
+
+    }
+
+    @Test
+    public void test42() throws DocumentException {
+        String voucherReturn = "<test><one>&lt;123&amp;</one></test>";
+        Document doc = DocumentHelper.parseText(voucherReturn);
+        Element rootElt = doc.getRootElement();
+        String state = rootElt.elementTextTrim("one");
+        System.out.println(state);
 
     }
 
@@ -984,6 +996,64 @@ public class TestMain {
         } catch (Exception e) {
             throw new RuntimeException("MD5加密出现错误");
         }
+    }
+
+    @Test
+    public void test43() {
+        String jsonStr = "{\n" +
+                "\t\"account\":\"18100000000\",\n" +
+                "\t\"key\":\"95F596A5-7B1A-11E8-A778-00FF140FC3616\"\n" +
+                "}";
+        String s = sendPost("http://ucapitest.tidepharm.com/api/account/verification", jsonStr);
+        System.out.println("返回值：" + s);
+
+    }
+
+    private String sendPost(String url, String paramsJson) {
+        // BaseBean baseBean = new BaseBean();
+        BufferedReader reader = null;
+        StringBuilder response = new StringBuilder();
+        try {
+            URL httpUrl = new URL(url);
+            //建立连接
+            HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setUseCaches(false);//设置不要缓存
+            conn.setInstanceFollowRedirects(true);
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(9000);
+            conn.setReadTimeout(9000);
+            conn.setDoInput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.connect();
+
+            DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+            out.writeBytes(paramsJson);
+
+            out.flush();
+            out.close();
+
+            //读取响应
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String lines;
+            while ((lines = reader.readLine()) != null) {
+                lines = new String(lines.getBytes(), "utf-8");
+                response.append(lines);
+            }
+            // 断开连接
+            conn.disconnect();
+        } catch (Exception e) {
+            // baseBean.writeLog("佳杰总部点单sendPost异常： " + e);
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return response.toString();
     }
 }
 

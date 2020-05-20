@@ -90,7 +90,7 @@ public class syncsupplier extends BaseCronJob {
                 strBank = Util.null2String(table.getString("BANKA"));
                 strBankNum = Util.null2String(table.getString("BANKN"));
                 strSkdw = Util.null2String(table.getString("BRSCH"));
-                rsoaselect.executeQuery("select count(1) CN from crm_customerinfo where  PortalLoginid='" + strAccountNumber + "'");
+                rsoaselect.executeQuery("select count(1) CN from crm_customerinfo where crmcode='" + strAccountNumber + "'");
                 if (rsoaselect.next()) {
                     strCN = Util.null2o(rsoaselect.getString("CN"));
                     LogUtil.doWriteLog(strCN + "---2同步SAP供应商密码---" + strPassword + "ABC--账号" + strAccountNumber);
@@ -174,7 +174,7 @@ public class syncsupplier extends BaseCronJob {
                                 + strBankNum
                                 + "',Receiving_unit_type='"
                                 + strSkdw
-                                + "' where crmcode='"
+                                + "' where PortalLoginid='"
                                 + strAccountNumber + "'";
                         rsupdate.executeSql(strUpdate);
                         LogUtil.doWriteLog("==2执行更新供应商sql==" + strUpdate);
