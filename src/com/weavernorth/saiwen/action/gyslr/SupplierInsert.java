@@ -189,7 +189,7 @@ public class SupplierInsert extends BaseAction {
             CreateSupplierModel.addElement("M_Turnover").setText(recordSet.getString("yingye")); // 营业额（文本）
             CreateSupplierModel.addElement("M_RegisterCapital").setText(recordSet.getString("zczb")); // 资本额币种
             CreateSupplierModel.addElement("M_tradeCategory").setText(recordSet.getString("hy")); // 行业
-            CreateSupplierModel.addElement("M_RegisterLocation").setText(recordSet.getString("zcdz")); // 注册地址
+            CreateSupplierModel.addElement("M_RegisterLocation").setText(recordSet.getString("zcdzbm")); // 注册地址
             CreateSupplierModel.addElement("M_EmployeeCount").setText(recordSet.getString("ygrs")); // 员工人数
 
             String clnf = recordSet.getString("clnf").trim();
@@ -202,7 +202,7 @@ public class SupplierInsert extends BaseAction {
             CreateSupplierModel.addElement("Name").setText(recordSet.getString("kh")); // 供应商全称
 
             CreateSupplierModel.addElement("M_code").setText(recordSet.getString("gysbm")); // 供应商编码
-            CreateSupplierModel.addElement("M_officialLocation").setText(recordSet.getString("bgdz")); // 办公地址
+            CreateSupplierModel.addElement("M_officialLocation").setText(recordSet.getString("bgdzbm")); // 办公地址
             CreateSupplierModel.addElement("M_org").setText(recordSet.getString("zuzmc")); // 组织编码
             String xydm = recordSet.getString("xydm").trim();
             if (!"".equals(xydm)) {
