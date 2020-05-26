@@ -124,7 +124,7 @@ public class XunBiJiaAction extends BaseAction {
                     itOutput.setValue("ERNAM", cgy); // 采购员
                     itOutput.setValue("INCO2", hth); // 合同号
 
-                    itOutput.setValue("NETWR", fysSet.getString("xj")); // 小计
+                    itOutput.setValue("NETWR", fysSet.getString("xj2")); // 小计
                     itOutput.setValue("BATXT", fysSet.getString("lx")); // 类型
 
                     j++;

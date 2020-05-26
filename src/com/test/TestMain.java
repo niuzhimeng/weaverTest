@@ -1055,6 +1055,18 @@ public class TestMain {
         }
         return response.toString();
     }
+
+    @Test
+    public void test44() {
+        String wzStr = "18";
+        String str2 = wzStr.substring(0, 2);
+        String str4 = str2;
+        if (wzStr.length() > 4) {
+            str4 = wzStr.substring(0, 4);
+        }
+        System.out.println(str2);
+        System.out.println(str4);
+    }
 }
 
 
