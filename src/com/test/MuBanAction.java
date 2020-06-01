@@ -16,7 +16,7 @@ public class MuBanAction extends BaseAction {
         int formId = requestInfo.getRequestManager().getFormid();
         String tableName = "";
         RecordSet recordSet = new RecordSet();
-        recordSet.executeQuery("SELECT tablename FROM workflow_bill WHERE id = '" + formId + "'");
+        recordSet.executeQuery("SELECT tablename FROM workflow_bill WHERE id = " + formId);
         if (recordSet.next()) {
             tableName = recordSet.getString("tablename");
         }
@@ -24,7 +24,7 @@ public class MuBanAction extends BaseAction {
         this.writeLog("费用报销 Start requestid=" + requestId + "  operatetype --- " + operateType + "   fromTable --- " + tableName);
         try {
             // 查询主表
-            recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
+            recordSet.executeQuery("select * from " + tableName + " where requestid = " + requestId);
             if (recordSet.next()) {
                 // 申请人
                 String sqr = recordSet.getString("sqr");
