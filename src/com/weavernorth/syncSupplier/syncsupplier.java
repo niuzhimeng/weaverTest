@@ -160,8 +160,8 @@ public class syncsupplier extends BaseCronJob {
                                 + strYhgjmm
                                 + "',Bank_code='"
                                 + strYhdm
-                                + "',PortalPassword='"
-                                + strPassword
+//                                + "',PortalPassword='"
+//                                + strPassword
                                 + "',Cooperative_bank_type='"
                                 + strHzyhlx
                                 + "',Bank_Reference='"

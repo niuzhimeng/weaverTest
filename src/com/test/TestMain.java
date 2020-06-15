@@ -13,6 +13,8 @@ import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -23,6 +25,7 @@ import org.dom4j.Element;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import weaver.conn.RecordSet;
+import weaver.conn.aop.RecordSetAop;
 import weaver.general.MD5;
 import weaver.integration.util.HTTPUtil;
 
@@ -1058,14 +1061,16 @@ public class TestMain {
 
     @Test
     public void test44() {
-        String wzStr = "18";
-        String str2 = wzStr.substring(0, 2);
-        String str4 = str2;
-        if (wzStr.length() > 4) {
-            str4 = wzStr.substring(0, 4);
-        }
-        System.out.println(str2);
-        System.out.println(str4);
+
+        List<String> list = new ArrayList<String>();
+        list.add("1");
+        boolean empty = list.isEmpty();
+
+        CollectionUtils.isEmpty(list);
+
+        System.out.println(empty);
+
+
     }
 }
 
