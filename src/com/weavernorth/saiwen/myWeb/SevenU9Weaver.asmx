@@ -206,6 +206,23 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="UpLoadAttachFromXMLLocal">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="xml" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9User" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9Pwd" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="u9Org" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpLoadAttachFromXMLLocalResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpLoadAttachFromXMLLocalResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="CreateCustomerFromXMLSoapIn">
@@ -280,6 +297,12 @@
   <wsdl:message name="GetAccountRemainFromXMLSoapOut">
     <wsdl:part name="parameters" element="tns:GetAccountRemainFromXMLResponse" />
   </wsdl:message>
+  <wsdl:message name="UpLoadAttachFromXMLLocalSoapIn">
+    <wsdl:part name="parameters" element="tns:UpLoadAttachFromXMLLocal" />
+  </wsdl:message>
+  <wsdl:message name="UpLoadAttachFromXMLLocalSoapOut">
+    <wsdl:part name="parameters" element="tns:UpLoadAttachFromXMLLocalResponse" />
+  </wsdl:message>
   <wsdl:portType name="SevenU9WeaverSoap">
     <wsdl:operation name="CreateCustomerFromXML">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">创建客户</wsdl:documentation>
@@ -340,6 +363,11 @@
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">获取科目余额 </wsdl:documentation>
       <wsdl:input message="tns:GetAccountRemainFromXMLSoapIn" />
       <wsdl:output message="tns:GetAccountRemainFromXMLSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpLoadAttachFromXMLLocal">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">附件上传</wsdl:documentation>
+      <wsdl:input message="tns:UpLoadAttachFromXMLLocalSoapIn" />
+      <wsdl:output message="tns:UpLoadAttachFromXMLLocalSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="SevenU9WeaverSoap" type="tns:SevenU9WeaverSoap">
@@ -452,6 +480,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UpLoadAttachFromXMLLocal">
+      <soap:operation soapAction="http://tempuri.org/UpLoadAttachFromXMLLocal" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="SevenU9WeaverSoap12" type="tns:SevenU9WeaverSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -556,6 +593,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetAccountRemainFromXML">
       <soap12:operation soapAction="http://tempuri.org/GetAccountRemainFromXML" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpLoadAttachFromXMLLocal">
+      <soap12:operation soapAction="http://tempuri.org/UpLoadAttachFromXMLLocal" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

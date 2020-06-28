@@ -72,7 +72,7 @@ public class XunBiJiaAction extends BaseAction {
                 this.writeLog("询比价流程-物资类 End ===============");
                 return "1";
             }
-            String hth = getSysByFiled("htbh", "uf_hbhtbd", "ylc", recordSet.getString("hth"));
+            String hth = getSysByFiled("htbh", "uf_httz", "id", recordSet.getString("hth"));
             String cgy = getSysByFiled("loginid", "hrmresource", "id", recordSet.getString("cgy"));
             this.writeLog("合同号==========" + hth);
             this.writeLog("采购员==========" + cgy);
@@ -124,7 +124,7 @@ public class XunBiJiaAction extends BaseAction {
                     itOutput.setValue("ERNAM", cgy); // 采购员
                     itOutput.setValue("INCO2", hth); // 合同号
 
-                    itOutput.setValue("NETWR", fysSet.getString("xj")); // 小计
+                    itOutput.setValue("NETWR", fysSet.getString("xj2")); // 小计
                     itOutput.setValue("BATXT", fysSet.getString("lx")); // 类型
 
                     j++;

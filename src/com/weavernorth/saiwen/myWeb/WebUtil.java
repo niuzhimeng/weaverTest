@@ -5,6 +5,16 @@ import weaver.conn.RecordSet;
 public class WebUtil {
 
     /**
+     * 上传文件
+     */
+    public static String upLoadAttachFromXMLLocal(String myXml, String orgId) throws Exception {
+        String[] userInfo = getUserInfo();
+        SevenU9WeaverLocator locator = new SevenU9WeaverLocator();
+        SevenU9WeaverSoap_PortType soap = locator.getSevenU9WeaverSoap();
+        return soap.upLoadAttachFromXMLLocal(myXml, userInfo[0], userInfo[1], orgId);
+    }
+
+    /**
      * 创建供应商银行账号
      */
     public static String createSupplierBankAccountFromXML(String myXml, String orgId) throws Exception {
@@ -13,6 +23,7 @@ public class WebUtil {
         SevenU9WeaverSoap_PortType soap = locator.getSevenU9WeaverSoap();
         return soap.createSupplierBankAccountFromXML(myXml, userInfo[0], userInfo[1], orgId);
     }
+
     /**
      * 付款单创建
      */

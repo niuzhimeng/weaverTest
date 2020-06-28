@@ -1,5 +1,6 @@
 package com.weavernorth.saiwen.action.gyslr;
 
+import com.weaver.general.TimeUtil;
 import com.weavernorth.saiwen.myWeb.WebUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -8,12 +9,22 @@ import weaver.conn.RecordSet;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 /**
  * 新供应商录入
  * 地址 -> 联系对象 -> 供应商 -> 银行账号
  * 地址编码 在联系对象创建时做参数调用联系对象接口，再以联系对象的编码作为参数调用供应商创建接口，最后以供应商编码为参数调用供应商银行账号接口
  */
 public class SupplierInsert extends BaseAction {
+
+    private static final String OA_URL = "http://111.160.2.51:8888/";
 
     @Override
     public String execute(RequestInfo requestInfo) {
@@ -56,7 +67,7 @@ public class SupplierInsert extends BaseAction {
             String zcdz = recordSet.getString("zcdz").trim();
 
             // 办公/收货地址
-            String bgshdz = recordSet.getString("bgshdz").trim();
+            String bgshdz = recordSet.getString("bgdz").trim();
             // 收货国家
             String shgj = recordSet.getString("shgj").trim();
             // 收货省份
@@ -65,6 +76,9 @@ public class SupplierInsert extends BaseAction {
             String shcs = recordSet.getString("shcs").trim();
             // 收货地址编码
             String shdzbm = recordSet.getString("bgdzbm").trim();
+
+            // 附件
+            String fj = recordSet.getString("fj").trim();
 
             // 1、供应商地点信息创建 ====================
             String shLocationCode = "";
@@ -162,20 +176,20 @@ public class SupplierInsert extends BaseAction {
             // 拼接子级
             Element m_descFlexField = CreateSupplierModel.addElement("M_descFlexField");
             String gysdj = recordSet.getString("gysdj").trim();
-            if(!"".equals(gysdj)){
+            if (!"".equals(gysdj)) {
                 m_descFlexField.addElement("M_privateDescSeg4").setText(gysdj); // 供应商等级
             }
             m_descFlexField.addElement("M_privateDescSeg3").setText(recordSet.getString("jzmj")); // 建筑面积
             m_descFlexField.addElement("M_privateDescSeg2").setText(recordSet.getString("qiyxz")); // 企业性质
             String zycp = recordSet.getString("zycp");
-            if(!"".equals(zycp)){
+            if (!"".equals(zycp)) {
                 m_descFlexField.addElement("M_pubDescSeg8").setText(zycp); // 主要产品
             }
 
             CreateSupplierModel.addElement("M_Turnover").setText(recordSet.getString("yingye")); // 营业额（文本）
             CreateSupplierModel.addElement("M_RegisterCapital").setText(recordSet.getString("zczb")); // 资本额币种
             CreateSupplierModel.addElement("M_tradeCategory").setText(recordSet.getString("hy")); // 行业
-            CreateSupplierModel.addElement("M_RegisterLocation").setText(recordSet.getString("zcdz")); // 注册地址
+            CreateSupplierModel.addElement("M_RegisterLocation").setText(recordSet.getString("zcdzbm")); // 注册地址
             CreateSupplierModel.addElement("M_EmployeeCount").setText(recordSet.getString("ygrs")); // 员工人数
 
             String clnf = recordSet.getString("clnf").trim();
@@ -188,7 +202,7 @@ public class SupplierInsert extends BaseAction {
             CreateSupplierModel.addElement("Name").setText(recordSet.getString("kh")); // 供应商全称
 
             CreateSupplierModel.addElement("M_code").setText(recordSet.getString("gysbm")); // 供应商编码
-            CreateSupplierModel.addElement("M_officialLocation").setText(recordSet.getString("bgdz")); // 办公地址
+            CreateSupplierModel.addElement("M_officialLocation").setText(recordSet.getString("bgdzbm")); // 办公地址
             CreateSupplierModel.addElement("M_org").setText(recordSet.getString("zuzmc")); // 组织编码
             String xydm = recordSet.getString("xydm").trim();
             if (!"".equals(xydm)) {
@@ -237,7 +251,7 @@ public class SupplierInsert extends BaseAction {
             }
 
             // 4、供应商银行账号创建 ====================
-            Element bankRoot = DocumentHelper.createElement("CustomerBankAccount");
+            Element bankRoot = DocumentHelper.createElement("SupplierBankAccount");
             bankRoot.addElement("Org").setText(zuzhimc); // 组织名称
             bankRoot.addElement("Currency").setText(mrbz); // 币种
             bankRoot.addElement("BankAccountName").setText(zhmc); // 账号名称
@@ -266,6 +280,51 @@ public class SupplierInsert extends BaseAction {
                 requestInfo.getRequestManager().setMessageid("1100000");
                 requestInfo.getRequestManager().setMessagecontent("供应商信息录入-【银行账号创建】异常： " + clientR.elementTextTrim("Msg"));
                 return "0";
+            }
+
+            if (!"".equals(fj)) {
+                this.writeLog("上传附件开始======= " + fj);
+                Element attachList = DocumentHelper.createElement("AttachList");
+                Element attach = attachList.addElement("Attach");
+
+                String pathSql = "SELECT im.imagefileid,im.imagefilename,im.filerealpath FROM ImageFile im LEFT JOIN " +
+                        "DocImageFile df ON df.imagefileid = im.imagefileid WHERE df.docid IN ( " + fj + " )";
+                this.writeLog("拼接后sql： " + pathSql);
+                recordSet.executeQuery(pathSql);
+                String dataPath = TimeUtil.getCurrentDateString().substring(0, 7);
+                while (recordSet.next()) {
+                    String imagefilename = recordSet.getString("imagefilename");
+                    String filerealpath = recordSet.getString("filerealpath");
+                    String savePath = "D:/WEAVER/ecology/";
+                    String savePathTwo = "TmpU9File/" + dataPath + "/" + imagefilename;
+                    unZip(filerealpath, savePath + savePathTwo);
+
+                    Element docAttachment = attach.addElement("DocAttachment");
+                    docAttachment.addElement("FileUrl").setText(OA_URL + savePathTwo);
+                    docAttachment.addElement("IniFileName").setText(imagefilename);
+                    docAttachment.addElement("EntityName").setText("supplier");
+                    docAttachment.addElement("DocCode").setText(supperCode);
+                }
+                Document attachListObj = DocumentHelper.createDocument(attachList);
+                String attachListObjXml = attachListObj.asXML();
+                this.writeLog("OA供应商附件推送xml：" + attachListObjXml);
+
+                String fJReturn = WebUtil.upLoadAttachFromXMLLocal(attachListObjXml, zuzhimc);
+                this.writeLog("A供应商附件推送U9返回xml： " + fJReturn);
+                if (fJReturn.startsWith("error")) {
+                    requestInfo.getRequestManager().setMessageid("1100000");
+                    requestInfo.getRequestManager().setMessagecontent("供应商信息录入-【附件推送U9】异常： " + fJReturn);
+                    return "0";
+                }
+
+                Document fJReturnClient = DocumentHelper.parseText(fJReturn);
+                Element fJReturnR = fJReturnClient.getRootElement();
+                String fJReturnRState = fJReturnR.elementTextTrim("State");
+                if (!"success".equalsIgnoreCase(fJReturnRState)) {
+                    requestInfo.getRequestManager().setMessageid("1100000");
+                    requestInfo.getRequestManager().setMessagecontent("供应商信息录入-【附件推送U9】异常： " + clientR.elementTextTrim("Msg"));
+                    return "0";
+                }
             }
 
             this.writeLog("新供应商录入 End ===============");
@@ -320,4 +379,46 @@ public class SupplierInsert extends BaseAction {
         }
         return locationCode;
     }
+
+    private void unZip(String srcFilePath, String destDirPath) throws RuntimeException, IOException {
+        System.setProperty("sun.jnu.encoding", "UTF-8");
+        File srcFile = new File(srcFilePath);
+        // 判断源文件是否存在
+        if (!srcFile.exists()) {
+            throw new RuntimeException(srcFile.getPath() + "所指文件不存在");
+        }
+        // 开始解压
+        ZipFile zipFile = new ZipFile(srcFile);
+
+        Enumeration<?> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            // 如果是文件，就先创建一个文件，然后用io流把内容copy过去
+            File targetFile = new File(destDirPath);
+            // 保证这个文件的父文件夹必须要存在
+            if (!targetFile.getParentFile().exists()) {
+                targetFile.getParentFile().mkdirs();
+            }
+            // 将压缩文件内容写入到这个文件中
+            InputStream is = zipFile.getInputStream(entry);
+            FileOutputStream fos = new FileOutputStream(targetFile);
+            int len;
+            byte[] buf = new byte[2048];
+            while ((len = is.read(buf)) != -1) {
+                fos.write(buf, 0, len);
+            }
+            // 关流顺序，先打开的后关闭
+            fos.close();
+            is.close();
+        }
+
+        if (zipFile != null) {
+            try {
+                zipFile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

@@ -68,4 +68,9 @@ public interface SevenU9WeaverSoap_PortType extends java.rmi.Remote {
      * 获取科目余额
      */
     public String getAccountRemainFromXML(String xml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
+
+    /**
+     * 附件上传
+     */
+    public String upLoadAttachFromXMLLocal(String xml, String u9User, String u9Pwd, String u9Org) throws java.rmi.RemoteException;
 }

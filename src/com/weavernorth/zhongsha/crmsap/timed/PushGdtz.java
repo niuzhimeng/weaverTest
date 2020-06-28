@@ -46,7 +46,9 @@ public class PushGdtz extends BaseCronJob {
             // 获取输入表
             JCoTable insertTable = function.getTableParameterList().getTable("IT_PMORD_R");
 
-            recordSet.executeQuery("select * from uf_gdtzmxb where rq = '" + selectDate + "' and tbzt != 'S'");
+            String selSql = "select * from uf_gdtzmxb where rq = '" + selectDate + "' and (tbzt != 'S' or tbzt is null)";
+            baseBean.writeLog("推送数据查询sql： " + selSql);
+            recordSet.executeQuery(selSql);
             int counts = recordSet.getCounts();
             baseBean.writeLog("工单台账推送数据数量： " + counts + ", 数据日期： " + selectDate);
 
