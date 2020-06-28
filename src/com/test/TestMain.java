@@ -985,6 +985,21 @@ public class TestMain {
             throw new RuntimeException("MD5加密出现错误");
         }
     }
+
+    @Test
+    public void test42() {
+        String flowKey = "MI_OA_CREATE_WORKFLOW";
+        String workCode = "100010";
+        long currentTimeMillis = System.currentTimeMillis();
+        String md5ofStr = new MD5().getMD5ofStr(currentTimeMillis + flowKey + workCode);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("workCode", workCode);
+        jsonObject.put("currentTime", currentTimeMillis);
+        jsonObject.put("token", md5ofStr);
+        System.out.println(jsonObject.toJSONString());
+    }
+
 }
 
 
