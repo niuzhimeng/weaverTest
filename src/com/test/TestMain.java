@@ -1,7 +1,6 @@
 package com.test;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
@@ -14,7 +13,6 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -25,7 +23,6 @@ import org.dom4j.Element;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import weaver.conn.RecordSet;
-import weaver.conn.aop.RecordSetAop;
 import weaver.general.MD5;
 import weaver.integration.util.HTTPUtil;
 
@@ -1002,8 +999,9 @@ public class TestMain {
     }
 
     @Test
-    public void test42() {
-        String flowKey = "MI_OA_CREATE_WORKFLOW";
+    public void test45() {
+        String flowKey = "MI_OA_UPDATE_WORKFLOW";
+        //String flowKey = "MI_OA_CREATE_WORKFLOW";
         String workCode = "100010";
         long currentTimeMillis = System.currentTimeMillis();
         String md5ofStr = new MD5().getMD5ofStr(currentTimeMillis + flowKey + workCode);
