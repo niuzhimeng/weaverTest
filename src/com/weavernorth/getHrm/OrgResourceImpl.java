@@ -42,7 +42,7 @@ public class OrgResourceImpl implements OrgResource {
 
     @Override
     public String getHrmJobTitleInfoXML() throws Exception {
-        return null;
+        return hrmService.getHrmJobTitleInfoXML("", "", "");
     }
 
 
