@@ -376,15 +376,19 @@ public class OA2U8Action extends BaseBean implements Action {
                     account_code = "222110011202";
                 }
 
-                natural_debit_currency = df2.format(entry.getValue().doubleValue());
+                double jtfjxsVal = entry.getValue().doubleValue();
 
-                String sqlJtfjxs = "Insert Into GL_accvouch(iperiod,csign,isignseq,coutno_id,ino_id,inid,dbill_date," +
-                        "cbill,cdigest,ccode,md,mc,bdelete,doutbilldate,idoc,citem_id,citem_class,cdept_id,cperson_id" +
-                        ", iyear, iYPeriod,tvouchtime, cn_id)" +
-                        "values(" + accounting_period + ",'" + voucher_type + "'," + isignseq + ",'" + coutno_id + "','" + ino_id + "'," + entry_id + ",'" + date + " 00:00:00.000'," +
-                        "'" + enter + "','" + abstractstr + "','" + account_code + "'," + natural_debit_currency + "," + natural_credit_currency + ",0,'" + date + " 00:00:00.000'," + attachment_number + "," + item_id + "," + item_class + "," + dept_id + "," + personnel_id + "" +
-                        ",'" + StringEscapeUtils.escapeSql(iyear) + "','" + StringEscapeUtils.escapeSql(iYPeriod) + "','" + StringEscapeUtils.escapeSql(tvouchtime) + "', '" + StringEscapeUtils.escapeSql(zph) + "')";
-                flag = rsds.executeSql(sqlJtfjxs);
+                if (jtfjxsVal > 0) {
+                    natural_debit_currency = df2.format(jtfjxsVal);
+                    String sqlJtfjxs = "Insert Into GL_accvouch(iperiod,csign,isignseq,coutno_id,ino_id,inid,dbill_date," +
+                            "cbill,cdigest,ccode,md,mc,bdelete,doutbilldate,idoc,citem_id,citem_class,cdept_id,cperson_id" +
+                            ", iyear, iYPeriod,tvouchtime, cn_id)" +
+                            "values(" + accounting_period + ",'" + voucher_type + "'," + isignseq + ",'" + coutno_id + "','" + ino_id + "'," + entry_id + ",'" + date + " 00:00:00.000'," +
+                            "'" + enter + "','" + abstractstr + "','" + account_code + "'," + natural_debit_currency + "," + natural_credit_currency + ",0,'" + date + " 00:00:00.000'," + attachment_number + "," + item_id + "," + item_class + "," + dept_id + "," + personnel_id + "" +
+                            ",'" + StringEscapeUtils.escapeSql(iyear) + "','" + StringEscapeUtils.escapeSql(iYPeriod) + "','" + StringEscapeUtils.escapeSql(tvouchtime) + "', '" + StringEscapeUtils.escapeSql(zph) + "')";
+                    flag = rsds.executeSql(sqlJtfjxs);
+                }
+
             }
         }
         this.writeLog("nzm 代码结束==================  " + TimeUtil.getCurrentTimeString());
