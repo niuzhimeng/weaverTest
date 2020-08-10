@@ -5,6 +5,7 @@ import com.weavernorth.zhongsha.crmsap.vo.CreateReportVO;
 import weaver.conn.RecordSet;
 import weaver.formmode.setup.ModeRightInfo;
 import weaver.general.TimeUtil;
+import weaver.general.Util;
 import weaver.interfaces.schedule.BaseCronJob;
 
 import java.math.BigDecimal;
@@ -49,10 +50,10 @@ public class CreateReport extends BaseCronJob {
         }
 
         // 合同号-不含税价格
-        Map<String, Double> hthBhsjeMap = new HashMap<String, Double>();
+        Map<String, String> hthBhsjeMap = new HashMap<String, String>();
         recordSet.executeQuery("Select htbh, bhsjg from uf_htzxbb");
         while (recordSet.next()) {
-            hthBhsjeMap.put(recordSet.getString("htbh"), recordSet.getDouble("bhsjg"));
+            hthBhsjeMap.put(recordSet.getString("htbh"), recordSet.getString("bhsjg"));
         }
 
         /*
@@ -100,6 +101,7 @@ public class CreateReport extends BaseCronJob {
             String dateStr = detailCurrentTimeString.substring(0, 10);
             String timeStr = detailCurrentTimeString.substring(11);
 
+            baseBean.writeLog("循环开始======");
             while (recordSet.next()) {
                 String htbh = recordSet.getString("hth"); // 合同编号
                 String htbhwb = recordSet.getString("htbh"); // 合同编号（文本）
@@ -113,7 +115,9 @@ public class CreateReport extends BaseCronJob {
                 String jhje = hthFyzhMap.get(htbh); // 计划金额
                 double zxje = calculate(htbh, hthZxjeMap); // 执行金额
 
-                Double bhsjg = hthBhsjeMap.get(htbh); // 不含税价格
+                double bhsjg = Util.getDoubleValue(hthBhsjeMap.get(htbh),0); // 不含税价格
+                baseBean.writeLog("==================");
+                baseBean.writeLog("执行金额: " + zxje + "不含税价格: " + bhsjg);
 
                 String zxbfb_number = "0";
                 if (bhsjg > 0) {
@@ -122,6 +126,7 @@ public class CreateReport extends BaseCronJob {
                     BigDecimal bigOne = BigDecimal.valueOf(zxjeTemp);
                     BigDecimal bigTwo = BigDecimal.valueOf(bhsjg);
                     zxbfb_number = bigOne.divide(bigTwo, 2, BigDecimal.ROUND_HALF_UP).toString(); // 执行百分比
+                    baseBean.writeLog("执行百分比: "+ zxbfb_number);
                 }
 
                 if (existList.contains(htbh)) {

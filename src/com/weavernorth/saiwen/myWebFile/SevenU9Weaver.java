@@ -5,7 +5,7 @@
  * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
  */
 
-package com.weavernorth.saiwen.myWeb;
+package com.weavernorth.saiwen.myWebFile;
 
 public interface SevenU9Weaver extends javax.xml.rpc.Service {
     public String getSevenU9WeaverSoap12Address();

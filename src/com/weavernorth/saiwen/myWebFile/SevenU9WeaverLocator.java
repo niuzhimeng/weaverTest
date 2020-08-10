@@ -5,7 +5,7 @@
  * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
  */
 
-package com.weavernorth.saiwen.myWeb;
+package com.weavernorth.saiwen.myWebFile;
 
 public class SevenU9WeaverLocator extends org.apache.axis.client.Service implements SevenU9Weaver {
 
@@ -22,7 +22,7 @@ public class SevenU9WeaverLocator extends org.apache.axis.client.Service impleme
     }
 
     // Use to get a proxy class for SevenU9WeaverSoap12
-    private String SevenU9WeaverSoap12_address = "http://60.28.102.130/SVUW/SevenU9Weaver.asmx";
+    private String SevenU9WeaverSoap12_address = "http://erp.chinaseven.com/SVUW/SevenU9Weaver.asmx";
 
     public String getSevenU9WeaverSoap12Address() {
         return SevenU9WeaverSoap12_address;
@@ -67,7 +67,7 @@ public class SevenU9WeaverLocator extends org.apache.axis.client.Service impleme
 
 
     // Use to get a proxy class for SevenU9WeaverSoap
-    private String SevenU9WeaverSoap_address = "http://60.28.102.130/SVUW/SevenU9Weaver.asmx";
+    private String SevenU9WeaverSoap_address = "http://erp.chinaseven.com/SVUW/SevenU9Weaver.asmx";
 
     public String getSevenU9WeaverSoapAddress() {
         return SevenU9WeaverSoap_address;
@@ -178,15 +178,15 @@ public class SevenU9WeaverLocator extends org.apache.axis.client.Service impleme
     * Set the endpoint address for the specified port name.
     */
     public void setEndpointAddress(String portName, String address) throws javax.xml.rpc.ServiceException {
-        
+
 if ("SevenU9WeaverSoap12".equals(portName)) {
             setSevenU9WeaverSoap12EndpointAddress(address);
         }
-        else 
+        else
 if ("SevenU9WeaverSoap".equals(portName)) {
             setSevenU9WeaverSoapEndpointAddress(address);
         }
-        else 
+        else
 { // Unknown Port Name
             throw new javax.xml.rpc.ServiceException(" Cannot set Endpoint Address for Unknown Port" + portName);
         }

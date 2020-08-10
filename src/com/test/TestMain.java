@@ -12,10 +12,10 @@ import com.weavernorth.zgsy.webUtil.util.BaseDataUtil;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.poi.hssf.record.FontIndexRecord;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -23,15 +23,21 @@ import org.dom4j.Element;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import weaver.conn.RecordSet;
+import weaver.conn.RecordSetDataSource;
+import weaver.general.BaseBean;
 import weaver.general.MD5;
 import weaver.integration.util.HTTPUtil;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -954,7 +960,7 @@ public class TestMain {
     }
 
     @Test
-    public void test42() throws DocumentException {
+    public void test421() throws DocumentException {
         String voucherReturn = "<test><one>&lt;123&amp;</one></test>";
         Document doc = DocumentHelper.parseText(voucherReturn);
         Element rootElt = doc.getRootElement();
@@ -1073,18 +1079,62 @@ public class TestMain {
     }
 
     @Test
-    public void test44() {
+    public void test44() throws Exception {
 
-        List<String> list = new ArrayList<String>();
-        list.add("1");
-        boolean empty = list.isEmpty();
-
-        CollectionUtils.isEmpty(list);
-
-        System.out.println(empty);
+        BigDecimal bigOne = BigDecimal.valueOf(12);
+        BigDecimal bigTwo = BigDecimal.valueOf(0);
+        String zxbfb_number = bigOne.divide(bigTwo, 2, BigDecimal.ROUND_HALF_UP).toString(); // 执行百分比
+        System.out.println(zxbfb_number);
+        RecordSetDataSource recordSetDataSource = new RecordSetDataSource("");
 
 
     }
+
+    @Test
+    public void test46() throws Exception {
+        Class<?> aClass = Class.forName("com.test.MyTest0724");
+        TestInter o = (TestInter) aClass.newInstance();
+        Field[] fields = aClass.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            field.set(o, "牛智萌");
+        }
+
+        o.execute();
+
+    }
+
+    @Test
+    public void test47() {
+        String approvedTaxAmtValue = "12.343245435";
+        double v = Double.valueOf(approvedTaxAmtValue.replace(",", "")).doubleValue();
+        double approvedTaxAmtV = v < 0 ? 0 : v;
+
+        System.out.println("approvedTaxAmtV: "+ approvedTaxAmtV);
+        NumberFormat numberFormat7 = NumberFormat.getNumberInstance();
+        numberFormat7.setGroupingUsed(false); //设置了以后不会有千分位，如果不设置，默认是有的
+        String approvedTaxAmt = numberFormat7.format(approvedTaxAmtV);
+        System.out.println(approvedTaxAmt);
+    }
+
+    /**
+     * 保留两位小数
+     */
+    private String setScale2(String before) {
+        String returnSrr = "0";
+        if (null == before || before.length() == 0) {
+            return "0";
+        }
+        try {
+            BigDecimal bigOne = new BigDecimal(before);
+            returnSrr = bigOne.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+        } catch (Exception e) {
+            new BaseBean().writeLog("setScale2保留两位小数异常，接到参数： " + before);
+        }
+
+        return returnSrr;
+    }
+
 }
 
 

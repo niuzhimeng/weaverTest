@@ -1,6 +1,9 @@
 package com.weavernorth.saiwen.myWeb;
 
+import com.weavernorth.saiwen.myWebFile.SevenU9WeaverLocator;
+import com.weavernorth.saiwen.myWebFile.SevenU9WeaverSoap_PortType;
 import weaver.conn.RecordSet;
+import weaver.general.BaseBean;
 
 public class WebUtil {
 
@@ -48,7 +51,10 @@ public class WebUtil {
      * 创建凭证
      */
     public static String createVoucher(String myXml, String orgId) throws Exception {
+        BaseBean baseBean = new BaseBean();
+        baseBean.writeLog("推送凭证开始");
         String[] userInfo = getUserInfo();
+        baseBean.writeLog("推送凭证开始");
         SevenU9WeaverLocator locator = new SevenU9WeaverLocator();
         SevenU9WeaverSoap_PortType soap = locator.getSevenU9WeaverSoap();
         return soap.createVoucherFromXML(myXml, userInfo[0], userInfo[1], orgId);

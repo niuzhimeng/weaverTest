@@ -47,6 +47,7 @@ public class GrTiaoXinWorkflow extends BaseAction {
 
             String nsr2 = recordSet.getString("nsr3"); // 调整后年收入
             String jjbz2 = recordSet.getString("jjbz3"); // 调整后奖金标准
+            String bl3 = recordSet.getString("bl3"); // 调整后奖金比例
 
             // 查询原值
             String oldZhiJi = JiaJieConnUtil.getCusById(xm, JiaJieConfigInfo.ZHI_JI.getValue()); // 职级
@@ -66,6 +67,7 @@ public class GrTiaoXinWorkflow extends BaseAction {
             String jbgz = ""; // 基本工资
             String nsr = ""; // 年收入
             String jjbz = ""; // 奖金标准
+            String jjbl = ""; // 奖金比例
             recordSet.executeQuery("select * from uf_jtxz where xm = '" + xm + "'");
             RecordSet updateSet = new RecordSet();
             if (recordSet.next()) {
@@ -73,21 +75,23 @@ public class GrTiaoXinWorkflow extends BaseAction {
                 jbgz = recordSet.getString("jbgz");
                 nsr = recordSet.getString("nsr");
                 jjbz = recordSet.getString("jjbz");
-                updateSet.executeUpdate("update uf_jtxz set jbgz = ?, nsr = ?, jjbzyd = ? where xm = ?", hjbgz, nsr2, jjbz2,
+                jjbl = recordSet.getString("jjbl");
+                updateSet.executeUpdate("update uf_jtxz set jbgz = ?, nsr = ?, jjbzyd = ?, jjbl = ? where xm = ?", hjbgz, nsr2, jjbz2, bl3,
                         xm);
             } else {
                 this.writeLog("新增建模========");
-                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, nsr, jjbzyd, " +
+                updateSet.executeUpdate("insert into uf_jtxz(xm, ygbh, bm, jbgz, nsr, jjbzyd, jjbl," +
                                 "formmodeid,modedatacreater,modedatacreatertype,modedatacreatedate,modedatacreatetime)" +
-                                " values(?,?,?,?,?,?,  ?,?,?,?,?)",
-                        xm, ygbh, bm, hjbgz, nsr2, jjbz2,
+                                " values(?,?,?,?,?,?,?,  ?,?,?,?,?)",
+                        xm, ygbh, bm, hjbgz, nsr2, jjbz2, bl3,
                         JiaJieConfigInfo.XZ_MODE_ID.getValue(), "1", "0", detailCurrentTimeString.substring(0, 10), detailCurrentTimeString.substring(11));
 
                 JiaJieConnUtil.fuQuan(detailCurrentTimeString, "uf_jtxz", Integer.parseInt(JiaJieConfigInfo.XZ_MODE_ID.getValue()));
             }
             this.writeLog("【基本工资】原值: " + jbgz + ", 现值： " + hjbgz +
                     ", 【年收入】原值：" + nsr + ", 现值： " + nsr2 +
-                    ", 【奖金标准】原值：" + jjbz + ", 现值： " + jjbz2);
+                    ", 【奖金标准】原值：" + jjbz + ", 现值： " + jjbz2 +
+                    ", 【奖金比例】原值：" + jjbl + ", 现值： " + bl3);
 
             // 插入日志
             JiaJieConnUtil.insertPerCord(xm, requestId, "职级", getGgxzk(JiaJieConfigInfo.ZHI_JI_SEL.getValue(), oldZhiJi),

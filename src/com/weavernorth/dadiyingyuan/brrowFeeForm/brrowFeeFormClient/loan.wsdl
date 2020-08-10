@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://vo.dadimedia.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="OaLoanService" targetNamespace="http://vo.dadimedia.com/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://vo.dadimedia.com/" elementFormDefault="unqualified" targetNamespace="http://vo.dadimedia.com/" version="1.0">
+
+  <xs:element name="receiveOaLoan" type="tns:receiveOaLoan"/>
+
+  <xs:element name="receiveOaLoanResponse" type="tns:receiveOaLoanResponse"/>
+
+  <xs:complexType name="receiveOaLoan">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="loanJson" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="receiveOaLoanResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="receiveOaLoanResponse">
+    <wsdl:part element="tns:receiveOaLoanResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="receiveOaLoan">
+    <wsdl:part element="tns:receiveOaLoan" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="OaLoanService">
+    <wsdl:operation name="receiveOaLoan">
+      <wsdl:input message="tns:receiveOaLoan" name="receiveOaLoan">
+    </wsdl:input>
+      <wsdl:output message="tns:receiveOaLoanResponse" name="receiveOaLoanResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="OaLoanServiceSoapBinding" type="tns:OaLoanService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="receiveOaLoan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="receiveOaLoan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="receiveOaLoanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OaLoanService">
+    <wsdl:port binding="tns:OaLoanServiceSoapBinding" name="OaLoanServiceImplPort">
+      <soap:address location="http://59.110.236.229:8080/oa/loan"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

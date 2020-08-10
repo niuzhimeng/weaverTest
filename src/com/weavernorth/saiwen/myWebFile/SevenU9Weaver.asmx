@@ -612,10 +612,10 @@
   </wsdl:binding>
   <wsdl:service name="SevenU9Weaver">
     <wsdl:port name="SevenU9WeaverSoap" binding="tns:SevenU9WeaverSoap">
-      <soap:address location="http://60.28.102.130/SVUW/SevenU9Weaver.asmx" />
+      <soap:address location="http://erp.chinaseven.com/SVUW/SevenU9Weaver.asmx" />
     </wsdl:port>
     <wsdl:port name="SevenU9WeaverSoap12" binding="tns:SevenU9WeaverSoap12">
-      <soap12:address location="http://60.28.102.130/SVUW/SevenU9Weaver.asmx" />
+      <soap12:address location="http://erp.chinaseven.com/SVUW/SevenU9Weaver.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

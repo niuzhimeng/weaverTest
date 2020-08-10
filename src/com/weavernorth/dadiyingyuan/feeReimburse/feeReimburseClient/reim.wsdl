@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://vo.dadimedia.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="OaReimService" targetNamespace="http://vo.dadimedia.com/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://vo.dadimedia.com/" elementFormDefault="unqualified" targetNamespace="http://vo.dadimedia.com/" version="1.0">
+
+  <xs:element name="receiveOaReim" type="tns:receiveOaReim"/>
+
+  <xs:element name="receiveOaReimResponse" type="tns:receiveOaReimResponse"/>
+
+  <xs:complexType name="receiveOaReim">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="reimJson" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="receiveOaReimResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="receiveOaReim">
+    <wsdl:part element="tns:receiveOaReim" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="receiveOaReimResponse">
+    <wsdl:part element="tns:receiveOaReimResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="OaReimService">
+    <wsdl:operation name="receiveOaReim">
+      <wsdl:input message="tns:receiveOaReim" name="receiveOaReim">
+    </wsdl:input>
+      <wsdl:output message="tns:receiveOaReimResponse" name="receiveOaReimResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="OaReimServiceSoapBinding" type="tns:OaReimService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="receiveOaReim">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="receiveOaReim">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="receiveOaReimResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OaReimService">
+    <wsdl:port binding="tns:OaReimServiceSoapBinding" name="OaReimServiceImplPort">
+      <soap:address location="http://59.110.236.229:8080/oa/reim"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
