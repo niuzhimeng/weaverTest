@@ -122,7 +122,7 @@ public class RuZhiWorkFlow extends BaseAction {
                 ldhtqszt = recordSet.getString("ldhtqsztzn");
                 htcfd = recordSet.getString("htcfdzn");
             }
-            this.writeLog("职级: " + zj + ", 岗位类型: " + gwlx + ", 办公地点: " + bgdd + ", 财务OU: " + cwou + ", 劳动合同签署主体: " + ldhtqszt);
+            this.writeLog("类别：" + lb + ", 职级: " + zj + ", 岗位类型: " + gwlx + ", 办公地点: " + bgdd + ", 财务OU: " + cwou + ", 劳动合同签署主体: " + ldhtqszt);
             this.writeLog("BPS审批人: " + bpsspr + ", 五险一金缴纳地: " + wxyj + ", 劳动合同签约开始时间: " + qykssj +
                     ", 劳动合同签约结束时间: " + qyjssj + ", 应聘申请表: " + ypsqb + ", 合同存放地: " + htcfd + ", 试用期是否打折: " + syqdz +
                     ", 面试评价表: " + mspj);

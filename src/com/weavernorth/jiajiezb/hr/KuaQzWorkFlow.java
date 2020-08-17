@@ -60,7 +60,7 @@ public class KuaQzWorkFlow extends BaseAction {
             String drzj = Util.null2String(recordSet.getString("drzj")); // 调入-职级
 
             String drdd = Util.null2String(recordSet.getString("drbgd")); // 调入-办公地点
-            String drwxyj = Util.null2String(recordSet.getString("drwxyj")); // 调入-五险一金缴纳地
+            String drwxyj = Util.null2String(recordSet.getString("drwxyjjnd")); // 调入-五险一金缴纳地
             String drzt = Util.null2String(recordSet.getString("drhtzt")); // 调入-劳动合同签署主体
             String drbpsspr = Util.null2String(recordSet.getString("drbpspsr")); // 调入-BPS审批人
             String drcwou = Util.null2String(recordSet.getString("drcwou")); // 调入-财务OU
@@ -80,7 +80,7 @@ public class KuaQzWorkFlow extends BaseAction {
             oldChangeVo.setZz(getGgxzk(JiaJieConfigInfo.ZHI_JI_SEL.getValue(), Util.null2String(recordSet.getString("dczj")))); // 调出-职级
 
             oldChangeVo.setBgdd(getSysByFiled("bgdd", "UF_JTBGDD", recordSet.getString("dcbgd"))); // 调出-办公地点
-            oldChangeVo.setWxyj(getSysByFiled("bgdd", "UF_JTBGDD", recordSet.getString("dcwxyj"))); // 调出-五险一金缴纳地
+            oldChangeVo.setWxyj(getSysByFiled("bgdd", "UF_JTBGDD", recordSet.getString("dcwxyjjnd"))); // 调出-五险一金缴纳地
             oldChangeVo.setLdhtqs(getGgxzk(JiaJieConfigInfo.LDHT_SEL.getValue(), Util.null2String(recordSet.getString("dchtzt")))); // 调出-劳动合同签署主体
             oldChangeVo.setBps(getSysByFiled("lastname", "hrmresource", recordSet.getString("dcbpsspr"))); // 调出-BPS审批人
             oldChangeVo.setCwou(getGgxzk(JiaJieConfigInfo.CWOU_SEL.getValue(), Util.null2String(recordSet.getString("dccwou")))); // 调出-财务OU
