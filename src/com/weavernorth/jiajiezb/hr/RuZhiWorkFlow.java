@@ -133,15 +133,15 @@ public class RuZhiWorkFlow extends BaseAction {
             String updateSql = "update CUS_FIELDDATA set " + JiaJieConfigInfo.ZHI_JI.getValue() + " = ?, " + JiaJieConfigInfo.GWLX.getValue() + " = ?, "
                     + JiaJieConfigInfo.BGDD.getValue() + " = ?, " + JiaJieConfigInfo.CWOU.getValue() + " = ?," + JiaJieConfigInfo.LDHT.getValue() + " = ?, "
                     + JiaJieConfigInfo.BPS.getValue() + " = ?, " + JiaJieConfigInfo.WXYJ.getValue() + " = ?, " + JiaJieConfigInfo.QYKSRQ.getValue() + " = ?, "
-                    + JiaJieConfigInfo.QYJSRQ.getValue() + " = ?, " + JiaJieConfigInfo.YPSQB.getValue() + " = ?, " + JiaJieConfigInfo.RZRQ.getValue() + " = ?, "
-                    + JiaJieConfigInfo.HTCFD.getValue() + " = ?, " + JiaJieConfigInfo.SYQSFDZ.getValue() + " =?, " + JiaJieConfigInfo.MSPJB.getValue() + " = ? where id = ?";
+                    + JiaJieConfigInfo.QYJSRQ.getValue() + " = ?, " + JiaJieConfigInfo.YPSQB.getValue() + " = '" + ypsqb + "', " + JiaJieConfigInfo.RZRQ.getValue() + " = ?, "
+                    + JiaJieConfigInfo.HTCFD.getValue() + " = ?, " + JiaJieConfigInfo.SYQSFDZ.getValue() + " =?, " + JiaJieConfigInfo.MSPJB.getValue() + " = '" + mspj + "' where id = ?";
             this.writeLog("入职流程更新自定义表sql: " + updateSql);
             zdySet.executeUpdate(updateSql,
                     zj, gwlx,
                     bgdd, cwou, ldhtqszt,
                     bpsspr, wxyj, qykssj,
-                    qyjssj, ypsqb, qykssj,
-                    htcfd, syqdz, mspj, xm);
+                    qyjssj, qykssj,
+                    htcfd, syqdz, xm);
             this.writeLog("更新自定义表结束============");
 
             //清除缓存
