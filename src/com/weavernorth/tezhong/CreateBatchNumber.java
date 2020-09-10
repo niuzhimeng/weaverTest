@@ -29,7 +29,7 @@ public class CreateBatchNumber extends BaseAction {
             recordSet.executeQuery("select * from " + tableName + " where requestid = " + requestId);
             recordSet.next();
 
-            String currYear = TimeUtil.getCurrentDateString().substring(0, 4); // 当前年份
+            String currYear = TimeUtil.getCurrentDateString().substring(2, 4); // 当前年份
 
             String sqlx = recordSet.getString("sqlx"); // 申请类型
             String sfjm = recordSet.getString("sfjm"); // 是否军贸
