@@ -1191,7 +1191,7 @@ public class FinanceBaseImpl implements FinanceBase {
                 statement.setString(5, codeAssistantDetail);
                 statement.setString(6, leaf);
                 statement.setString(7, longnumber);
-                statement.setString(8, "64");
+                statement.setString(8, "59");
                 statement.setString(9, "1");
                 statement.setString(10, "0");
                 statement.setString(11, TimeUtil.getCurrentTimeString().substring(0, 10));
