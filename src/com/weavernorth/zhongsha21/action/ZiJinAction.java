@@ -1,18 +1,18 @@
 package com.weavernorth.zhongsha21.action;
 
-import com.alibaba.fastjson.JSONObject;
 import com.sap.conn.jco.JCoDestination;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoTable;
+import com.weavernorth.zhongsha21.util.CreateWorkflowUtil;
 import com.weavernorth.zhongsha21.util.ZhsPoolThreeTest;
 import weaver.conn.RecordSet;
 import weaver.general.Util;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 资金安排审批流程推送sap
@@ -47,10 +47,12 @@ public class ZiJinAction extends BaseAction {
             recordSet.executeQuery("select * from " + tableName + " where requestid = '" + requestId + "'");
             recordSet.next();
             String mainId = recordSet.getString("id");
+            String tjr = recordSet.getString("tjr"); // 提交人
 
             detailSet.executeQuery("select * from " + tableName + "_dt1 where mainid = '" + mainId + "'");
 
-            Map<String, String> errMap = new HashMap<String, String>(); // 存放错误信息的map 单号 - 错误信息
+            StringBuilder stringBuilder = new StringBuilder();// 存放错误信息 单号 - 错误信息
+            List<String> oaList = new ArrayList<String>(); // 存放已推送过的oa单号，避免在异常提醒流程中 重复提示
             int i = 1;
             while (detailSet.next()) {
                 // 拼接参数
@@ -96,16 +98,17 @@ public class ZiJinAction extends BaseAction {
                     String zmstp = Util.null2String(t_return.getString("ZMSTP")).trim(); // 消息类型
                     String zmseg = t_return.getString("ZMSEG"); // 消息文本
                     this.writeLog("OA单号: " + zoaid + ", 消息类型: " + zmstp + ", 消息文本: " + zmseg);
-                    if ("E".equalsIgnoreCase(zmstp)) {
-                        errMap.put(zoaid, zmseg);
+                    if ("E".equalsIgnoreCase(zmstp) && !oaList.contains(zoaid)) {
+                        oaList.add(zoaid);
+                        stringBuilder.append("OA单号: ").append(zoaid).append(", 消息文本: ").append(zmseg).append(" | ");
                     }
                 }
 
                 i++;
             }
-            if (errMap.size() > 0) {
-                this.writeLog("存在失败记录，触发失败提醒流程: " + JSONObject.toJSONString(errMap));
-                //CreateWorkflowUtil.createFlow("2");
+            if (stringBuilder.length() > 0) {
+                this.writeLog("存在失败记录，触发失败提醒流程: " + stringBuilder.toString());
+                CreateWorkflowUtil.createFlow("1", requestId, stringBuilder.toString(), tjr);
             }
 
             this.writeLog("资金安排审批流程 End ===============");

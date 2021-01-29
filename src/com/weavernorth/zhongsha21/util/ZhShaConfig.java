@@ -1,7 +1,7 @@
 package com.weavernorth.zhongsha21.util;
 
 public enum ZhShaConfig {
-    TI_XING_FLOW_ID("12"), // 提醒流程id
+    TI_XING_FLOW_ID("401"), // 提醒流程id
     FU_KUAN_FLOW_ID("400"), // 付款印鉴审批流程id
     FU_KUAN_TABLE_NAME("formtable_main_290"); // 付款印鉴审批流程表名
 
