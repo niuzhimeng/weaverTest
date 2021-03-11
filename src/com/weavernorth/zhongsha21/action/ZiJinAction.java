@@ -18,7 +18,15 @@ import java.util.List;
  * 资金安排审批流程推送sap
  */
 public class ZiJinAction extends BaseAction {
+    /**
+     * 项目类型为该集合中的，才进行传递
+     */
+    private static final List<String> sendList = new ArrayList<String>(); // 银行间划款、同行间还款的
 
+    static {
+        sendList.add("4");
+        sendList.add("13");
+    }
 
     @Override
     public String execute(RequestInfo requestInfo) {
@@ -57,9 +65,10 @@ public class ZiJinAction extends BaseAction {
             while (detailSet.next()) {
                 // 拼接参数
                 String zch = detailSet.getString("zch"); // 转出行
+                String xm = detailSet.getString("xm"); // 项目
                 String[] mOdeData = getModeData(zch);
                 String zwjc = Util.null2String(mOdeData[5]); // 中文简称 只有【工行】才传递
-                if (!zwjc.startsWith("工行")) {
+                if (!zwjc.startsWith("工行") || !sendList.contains(xm)) {
                     continue;
                 }
                 importParameterList.setValue("I_BANKS1", mOdeData[0]); // 银行国家代码

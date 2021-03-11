@@ -5,6 +5,7 @@ import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoTable;
 import com.weavernorth.zhongsha21.util.ZhsPoolThreeTest;
 import weaver.conn.RecordSet;
+import weaver.general.Util;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
 
@@ -69,9 +70,14 @@ public class FuKuanAction extends BaseAction {
             int numRows = et_return.getNumRows();
             for (int j = 0; j < numRows; j++) {
                 et_return.setRow(j);
-                String zappn = et_return.getString("ZAPPN"); // 审批编号
-                String zapps = et_return.getString("ZAPPS"); // 审批状态
-                this.writeLog("审批编号: " + zappn + ", 审批状态: " + zapps);
+                String zmstp = et_return.getString("ZMSTP"); // 消息类型
+                String zmseg = Util.null2String(et_return.getString("ZMSEG")).trim(); // 消息文本
+                this.writeLog("消息类型: " + zmstp + ", 消息文本: " + zmseg);
+                if ("E".equalsIgnoreCase(zmstp)) {
+                    requestInfo.getRequestManager().setMessageid("110000");
+                    requestInfo.getRequestManager().setMessagecontent("付款印鉴审批 Error： " + "消息类型: " + zmstp + ", 消息文本: " + zmseg);
+                    return "0";
+                }
             }
 
             this.writeLog("付款印鉴审批 End ===============");

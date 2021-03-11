@@ -48,7 +48,7 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
                     ztVal = "2";
                 }
 
-                recordSet.executeUpdate("update uf_zxbb_dt1 set zxjd = ? where jybh = ?", ztVal, resultVO.getZOAID());
+                recordSet.executeUpdate("update uf_tdlb set zxjd = ? where dh = ?", ztVal, resultVO.getZOAID());
             }
 
             resultVO1.setCode("S");
@@ -117,6 +117,13 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
             mainField[i] = new WorkflowRequestTableField();
             mainField[i].setFieldName("hjje");
             mainField[i].setFieldValue(mainTable.getZPAYN()); // 金额
+            mainField[i].setView(true);
+            mainField[i].setEdit(true);
+
+            i++;
+            mainField[i] = new WorkflowRequestTableField();
+            mainField[i].setFieldName("dbspjg");
+            mainField[i].setFieldValue("0"); // 打包审批结果
             mainField[i].setView(true);
             mainField[i].setEdit(true);
 
@@ -199,6 +206,13 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
                 detailField1[i].setView(true);
                 detailField1[i].setEdit(true);
 
+                i++;
+                detailField1[i] = new WorkflowRequestTableField();
+                detailField1[i].setFieldName("spyj");
+                detailField1[i].setFieldValue("0"); // 审批意见
+                detailField1[i].setView(true);
+                detailField1[i].setEdit(true);
+
                 detailRecord[j] = new WorkflowRequestTableRecord();
                 detailRecord[j].setWorkflowRequestTableFields(detailField1);
 
@@ -276,9 +290,10 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
                 String zoaid = withdrawVO.getZOAID();// 审批编号
                 String zchyy = withdrawVO.getZCHYY();// 撤回原因
 
-                recordSet.executeQuery("select id from " + ZhShaConfig.FU_KUAN_TABLE_NAME.getValue() + " where dbdh = ?", zappn);
+                recordSet.executeQuery("select id from " + ZhShaConfig.FU_KUAN_TABLE_NAME.getValue() + " where dbdh = ? order by id desc", zappn);
                 if (recordSet.next()) {
                     String id = recordSet.getString("id");
+                    baseBean.writeLog("主表数据id： " + id);
                     updateSet.executeUpdate("update " + ZhShaConfig.FU_KUAN_TABLE_NAME.getValue() + "_dt1 " +
                             " set spyj = 2, bz = ? where OAfkdh = ? and mainid = ?", zchyy, zoaid, id);
                 }
@@ -286,7 +301,7 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
 
             resultVO1.setCode("S");
             resultVO1.setMessage("付款申请撤回数据回传oa成功");
-            baseBean.writeLog("交付款申请撤回数据回传oaEnd==============");
+            baseBean.writeLog("付款申请撤回数据回传oaEnd==============");
         } catch (Exception e) {
             resultVO1.setCode("E");
             resultVO1.setMessage("付款申请撤回数据回传oa异常");
