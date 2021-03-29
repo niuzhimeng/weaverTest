@@ -58,6 +58,8 @@ public class ZiJinAction extends BaseAction {
             String tjr = recordSet.getString("tjr"); // 提交人
 
             detailSet.executeQuery("select * from " + tableName + "_dt1 where mainid = '" + mainId + "'");
+            int counts = detailSet.getCounts();
+            this.writeLog("明细表行数： " + counts);
 
             StringBuilder stringBuilder = new StringBuilder();// 存放错误信息 单号 - 错误信息
             List<String> oaList = new ArrayList<String>(); // 存放已推送过的oa单号，避免在异常提醒流程中 重复提示
@@ -66,9 +68,11 @@ public class ZiJinAction extends BaseAction {
                 // 拼接参数
                 String zch = detailSet.getString("zch"); // 转出行
                 String xm = detailSet.getString("xm"); // 项目
+                this.writeLog("转出行： " + zch + ", 项目: " + xm);
                 String[] mOdeData = getModeData(zch);
                 String zwjc = Util.null2String(mOdeData[5]); // 中文简称 只有【工行】才传递
-                if (!zwjc.startsWith("工行") || !sendList.contains(xm)) {
+                this.writeLog("中文简称: " + zwjc);
+                if (!zwjc.contains("工行") || !sendList.contains(xm)) {
                     continue;
                 }
                 importParameterList.setValue("I_BANKS1", mOdeData[0]); // 银行国家代码

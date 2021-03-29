@@ -64,7 +64,7 @@ public class DetailCodeAction extends BaseAction {
                 String spr = strings[1]; // 审批人标准（可能需要根据金额做判断）
                 if (jeValue > 0) {
                     // 进行金额判断
-                    if (je >= jeValue) {
+                    if (je > jeValue) {
                         spr = "0"; // CFO
                     } else {
                         spr = "1"; // 财务经理

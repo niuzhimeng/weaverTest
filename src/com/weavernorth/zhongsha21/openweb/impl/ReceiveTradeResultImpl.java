@@ -142,11 +142,41 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
             WorkflowRequestTableRecord[] detailRecord = new WorkflowRequestTableRecord[length]; //明细表行数组
             int j = 0;
             for (DetailTable detailTable : detailTableList) {
-                WorkflowRequestTableField[] detailField1 = new WorkflowRequestTableField[12]; // 明细表列数组，每行12个字段
+                WorkflowRequestTableField[] detailField1 = new WorkflowRequestTableField[17]; // 明细表列数组，每行17个字段
+
+                String[] returns = getMode(detailTable.getZOAID());
                 i = 0;
                 detailField1[i] = new WorkflowRequestTableField();
                 detailField1[i].setFieldName("OAfkdh");
-                detailField1[i].setFieldValue(detailTable.getZOAID()); // OA单号
+                detailField1[i].setFieldValue(returns[0]); // OA单号
+                detailField1[i].setView(true);
+                detailField1[i].setEdit(true);
+
+                i++;
+                detailField1[i] = new WorkflowRequestTableField();
+                detailField1[i].setFieldName("xglc");
+                detailField1[i].setFieldValue(returns[1]); // 相关流程
+                detailField1[i].setView(true);
+                detailField1[i].setEdit(true);
+
+                i++;
+                detailField1[i] = new WorkflowRequestTableField();
+                detailField1[i].setFieldName("bm");
+                detailField1[i].setFieldValue(returns[2]); // 部门
+                detailField1[i].setView(true);
+                detailField1[i].setEdit(true);
+
+                i++;
+                detailField1[i] = new WorkflowRequestTableField();
+                detailField1[i].setFieldName("ywlx");
+                detailField1[i].setFieldValue(returns[3]); // 业务类型
+                detailField1[i].setView(true);
+                detailField1[i].setEdit(true);
+
+                i++;
+                detailField1[i] = new WorkflowRequestTableField();
+                detailField1[i].setFieldName("htbh");
+                detailField1[i].setFieldValue(returns[4]); // 合同编号
                 detailField1[i].setView(true);
                 detailField1[i].setEdit(true);
 
@@ -275,6 +305,21 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
         }
         resultVO1.setMessage(message);
         return resultVO1;
+    }
+
+    private String[] getMode(String zoaid) {
+        String[] returns = new String[5];
+        RecordSet recordSet = new RecordSet();
+        recordSet.executeQuery("select id, lcid, bm, ywlx, htbh from uf_tdlb where dh = '" + zoaid + "'");
+        if (recordSet.next()) {
+            returns[0] = recordSet.getString("id");
+            returns[1] = recordSet.getString("lcid");
+            returns[2] = recordSet.getString("bm");
+            returns[3] = recordSet.getString("ywlx");
+            returns[4] = recordSet.getString("htbh");
+        }
+
+        return returns;
     }
 
     @Override
