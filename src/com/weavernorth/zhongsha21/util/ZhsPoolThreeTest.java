@@ -14,21 +14,21 @@ import java.util.Properties;
  */
 public class ZhsPoolThreeTest {
 
-    private static final String CONN_NAME = "ZHONG_SHA_POOL_OARFC_2021Test";
+    private static final String CONN_NAME = "ZHONG_SHA_POOL_OARFC";
 
     public static JCoDestination getJCoDestination() throws JCoException {
 
         Properties properties = new Properties();
         // IP 测试环境10.102.176.183 开发环境 10.102.176.184 正式环境 10.102.176.171
-        properties.setProperty(DestinationDataProvider.JCO_ASHOST, "10.102.176.183");
+        properties.setProperty(DestinationDataProvider.JCO_ASHOST, "10.102.176.171");
         // 系统编号
-        properties.setProperty(DestinationDataProvider.JCO_SYSNR, "00");
+        properties.setProperty(DestinationDataProvider.JCO_SYSNR, "01");
         // 客户端编号 测试环境800 开发环境 400 正式环境 800
         properties.setProperty(DestinationDataProvider.JCO_CLIENT, "800");
         // 用户名
         properties.setProperty(DestinationDataProvider.JCO_USER, "RFCOA02");
         // 密码 测试环境init1234 开发环境 init12345
-        properties.setProperty(DestinationDataProvider.JCO_PASSWD, "init123456");
+        properties.setProperty(DestinationDataProvider.JCO_PASSWD, "sstpc.1234");
         // 语言
         properties.setProperty(DestinationDataProvider.JCO_LANG, "zh");
 

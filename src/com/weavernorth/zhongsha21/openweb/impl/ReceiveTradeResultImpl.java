@@ -139,6 +139,7 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
             // ==================================== 明细表1start
             DetailTable[] detailTableList = mainTable.getDetailTables(); // 明细表数组
             int length = detailTableList.length;
+            baseBean.writeLog("明细表行数： "+ length);
             WorkflowRequestTableRecord[] detailRecord = new WorkflowRequestTableRecord[length]; //明细表行数组
             int j = 0;
             for (DetailTable detailTable : detailTableList) {
@@ -148,7 +149,7 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
                 i = 0;
                 detailField1[i] = new WorkflowRequestTableField();
                 detailField1[i].setFieldName("OAfkdh");
-                detailField1[i].setFieldValue(returns[0]); // OA单号
+                detailField1[i].setFieldValue(detailTable.getZOAID()); // OA单号
                 detailField1[i].setView(true);
                 detailField1[i].setEdit(true);
 
@@ -182,22 +183,15 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
 
                 i++;
                 detailField1[i] = new WorkflowRequestTableField();
+                detailField1[i].setFieldName("skh");
+                detailField1[i].setFieldValue(returns[5]); // 收款行
+                detailField1[i].setView(true);
+                detailField1[i].setEdit(true);
+
+                i++;
+                detailField1[i] = new WorkflowRequestTableField();
                 detailField1[i].setFieldName("bmstr");
                 detailField1[i].setFieldValue(detailTable.getZDEPT()); // 部门
-                detailField1[i].setView(true);
-                detailField1[i].setEdit(true);
-
-                i++;
-                detailField1[i] = new WorkflowRequestTableField();
-                detailField1[i].setFieldName("ywlx");
-                detailField1[i].setFieldValue(detailTable.getZANLF()); // 业务类型
-                detailField1[i].setView(true);
-                detailField1[i].setEdit(true);
-
-                i++;
-                detailField1[i] = new WorkflowRequestTableField();
-                detailField1[i].setFieldName("htbh");
-                detailField1[i].setFieldValue(detailTable.getZHTBH()); // 合同编号
                 detailField1[i].setView(true);
                 detailField1[i].setEdit(true);
 
@@ -263,7 +257,7 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
             workflowRequestInfo.setWorkflowBaseInfo(workflowBaseInfo);
             workflowRequestInfo.setWorkflowMainTableInfo(workflowMainTableInfo);// 添加主表字段数据
             workflowRequestInfo.setWorkflowDetailTableInfos(detailTableInfos);// 添加明细表字段数据
-            workflowRequestInfo.setIsnextflow("0");
+            workflowRequestInfo.setIsnextflow("1");
 
             //创建流程的类
             WorkflowServiceImpl service = new WorkflowServiceImpl();
@@ -308,15 +302,16 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
     }
 
     private String[] getMode(String zoaid) {
-        String[] returns = new String[5];
+        String[] returns = new String[6];
         RecordSet recordSet = new RecordSet();
-        recordSet.executeQuery("select id, lcid, bm, ywlx, htbh from uf_tdlb where dh = '" + zoaid + "'");
+        recordSet.executeQuery("select id, lcid, bm, ywlx, htbh, khyh from v_yjspckst where dh = '" + zoaid + "'");
         if (recordSet.next()) {
             returns[0] = recordSet.getString("id");
             returns[1] = recordSet.getString("lcid");
             returns[2] = recordSet.getString("bm");
             returns[3] = recordSet.getString("ywlx");
             returns[4] = recordSet.getString("htbh");
+            returns[5] = recordSet.getString("khyh");
         }
 
         return returns;
@@ -340,7 +335,7 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
                     String id = recordSet.getString("id");
                     baseBean.writeLog("主表数据id： " + id);
                     updateSet.executeUpdate("update " + ZhShaConfig.FU_KUAN_TABLE_NAME.getValue() + "_dt1 " +
-                            " set spyj = 2, bz = ? where OAfkdh = ? and mainid = ?", zchyy, zoaid, id);
+                            " set spyj = 1, bz = ? where OAfkdh = ? and mainid = ?", zchyy, zoaid, id);
                 }
             }
 

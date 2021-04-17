@@ -59,7 +59,7 @@ public class FuKuanAction extends BaseAction {
                 itMatkl.appendRow();
                 itMatkl.setRow(i);
                 itMatkl.setValue("ZOAID", recordSet.getString("OAfkdh")); // OA单号
-                itMatkl.setValue("ZSTAT", "0".equals(recordSet.getString("spyj")) ? "06" : "07"); //OA单审批结果
+                itMatkl.setValue("ZSTAT", resultChange(recordSet.getString("spyj"))); //OA单审批结果
 
                 i++;
             }
@@ -89,6 +89,34 @@ public class FuKuanAction extends BaseAction {
         }
 
         return "1";
+    }
+
+    /**
+     * 0-审批通过 06
+     * 1-审批拒绝 07
+     * 2-SAP撤回 07
+     * 3-关闭 17
+     */
+    private String resultChange(String id) {
+        String result = "07";
+        if ("0".equals(id)) {
+            result = "06";
+        } else if ("3".equals(id)) {
+            result = "17";
+        }
+
+        return result;
+    }
+
+    private String getOAId(String id) {
+        String oaId = "";
+        RecordSet recordSet = new RecordSet();
+        recordSet.executeQuery("select dh from uf_tdlb where id= '" + id + "'");
+        if (recordSet.next()) {
+            oaId = recordSet.getString("dh");
+        }
+
+        return oaId;
     }
 
 }

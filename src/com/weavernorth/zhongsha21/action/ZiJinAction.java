@@ -72,7 +72,7 @@ public class ZiJinAction extends BaseAction {
                 String[] mOdeData = getModeData(zch);
                 String zwjc = Util.null2String(mOdeData[5]); // 中文简称 只有【工行】才传递
                 this.writeLog("中文简称: " + zwjc);
-                if (!zwjc.contains("工行") || !sendList.contains(xm)) {
+                if (!zwjc.contains("工行3") || !sendList.contains(xm)) {
                     continue;
                 }
                 importParameterList.setValue("I_BANKS1", mOdeData[0]); // 银行国家代码
