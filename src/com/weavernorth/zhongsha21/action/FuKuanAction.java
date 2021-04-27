@@ -41,14 +41,17 @@ public class FuKuanAction extends BaseAction {
             String mainId = recordSet.getString("id");
             String dbdh = recordSet.getString("dbdh"); // 打包单号
             String dbspjg = recordSet.getString("dbspjg"); // 打包审批结果
+            String mc = recordSet.getString("mc"); // 审批人
             String dbspjgVal = "0".equals(dbspjg) ? "02" : "03";
-            this.writeLog("打包单号: " + dbdh + ", 打包审批结果: " + dbspjg + ", 打包审批结果转换后： " + dbspjgVal);
+            this.writeLog("打包单号: " + dbdh + ", 打包审批结果: " + dbspjg + ", 打包审批结果转换后： " + dbspjgVal +
+                    "审批人： " + mc);
 
             JCoTable it_header = function.getTableParameterList().getTable("IT_HEADER");
             it_header.appendRow();
             it_header.setRow(0);
             it_header.setValue("ZAPPN", dbdh); // 审批编号
             it_header.setValue("ZAPPS", dbspjgVal); // 审批编号审批结果
+            it_header.setValue("ZAUTH", mc); // 审批人
 
             // 输入表
             JCoTable itMatkl = function.getTableParameterList().getTable("IT_ITEM");

@@ -351,9 +351,7 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
                 String zappn = withdrawVO.getZAPPN(); // 打包单号
                 String zoaid = withdrawVO.getZOAID();// 审批编号
                 String zchyy = withdrawVO.getZCHYY();// 撤回原因
-                String zauth = withdrawVO.getZAUTH();// 审批人
 
-                recordSet.executeUpdate("update " + ZhShaConfig.FU_KUAN_TABLE_NAME.getValue() + " set mc = ? where dbdh = ?", zauth, zappn);
                 recordSet.executeQuery("select id from " + ZhShaConfig.FU_KUAN_TABLE_NAME.getValue() + " where dbdh = ? order by id desc", zappn);
                 if (recordSet.next()) {
                     String id = recordSet.getString("id");
