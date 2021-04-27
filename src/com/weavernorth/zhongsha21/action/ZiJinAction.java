@@ -24,7 +24,7 @@ public class ZiJinAction extends BaseAction {
     private static final List<String> sendList = new ArrayList<String>(); // 银行间划款、同行间还款的
 
     static {
-        sendList.add("4");
+        sendList.add("14");
         sendList.add("13");
     }
 

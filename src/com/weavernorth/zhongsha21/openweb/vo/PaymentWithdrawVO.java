@@ -7,6 +7,15 @@ public class PaymentWithdrawVO {
     private String ZAPPN; // 打包单号
     private String ZOAID; // OA付款单号
     private String ZCHYY; // 撤回原因
+    private String ZAUTH; // 审批人
+
+    public String getZAUTH() {
+        return ZAUTH;
+    }
+
+    public void setZAUTH(String ZAUTH) {
+        this.ZAUTH = ZAUTH;
+    }
 
     public String getZAPPN() {
         return ZAPPN;

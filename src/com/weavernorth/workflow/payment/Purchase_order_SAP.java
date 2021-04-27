@@ -204,6 +204,12 @@ public class Purchase_order_SAP extends BaseBean{
                 String accounts = "";
                 //银行帐户的参考规定
                 String Bank_Reference = "";
+                // 银行地址
+                String BSTRAS = "";
+                // 收款人地址
+                String LSTRAS = "";
+                // 供应商英文描述
+                String ZNAME = "";
                 for (int i = 0; i < table.getNumRows(); i++) {
                     table.setRow(i);
                     JSONObject obj = new JSONObject();
@@ -216,6 +222,10 @@ public class Purchase_order_SAP extends BaseBean{
                     Account_name = weaver.general.Util.null2String(table.getString("KOINH"));
                     accounts = weaver.general.Util.null2String(table.getString("BANKN"));
                     Bank_Reference = weaver.general.Util.null2String(table.getString("BKREF"));
+
+                    BSTRAS = weaver.general.Util.null2String(table.getString("BSTRAS"));
+                    LSTRAS = weaver.general.Util.null2String(table.getString("LSTRAS"));
+                    ZNAME = weaver.general.Util.null2String(table.getString("ZNAME"));
                     obj.put("id",i+1);
                     obj.put("crmcode", crmcode);
                     obj.put("name", name);
@@ -227,6 +237,10 @@ public class Purchase_order_SAP extends BaseBean{
                     obj.put("Account_name", Account_name);
                     obj.put("accounts", accounts);
                     obj.put("Bank_Reference", Bank_Reference);
+
+                    obj.put("BSTRAS", BSTRAS);
+                    obj.put("LSTRAS", LSTRAS);
+                    obj.put("ZNAME", ZNAME);
                     array.add(obj);
                     if(i>10){
                     	break;
@@ -242,7 +256,7 @@ public class Purchase_order_SAP extends BaseBean{
     
     /**
      * 获取客户信息
-     * @param provideAccount  客户名称
+     * @param CustomerAccount  客户名称
      * @return
      */
     public JSONArray getCustomerInfo(String CustomerAccount,String CustomerName){

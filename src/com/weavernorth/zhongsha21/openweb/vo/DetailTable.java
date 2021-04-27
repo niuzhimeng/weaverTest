@@ -15,6 +15,34 @@ public class DetailTable {
     private String ZJJSX; // 经济事项
     private String ZPAYN; // 应付金额
     private String WAERS; // 货币单位
+    private String ZPJDM; // 票据金额
+
+    private String ZQTDM; // 其他金额
+    private String ZCDDM; // 承兑金额
+
+    public String getZPJDM() {
+        return ZPJDM;
+    }
+
+    public void setZPJDM(String ZPJDM) {
+        this.ZPJDM = ZPJDM;
+    }
+
+    public String getZQTDM() {
+        return ZQTDM;
+    }
+
+    public void setZQTDM(String ZQTDM) {
+        this.ZQTDM = ZQTDM;
+    }
+
+    public String getZCDDM() {
+        return ZCDDM;
+    }
+
+    public void setZCDDM(String ZCDDM) {
+        this.ZCDDM = ZCDDM;
+    }
 
     public String getZOAID() {
         return ZOAID;

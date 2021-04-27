@@ -11,46 +11,48 @@ import weaver.conn.RecordSet;
 import weaver.interfaces.workflow.action.Action;
 import weaver.soa.workflow.request.RequestInfo;
 import weaver.workflow.action.BaseAction;
+
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 /**
-*@program: feeOutForFilm
-*@description: 汇款申请单（总部/媒体）
-*@author: chchq
-*@updateDate: 2019/6/20
-*/
+ * @program: feeOutForFilm
+ * @description: 汇款申请单（总部/媒体）
+ * @author: chchq
+ * @updateDate: 2019/6/20
+ */
 public class feeOutForFilm extends BaseAction {
     @Override
     public String execute(RequestInfo request) {
         //1、获取流程表单数据
         String requestid = request.getRequestid();//获取流程请求id
-        String tableName = getPropValue("workFlowTableName","feeOutForFilm");
+        String tableName = getPropValue("workFlowTableName", "feeOutForFilm");
         String workflowid = request.getWorkflowid();//获取流程id
         String operator = request.getRequestManager().getSrc();//获取流程状态
         String requestname = request.getRequestManager().getRequestname();//请求标题
         String lastoperator = request.getLastoperator();//获取当前节点操作者
         //获取当前时间
-        Date day=new Date();
+        Date day = new Date();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String format = df.format(day);
         RecordSet rs = new RecordSet();//主表信息
-        RecordSet detailRs=new RecordSet();//明细表1信息
-        RecordSet detailRsTwo=new RecordSet();//明细表2信息
+        RecordSet detailRs = new RecordSet();//明细表1信息
+        RecordSet detailRsTwo = new RecordSet();//明细表2信息
 
         List arrayFeeOutExpenseList = new ArrayList();
-        String s ="";
+        String s = "";
 
         //方法执行结果
         String result = "";
         //推送结果
-        String tsjg = "";
+        String tsjg = "1";
         //修改推送结果sql
-        String updateTsjgSql = "update "+tableName+" SET tsjg = ? where requestid = ?  ";
+        String updateTsjgSql = "update " + tableName + " SET tsjg = ? where requestid = ?  ";
         ConnStatement con = new ConnStatement();
-        this.writeLog("feeOutForFilm 汇款申请单（影院/汉堡王）--请求id："+requestid+"--start");
+        this.writeLog("feeOutForFilm 汇款申请单（影院/汉堡王）--请求id：" + requestid + "--start");
 
-        if("submit".equals(operator)) {
+        if ("submit".equals(operator)) {
             try {
                 //获取主表信息
                 rs.execute("select * from " + tableName + " where requestId='" + requestid + "'");//获取流程主表数据
@@ -58,7 +60,7 @@ public class feeOutForFilm extends BaseAction {
                 rs.next();
                 String pkOaHead = requestid;//requestid---pkOaHead
                 String number = rs.getString("dh");//单号---number
-                this.writeLog("单号："+number);
+                this.writeLog("单号：" + number);
                 String applier = rs.getString("sqr");//报销人---applier
                 String appDate = rs.getString("sqrq");//申请日期---appDate
                 //String payDept = rs.getString("fyzfbm");//费用支付部门---payDept
@@ -451,41 +453,33 @@ public class feeOutForFilm extends BaseAction {
                 map.put("unPayAmt", 0.0);
                 map.put("expenseList", arrayFeeOutExpenseList);
                 String json = gson.toJson(map);
-                this.writeLog("请求id："+requestid+"，请求参数---->" + json);
+                this.writeLog("请求id：" + requestid + "，请求参数---->" + json);
 
                 OaExpendService_ServiceLocator oaExpendService_serviceLocator = new OaExpendService_ServiceLocator();
                 OaExpendService_PortType oaExpendServiceImplPort = oaExpendService_serviceLocator.getOaExpendServiceImplPort();
                 s = oaExpendServiceImplPort.receiveOaExpend(json);
-                this.writeLog("请求id："+requestid+"，金蝶返回值---->" + s);
+                this.writeLog("请求id：" + requestid + "，金蝶返回值---->" + s);
                 JsonObject asJsonObject = new JsonParser().parse(s).getAsJsonObject();//获取jsonObject里的具体对象属性
                 String c = asJsonObject.get("c").getAsString();//获取staff里的对象
                 String msg = asJsonObject.get("m").getAsString();//获取staff里的对象
 
                 if ("1020000".equals(c)) {
-                    this.writeLog("请求id："+requestid+"，调用成功");
+                    this.writeLog("请求id：" + requestid + "，调用成功");
                     result = SUCCESS;
                     tsjg = "0";
-                } else if ("1010001".equals(c) && !"".equals(msg)) {
-                    this.writeLog("请求id："+requestid+"，金蝶数据保存出错,请联系相关人员处理："+msg);
-                    request.getRequestManager().setMessagecontent("金蝶数据保存出错,请联系相关人员处理，错误信息详情："+msg);
-                    request.getRequestManager().setMessageid("错误信息详情" + msg);
-                    result = Action.FAILURE_AND_CONTINUE;
-                    tsjg = "1";
                 } else {
-                    this.writeLog("请求id："+requestid+"，错误信息详情："+msg);
+                    this.writeLog("请求id：" + requestid + "，错误信息详情：" + msg);
                     //控制流程流转，增加以下两行，流程不会向下流转，表单上显示返回的自定义错误信息
-                    request.getRequestManager().setMessagecontent("金蝶数据保存出错,请联系相关人员处理，错误信息详情："+msg);
-                    request.getRequestManager().setMessageid("11111"+requestid+"55555");
-                    result = Action.FAILURE_AND_CONTINUE;
-                    tsjg = "1";
+                    request.getRequestManager().setMessagecontent("金蝶数据保存出错,请联系相关人员处理，错误信息详情：" + msg);
+                    request.getRequestManager().setMessageid("110000");
+                    return Action.FAILURE_AND_CONTINUE;
                 }
             } catch (Exception e) {
-                this.writeLog("请求id："+requestid+"，错误："+e);
+                this.writeLog("请求id：" + requestid + "，错误：" + e);
                 //控制流程流转，增加以下两行，流程不会向下流转，表单上显示返回的自定义错误信息
-                request.getRequestManager().setMessagecontent("代码异常。"+"错误信息详情：" + e);
-                request.getRequestManager().setMessageid("11111"+requestid+"55555");
-                result = Action.FAILURE_AND_CONTINUE;
-                tsjg = "2";
+                request.getRequestManager().setMessagecontent("代码异常。" + "错误信息详情：" + e);
+                request.getRequestManager().setMessageid("110000");
+                return Action.FAILURE_AND_CONTINUE;
             }
             try {
                 con.setStatementSql(updateTsjgSql);
@@ -494,11 +488,11 @@ public class feeOutForFilm extends BaseAction {
                 con.executeUpdate();
                 con.close();
             } catch (Exception e) {
-                this.writeLog("修改推送结果异常，请求id："+requestid+"，错误："+e);
+                this.writeLog("修改推送结果异常，请求id：" + requestid + "，错误：" + e);
             }
         }
-        this.writeLog("请求id："+requestid+"，推送结果："+tsjg+",流程执行结果："+result);
-        this.writeLog("feeOutForFilm 汇款申请单（影院/汉堡王）--请求id："+requestid+"--end");
+        this.writeLog("请求id：" + requestid + "，推送结果：" + tsjg + ",流程执行结果：" + result);
+        this.writeLog("feeOutForFilm 汇款申请单（影院/汉堡王）--请求id：" + requestid + "--end");
         return result;
     }
 }

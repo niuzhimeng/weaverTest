@@ -70,7 +70,7 @@ public class DownloadServlet extends BaseBean implements Servlet {
         ServletOutputStream outputStream = response.getOutputStream();
 
         // 读取服务器文件
-        FileInputStream fileInputStream = new FileInputStream("D:\\WEAVER\\ecology\\" + fileName);
+        FileInputStream fileInputStream = new FileInputStream("E:\\WEAVER\\ecology\\" + fileName);
         byte[] bytes = new byte[1024 * 2];
         int len;
         while ((len = fileInputStream.read(bytes)) != -1) {

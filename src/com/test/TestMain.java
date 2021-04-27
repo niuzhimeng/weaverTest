@@ -15,7 +15,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
-import org.apache.poi.hssf.record.FontIndexRecord;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -30,17 +29,20 @@ import weaver.integration.util.HTTPUtil;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
-import java.text.NumberFormat;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -1092,29 +1094,50 @@ public class TestMain {
 
     @Test
     public void test46() throws Exception {
-        Class<?> aClass = Class.forName("com.test.MyTest0724");
-        TestInter o = (TestInter) aClass.newInstance();
-        Field[] fields = aClass.getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            field.set(o, "牛智萌");
-        }
-
-        o.execute();
+//        ExecutorService executorService = Executors.newFixedThreadPool(5);
+//        ExecutorService executorService1 = Executors.newSingleThreadExecutor();
+//        ExecutorService executorService2 = Executors.newCachedThreadPool();
+//        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(5);
+        int i = Runtime.getRuntime().availableProcessors();
+        System.out.println(i);
 
     }
 
     @Test
     public void test47() {
-        String approvedTaxAmtValue = "12.343245435";
-        double v = Double.valueOf(approvedTaxAmtValue.replace(",", "")).doubleValue();
-        double approvedTaxAmtV = v < 0 ? 0 : v;
+        String str = String.format("%03d", 10);
+        System.out.println(str);
 
-        System.out.println("approvedTaxAmtV: "+ approvedTaxAmtV);
-        NumberFormat numberFormat7 = NumberFormat.getNumberInstance();
-        numberFormat7.setGroupingUsed(false); //设置了以后不会有千分位，如果不设置，默认是有的
-        String approvedTaxAmt = numberFormat7.format(approvedTaxAmtV);
-        System.out.println(approvedTaxAmt);
+//        Thread thread = new Thread();
+//        thread.setPriority(0);
+
+
+        System.out.println(MD5("1"));
+    }
+
+    public String MD5(String content) {
+        MessageDigest ins = null;
+        try {
+            ins = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        if (ins != null) {
+            ins.update(content.getBytes(Charset.forName("UTF-8")));
+        }
+        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+        byte[] tmp = new byte[0];
+        if (ins != null) {
+            tmp = ins.digest();
+        }
+        char[] str = new char[16 * 2];
+        int k = 0;
+        for (int i = 0; i < 16; i++) {
+            byte byte0 = tmp[i];
+            str[k++] = hexDigits[byte0 >>> 4 & 0xf];
+            str[k++] = hexDigits[byte0 & 0xf];
+        }
+        return new String(str);
     }
 
     /**

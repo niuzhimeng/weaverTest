@@ -48,8 +48,8 @@ public class GaoDengFilter extends BaseBean implements Filter {
         // 登录名
         String loginName = AssertionHolder.getAssertion().getPrincipal().getName();
 
-        // 默认url 登录主页
-        String workFlowUrl = "/wui/main.jsp?templateId=1";
+        //String workFlowUrl = "/wui/main.jsp?templateId=1"; // 默认url 登录主页
+        String workFlowUrl = "/wui/index.html#/main/workflow/listDoing"; // 流程页面
         String forwardUrl = request.getParameter("forwardUrl");
         this.writeLog("forwardUrl: " + forwardUrl);
         if (!"".equals(forwardUrl) && forwardUrl != null) {

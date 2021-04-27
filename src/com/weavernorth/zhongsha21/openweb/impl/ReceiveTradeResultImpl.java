@@ -36,7 +36,7 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
         ResultVO resultVO1 = new ResultVO();
         try {
             baseBean.writeLog("交易结果回传oa Start============== " + JSONObject.toJSONString(tradeResultVO));
-
+            String currentDateString = TimeUtil.getCurrentDateString();
             for (TradeResultVO resultVO : tradeResultVO) {
                 baseBean.writeLog("交易编号：" + resultVO.getZOAID() + ", 公司代码: " + resultVO.getBUKRS() +
                         ", 付款状态: " + resultVO.getZFKZT());
@@ -48,7 +48,8 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
                     ztVal = "2";
                 }
 
-                recordSet.executeUpdate("update uf_tdlb set zxjd = ? where dh = ?", ztVal, resultVO.getZOAID());
+                recordSet.executeUpdate("update uf_tdlb set zxjd = ?, zxsj = ?, zxbz = ? where dh = ?",
+                        ztVal, currentDateString, "SAP传值: " + zfkzt, resultVO.getZOAID());
             }
 
             resultVO1.setCode("S");
@@ -139,11 +140,11 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
             // ==================================== 明细表1start
             DetailTable[] detailTableList = mainTable.getDetailTables(); // 明细表数组
             int length = detailTableList.length;
-            baseBean.writeLog("明细表行数： "+ length);
+            baseBean.writeLog("明细表行数： " + length);
             WorkflowRequestTableRecord[] detailRecord = new WorkflowRequestTableRecord[length]; //明细表行数组
             int j = 0;
             for (DetailTable detailTable : detailTableList) {
-                WorkflowRequestTableField[] detailField1 = new WorkflowRequestTableField[17]; // 明细表列数组，每行17个字段
+                WorkflowRequestTableField[] detailField1 = new WorkflowRequestTableField[20]; // 明细表列数组，每行17个字段
 
                 String[] returns = getMode(detailTable.getZOAID());
                 i = 0;
@@ -234,6 +235,27 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
                 detailField1[i] = new WorkflowRequestTableField();
                 detailField1[i].setFieldName("spyj");
                 detailField1[i].setFieldValue("0"); // 审批意见
+                detailField1[i].setView(true);
+                detailField1[i].setEdit(true);
+
+                i++;
+                detailField1[i] = new WorkflowRequestTableField();
+                detailField1[i].setFieldName("pjje");
+                detailField1[i].setFieldValue(detailTable.getZPJDM()); // 票据金额
+                detailField1[i].setView(true);
+                detailField1[i].setEdit(true);
+
+                i++;
+                detailField1[i] = new WorkflowRequestTableField();
+                detailField1[i].setFieldName("cdhpje");
+                detailField1[i].setFieldValue(detailTable.getZCDDM()); // 承兑汇票金额
+                detailField1[i].setView(true);
+                detailField1[i].setEdit(true);
+
+                i++;
+                detailField1[i] = new WorkflowRequestTableField();
+                detailField1[i].setFieldName("qtje");
+                detailField1[i].setFieldValue(detailTable.getZQTDM()); // 其他金额
                 detailField1[i].setView(true);
                 detailField1[i].setEdit(true);
 
@@ -329,7 +351,9 @@ public class ReceiveTradeResultImpl implements ReceiveSapInfo {
                 String zappn = withdrawVO.getZAPPN(); // 打包单号
                 String zoaid = withdrawVO.getZOAID();// 审批编号
                 String zchyy = withdrawVO.getZCHYY();// 撤回原因
+                String zauth = withdrawVO.getZAUTH();// 审批人
 
+                recordSet.executeUpdate("update " + ZhShaConfig.FU_KUAN_TABLE_NAME.getValue() + " set mc = ? where dbdh = ?", zauth, zappn);
                 recordSet.executeQuery("select id from " + ZhShaConfig.FU_KUAN_TABLE_NAME.getValue() + " where dbdh = ? order by id desc", zappn);
                 if (recordSet.next()) {
                     String id = recordSet.getString("id");
